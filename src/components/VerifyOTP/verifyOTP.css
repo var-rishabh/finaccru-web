@@ -1,0 +1,123 @@
+.verify__main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 70%;
+    margin-top: 2rem;
+    padding: 0 2rem 0;
+}
+
+.verify__heading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.verify__heading--main {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--main-color);
+}
+
+.verify__heading--sub {
+    width: 22rem;
+    margin-top: 0.9rem;
+    font-size: 1.25rem;
+    font-weight: 350;
+    color: var(--sub-color);
+    line-height: 1.8rem;
+    text-align: center;
+}
+
+.form__data--verify {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    padding-top: 3rem;
+}
+
+.verify__form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 26rem;
+}
+
+.verify__auth__form--button--verify>button {
+    width: 100%;
+    height: 4.5rem;
+    padding: 1rem 0;
+    margin-top: 2.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: 1rem;
+    color: white;
+    background-color: var(--blue);
+    border: none;
+    cursor: pointer;
+}
+
+.verify__auth__form--otp {
+    padding: 1rem 0 0 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.verify__auth__form--otp>input {
+    text-align: center;
+    width: 10%;
+    font-weight: 600;
+    font-size: 1.125rem;
+    padding: 0 0 1rem 0;
+    color: var(--gray);
+    border: none;
+    border-bottom: 1px solid var(--blue);
+}
+
+.verify__auth__form--otp>input:disabled {
+    color: #89888b;
+}
+
+.verify__auth__form--otp>input:focus {
+    border-bottom: 3px solid var(--blue);
+}
+
+.signup__link--verify {
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--black);
+    line-height: 1.8rem;
+    text-align: center;
+}
+
+.signup__link--verify>p>a {
+    color: var(--main-color);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.otp__heading--count {
+    color: var(--main-color);
+    text-align: center;
+    margin: 2rem 0;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}

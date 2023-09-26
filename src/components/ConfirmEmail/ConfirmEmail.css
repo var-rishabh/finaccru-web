@@ -1,0 +1,60 @@
+.confirm__email--main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 70%;
+    margin-top: 2rem;
+    padding: 0 2rem 0;
+}
+
+.confirm__email--heading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.confirm__email--heading--main {
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.confirm__email--heading--sub {
+    width: 26rem;
+    margin-top: 2rem;
+    font-size: 1.25rem;
+    font-weight: 350;
+    color: var(--dark-blue);
+    line-height: 1.8rem;
+    text-align: center;
+}
+
+.confirm__email--heading--foot>p {
+    width: 26rem;
+    color: var(--sub-color);
+    font-size: 1.25rem;
+    padding: 3rem 0;
+    text-align: center;
+}
+
+.confirm__email--button {
+    width: 100%;
+    max-width: 22rem;
+}
+
+.confirm__email--button>button {
+    width: 100%;
+    padding: 0.6rem;
+    height: 4rem;
+    justify-content: center;
+    align-items: center;
+    color: var(--white);
+    background-color: var(--blue);
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+    cursor: pointer;
+}

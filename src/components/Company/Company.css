@@ -1,0 +1,114 @@
+.company__main {
+    display: flex;
+    flex-direction: column;
+    align-self: start;
+    width: 100%;
+    margin: 4rem 0;
+}
+
+.company__heading {
+    display: flex;
+    font-size: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    color: var(--main-color);
+}
+
+.company__form__data {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.company__form {
+    padding: 0;
+    width: 80%;
+}
+
+.company__form--split {
+    display: flex;
+    justify-content: space-between;
+}
+
+.company__form--input {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.company__form--input>span {
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 1rem 0 .5rem 0;
+    color: var(--dark-blue);
+}
+
+.company__form--input>input {
+    font-weight: 400;
+    font-size: 1rem;
+    padding: 1rem;
+    color: var(--dark-blue);
+    height: 2.3rem;
+    width: 25rem;
+    border-radius: 1px;
+    border: 1px solid var(--light-gray);
+}
+
+input:focus {
+    outline: none;
+}
+
+.company__form--button>button {
+    margin-top: 3rem;
+    width: 100%;
+    height: 4rem;
+    padding: 1rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.25rem;
+    color: white;
+    background-color: var(--blue);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.company__select {
+    font-weight: 400;
+    font-size: 1rem;
+    background-color: var(--white);
+    color: var(--dark-blue);
+    height: 2.3rem;
+    max-width: 25rem;
+    border-radius: 1px;
+    border: 1px solid var(--light-gray);
+    width: 100%;
+    display: inline-block;
+    padding: 0 1rem;
+    background-image:
+        linear-gradient(45deg, transparent 50%, gray 50%),
+        linear-gradient(135deg, gray 50%, transparent 50%),
+        radial-gradient(#000 0%, transparent 0%);
+    background-position:
+        calc(100% - 20px) calc(1em + 2px),
+        calc(100% - 15px) calc(1em + 2px),
+        calc(100% - .5em) .5em;
+    background-size:
+        5px 5px,
+        5px 5px,
+        1.5em 1.5em;
+    background-repeat: no-repeat;
+    margin: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.company__select:focus {
+    outline: none;
+}

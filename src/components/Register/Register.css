@@ -1,0 +1,157 @@
+.register__main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 70%;
+    margin-top: 2rem;
+}
+
+.register__heading {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.register__heading--main {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--black);
+}
+
+.register__heading--sub {
+    width: 26rem;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--dark-blue);
+    line-height: 1.8rem;
+    text-align: left;
+}
+
+.register__form__data {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 80%;
+}
+
+.regiter__form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.register__auth__form {
+    width: 100%;
+}
+
+.register__auth__form--input {
+    padding: 0.8rem 0 0 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.register__auth__form--input>input {
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 0.8rem;
+    color: var(--dark-blue);
+    border: none;
+    background-color: var(--bg-gray);
+    border-radius: 8.77px;
+}
+
+.phone__error--span__register {
+    font-size: 0.8rem;
+    padding: 1rem 0 0 0.2rem;
+    color: red;
+}
+
+.register__select {
+    width: 100%;
+    font-weight: 500;
+    font-size: 0.8rem;
+    padding: 1rem;
+    font-family: 'Work Sans', sans-serif;
+    color: var(--dark-blue);
+    border: none;
+    background-color: var(--bg-gray);
+    border-radius: 8.77px;
+
+    display: inline-block;
+    padding: 1em 3.5em 1em 1em;    
+    
+    background-image:
+        linear-gradient(45deg, transparent 50%, gray 50%),
+        linear-gradient(135deg, gray 50%, transparent 50%),
+        radial-gradient(#000 0%, transparent 0%);
+    background-position:
+        calc(100% - 20px) calc(1em + 2px),
+        calc(100% - 15px) calc(1em + 2px),
+        calc(100% - .5em) .5em;
+    background-size:
+        5px 5px,
+        5px 5px,
+        1.5em 1.5em;
+    background-repeat: no-repeat;
+    margin: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.register__select:focus {
+    outline: none;
+}
+
+input:focus {
+    outline: none;
+}
+
+.form__checkbox--register {
+    padding: 1.5rem 0.5rem;
+}
+
+.form__checkbox--register>span {
+    color: var(--black);
+}
+
+.form__checkbox--register>span>a {
+    color: var(--main-color);
+    text-decoration: none;
+}
+
+.register__auth__form--button>button {
+    width: 100%;
+    height: 3rem;
+    padding: 0.6rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: 1rem;
+    font-weight: 500;
+    color: white;
+    background-color: var(--blue);
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+}
+
+.signup__link {
+    margin-top: 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--black);
+    width: 70%;
+    text-align: center;
+}
+
+.signup__link>p>a {
+    color: var(--main-color);
+    text-decoration: none;
+}

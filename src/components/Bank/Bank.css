@@ -1,0 +1,88 @@
+.bank__main {
+    display: flex;
+    flex-direction: row;
+    align-self: start;
+    width: 100%;
+    margin: 3rem 0 0 0;
+}
+
+.bank__form--left {
+    width: 40%;
+}
+
+.bank__form--right {
+    width: 60%;
+}
+
+.bank__heading {
+    display: flex;
+    font-size: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    color: var(--main-color);
+}
+
+.bank__form__data {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.bank__form {
+    padding: 0;
+}
+
+.bank__form--input {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.bank__form--input>span {
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 1rem 0 .5rem 0;
+    color: var(--dark-blue);
+}
+
+.bank__form--input>input {
+    font-weight: 400;
+    font-size: 1rem;
+    padding: 1rem;
+    color: var(--dark-blue);
+    height: 2.3rem;
+    width: 25rem;
+    border-radius: 1px;
+    border: 1px solid var(--light-gray);
+}
+
+.country__form {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.country__form div input {
+    width: 12rem;
+}
+
+input:focus {
+    outline: none;
+}
+
+.bank__form--button>button {
+    margin-top: 1rem;
+    width: 100%;
+    height: 4rem;
+    padding: 1rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.25rem;
+    color: white;
+    background-color: var(--blue);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}

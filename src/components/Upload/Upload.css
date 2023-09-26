@@ -1,0 +1,102 @@
+.upload__main {
+    display: flex;
+    flex-direction: column;
+    align-self: start;
+    width: 100%;
+    margin: 4rem 0;
+}
+
+.upload__heading {
+    display: flex;
+    font-size: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    color: var(--main-color);
+}
+
+.upload__form__data {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.upload__form {
+    padding: 0;
+    width: 80%;
+}
+
+.upload__form--split {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.upload__form--left {
+    width: 40%;
+}
+
+.upload__form--right {
+    margin-left: 10rem;
+    width: 40%;
+}
+
+.upload__form--input {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.upload__form__checkbox {
+    padding-top: 1.5rem;
+}
+
+.upload__form__checkbox>span {
+    padding-left: 0.5rem;
+}
+
+.upload__form--input>span {
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 2rem 0 .5rem 0;
+    color: var(--dark-blue);
+}
+
+.upload__form--input>label {
+    color: var(--black);
+    font-size: 1rem;
+    font-weight: 400;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem;
+    font-family: sans-serif;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    border: 1px solid #D0DAE9;
+    background: #FFF;
+}
+
+#file-chosen {
+    margin: 0.5rem 0;
+    font-family: sans-serif;
+}
+
+input:focus {
+    outline: none;
+}
+
+.upload__form--button>button {
+    margin-top: 1rem;
+    width: 100%;
+    height: 4rem;
+    padding: 1rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.25rem;
+    color: white;
+    background-color: var(--blue);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
