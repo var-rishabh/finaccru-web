@@ -1,6 +1,5 @@
+import "./Upload.css"
 import { useState } from 'react';
-import { useForm } from "react-hook-form";
-import "./upload.css";
 import { useDispatch } from 'react-redux';
 import { uploadDocuments } from '../../Actions/Onboarding';
 
@@ -12,7 +11,6 @@ const Upload = () => {
     const [emiratedId, setEmiratedId] = useState([]);
     const [ownerPassport, setOwnerPassport] = useState([]);
 
-    const { handleSubmit } = useForm();
     const dispatch = useDispatch();
     const handleUpload = (e) => {
         const { tradeLicense, moa, vat, emiratedId, ownerPassport } = e.target;
