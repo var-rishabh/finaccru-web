@@ -44,38 +44,38 @@ export const onboardingReducer = createReducer(initialState, (builder) => {
             state.error = null;
         })
         .addCase("GetCompanyTypeRequest", (state) => {
-            state.loading = true;
+            state.comapanyTypeLoading = true;
         })
         .addCase("GetCompanyTypeFailure", (state, action) => {
-            state.loading = false;
+            state.comapanyTypeLoading = false;
             state.error = action.payload;
         })
         .addCase("GetCompanyTypeSuccess", (state, action) => {
-            state.loading = false;
+            state.comapanyTypeLoading = false;
             state.companyTypes = action.payload;
             state.error = null;
         })
         .addCase("GetCurrencyRequest", (state) => {
-            state.loading = true;
+            state.currencyLoading = true;
         })
         .addCase("GetCurrencyFailure", (state, action) => {
-            state.loading = false;
+            state.currencyLoading = false;
             state.error = action.payload;
         })
         .addCase("GetCurrencySuccess", (state, action) => {
-            state.loading = false;
+            state.currencyLoading = false;
             state.currencies = action.payload;
             state.error = null;
         })
         .addCase("GetIndustryRequest", (state) => {
-            state.loading = true;
+            state.industryLoading = true;
         })
         .addCase("GetIndustryFailure", (state, action) => {
-            state.loading = false;
+            state.industryLoading = false;
             state.error = action.payload;
         })
         .addCase("GetIndustrySuccess", (state, action) => {
-            state.loading = false;
+            state.industryLoading = false;
             state.industries = action.payload;
             state.error = null;
         })

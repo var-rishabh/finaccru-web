@@ -1,6 +1,9 @@
-import "./Upload.css"
 import { useState } from 'react';
+import { useForm } from "react-hook-form";
 import { useDispatch } from 'react-redux';
+import { toast } from "react-toastify";
+
+import "./Upload.css"
 import { uploadDocuments } from '../../Actions/Onboarding';
 
 const Upload = () => {
@@ -11,15 +14,16 @@ const Upload = () => {
     const [emiratedId, setEmiratedId] = useState([]);
     const [ownerPassport, setOwnerPassport] = useState([]);
 
+    const { handleSubmit } = useForm();
     const dispatch = useDispatch();
     const handleUpload = (e) => {
         const { tradeLicense, moa, vat, emiratedId, ownerPassport } = e.target;
         if (!tradeLicense.files[0] || !moa.files[0] || !emiratedId.files[0] || !ownerPassport.files[0]) {
-            alert("Please upload all the documents");
+            toast.error("Please upload all the documents");
             return;
         }
         if (vatNeeded && !vat?.files[0]) {
-            alert("Please upload all the documents");
+            toast.error("Please upload all the documents");
             return;
         }
         if (vatNeeded) {

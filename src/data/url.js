@@ -1,3 +1,3 @@
-const url = 'http://stagingapi.finaccru.com';
+const url = 'https://stagingapi.finaccru.com';
 
 export default url;

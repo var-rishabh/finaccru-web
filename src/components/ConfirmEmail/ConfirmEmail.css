@@ -23,7 +23,7 @@
 
 .confirm__email--heading--sub {
     width: 26rem;
-    margin-top: 2rem;
+    margin-top: 1rem;
     font-size: 1.25rem;
     font-weight: 350;
     color: var(--dark-blue);
@@ -40,12 +40,10 @@
 }
 
 .confirm__email--button {
+    display: flex;
+    text-decoration: none;
     width: 100%;
     max-width: 22rem;
-}
-
-.confirm__email--button>button {
-    width: 100%;
     padding: 0.6rem;
     height: 4rem;
     justify-content: center;
@@ -56,5 +54,23 @@
     border-radius: 0.25rem;
     font-size: 1.2rem;
     font-weight: 500;
+    cursor: pointer;
+}
+
+.resend__button {   
+    display: flex;
+    text-decoration: none;
+    max-width: 22rem;
+    padding: 0.6rem;
+    height: 2rem;
+    justify-content: center;
+    align-items: center;
+    color: var(--white);
+    background-color: var(--blue);
+    margin-top: 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 0.8rem;
+    font-weight: 400;
     cursor: pointer;
 }

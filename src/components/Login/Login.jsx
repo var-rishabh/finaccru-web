@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import "./Login.css";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+
+import "./Login.css";
 import { login } from "../../Actions/User";
 import { getCountries } from "country-state-picker";
 
@@ -123,15 +124,14 @@ const Login = () => {
               <form className='login__form' onSubmit={handleLogin}>
                 <div className='login__form--input phone__input'>
                   <span>Phone Number</span>
-                  <select className="country__code" id="country" value={countryCode} onChange={handleCountryChange}>
-                    <option value="">Select a country</option>
-                    {countries.map((country) => (
-                      <option key={country.code} value={country.dial_code}>
-                        ({country.dial_code}) {country.name}
-                      </option>
-                    ))}
-                  </select>
                   <div className="login__form--phone-number">
+                    <select className="country__code" id="country" value={countryCode} onChange={handleCountryChange}>
+                      {countries.map((country) => (
+                        <option key={country.code} value={country.dial_code}>
+                          {country.dial_code}
+                        </option>
+                      ))}
+                    </select>
                     <input type='text' placeholder='Phone' name='phone' value={phone} onChange={(e) => {
                       setPhone(e.target.value);
                       if (e.target.value.length !== 10) {

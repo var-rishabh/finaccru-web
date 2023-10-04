@@ -8,7 +8,6 @@
     overflow: hidden;
 }
 
-/*Left Side of Auth Screen*/
 .auth__left {
     display: flex;
     align-items: center;
@@ -19,22 +18,25 @@
 }
 
 .auth__image1 {
-    position: relative;
-    width: 70%;
-    top: -18rem;
-    left: 3rem;
+    position: absolute;
+    width: 40%;
+    top: 16rem;
+    left: 10rem;
+    z-index: 1;
 }
 
 .auth__image2 {
-    position: relative;
-    top: -20rem;
-    left: 30rem;
+    position: absolute;
+    top: 15rem;
+    left: 52rem;
+    z-index: 999;
 }
 
 .auth__image3 {
     object-fit: cover;
-    position: relative;
-    width: 100%;
+    position: absolute;
+    top: -10rem;
+    left: -7rem;
     z-index: -999;
 }
 

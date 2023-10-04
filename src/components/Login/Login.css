@@ -16,7 +16,7 @@
 }
 
 .login__heading--main {
-    font-size: 1.2rem;
+    font-size: 1.125rem;
     font-weight: 700;
     color: var(--main-color);
 }
@@ -24,10 +24,11 @@
 .login__heading--sub {
     width: 26rem;
     margin-top: 0.9rem;
-    font-size: 1.25rem;
-    font-weight: 350;
+    font-size: 1rem;
+    font-weight: 400;
     color: var(--sub-color);
     line-height: 1.8rem;
+    opacity: 50%;
     text-align: center;
 }
 
@@ -37,7 +38,7 @@
     align-items: center;
     flex-direction: column;
     width: 100%;
-    max-width: 26rem;
+    max-width: 23rem;
     padding-top: 1.5rem !important;
 }
 
@@ -61,19 +62,13 @@
     border: 1px solid var(--main-color);
     font-size: 1rem;
     font-weight: 500;
-}
-
-.tab_email {
-    border-radius: 4px 0 0 4px;
-}
-
-.tab_phone {
-    border-radius: 0 4px 4px 0;
+    height: 3rem;
 }
 
 .tabs.active {
     background: var(--blue);
     color: var(--white);
+    border-color: var(--blue);
     font-weight: bold;
 }
 
@@ -103,16 +98,24 @@
 }
 
 .login__form--input>input {
-    font-weight: 600;
-    font-size: 1.125rem;
+    font-weight: 400;
+    font-size: 1rem;
     padding: 0.5rem 0 0.5rem 0;
-    color: var(--gray);
+    color: var(--black);
     border: none;
-    border-bottom: 1px solid var(--blue);
+    opacity: 0.4;
+    border-bottom: 1px solid var(--light-blue);
 }
 
 input:focus {
     outline: none;
+    opacity: 1;
+    border-bottom: 1px solid var(--light-blue);
+}
+
+input::placeholder {
+    color: var(--black);
+    opacity: 1;
 }
 
 .phone__input {
@@ -122,24 +125,12 @@ input:focus {
 .login__form--phone-number {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid var(--blue);
-}
-
-.login__form--phone-number>input {
-    padding: 1rem 0 !important;
-}
-
-.login__form--phone-number {
-    display: flex;
-    align-items: center;
+    border-bottom: 1px solid var(--light-blue);
 }
 
 .country__code {
-    padding: 1rem 0 0 0;
-    max-width: fit-content;
     color: var(--main-color);
     font-weight: 600;
-    font-size: 1.125rem;
     background: none;
     border: none;
 }
@@ -154,11 +145,11 @@ input:focus {
 }
 
 .login__form--phone-number>input {
-    font-weight: 600;
+    font-weight: 400;
     font-size: 1.125rem;
-    padding: 0 0 1rem 0;
     border: none;
-    color: var(--gray);
+    color: var(--black);
+    padding: 1rem 0.5rem;
 }
 
 .form__validation--login {
@@ -178,6 +169,7 @@ input:focus {
 .login__form--forgot>a {
     font-size: 1rem;
     font-weight: 500;
+    opacity: 0.5;
     color: var(--black);
     text-decoration: none;
 }

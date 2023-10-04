@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import "./verifyOTP.css"
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
+
+import "./verifyOTP.css"
 import { sendOtp, verifyOTP } from "../../Actions/User";
 
 const VerifyOTP = () => {
@@ -15,7 +16,10 @@ const VerifyOTP = () => {
     const sendOtpFunc = () => {
         const mobile_number = window.localStorage.getItem("mobile_number");
         if (mobile_number === null) {
-            window.location.href = "/login";
+            toast.error("Please enter mobile number");
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 1000);
         } else {
             dispatch(sendOtp({ mobile_number }));
         }
@@ -32,7 +36,7 @@ const VerifyOTP = () => {
         }
         if (window.localStorage.getItem("mobile_number") === null) {
             toast.error("Please enter mobile number");
-            window.location.href = "/login";
+            window.location.href = "/";
             return;
         }
 
@@ -87,8 +91,8 @@ const VerifyOTP = () => {
                             <p>
                                 Don&#39;t receive any OTP yet?
                                 <a onClick={() => {
-                                    // Hard refresh
-                                    window.location.reload();
+                                    const mobile_number = window.localStorage.getItem("mobilenumber");
+                                    dispatch(sendOtp({ mobile_number }));
                                 }}>
                                     &nbsp; Resend
                                 </a>

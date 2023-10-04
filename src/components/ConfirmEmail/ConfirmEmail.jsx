@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import "./ConfirmEmail.css"
+import { useDispatch } from "react-redux";
+import { resendEmail } from "../../Actions/User";
+import "./ConfirmEmail.css";
 
 const ConfirmEmail = () => {
-    const user = JSON.parse(window.localStorage.getItem("user"));
-    const [email, setEmail] = useState(user?.email);
+    const dispatch = useDispatch();
+
+    const email_id = window.localStorage.getItem("email_id");
+    const [email, setEmail] = useState(email_id);
 
     return (
         <div className="confirm__email--main">
@@ -17,6 +21,9 @@ const ConfirmEmail = () => {
                         We sent a confirmation email to {email}
                     </p>
                 </div>
+                <button className="resend__button" onClick={() =>
+                    dispatch(resendEmail())
+                }>Resend Email</button>
                 <div className="confirm__email--heading--foot">
                     <p>
                         Check you email and click on the confirmation link to login.
@@ -24,9 +31,7 @@ const ConfirmEmail = () => {
                 </div>
             </div>
 
-            <div className="confirm__email--button">
-                <button type='submit'>Login</button>
-            </div>
+            <a className="confirm__email--button" href="/">Login</a>
 
         </div>
     )

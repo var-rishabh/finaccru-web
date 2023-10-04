@@ -1,14 +1,21 @@
 import { useState } from "react";
-import "./Register.css";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from 'react-router-dom';
+
+import "./Register.css";
 import { sendLink } from "../../Actions/User";
 import { getCountries, getStates } from 'country-state-picker';
 
 const Register = () => {
+  const query = useLocation().search;
+  const params = new URLSearchParams(query);
+  const email_id = params.get('email_id');
+  const mobile_number = params.get('mobile_number');
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(email_id ? email_id : "");
   const [phone, setPhone] = useState("");
+  const [countryPhoneCode, setCountryPhoneCode] = useState("+91");
   const [password, setPassword] = useState("");
   const [country, setCountry] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
@@ -19,6 +26,7 @@ const Register = () => {
 
   const dispatch = useDispatch();
   const { loading } = useSelector(state => state.userReducer);
+
 
   const handleCountryChange = (e) => {
     const countryCode = e.target.value;
@@ -33,6 +41,11 @@ const Register = () => {
     }
   };
 
+  const handleCountryPhoneCodeChange = (e) => {
+    const countryPhoneCode = e.target.value;
+    setCountryPhoneCode(countryPhoneCode);
+  }
+
   const handleRegister = (e) => {
     e.preventDefault();
     if (username == "" || email == "" || phone == "" || password == "" || country == "" || state == "") {
@@ -43,8 +56,8 @@ const Register = () => {
       toast.error("Please agree to the terms and conditions");
       return;
     }
-    dispatch(sendLink({ email_id: email }));
-    window.localStorage.setItem("user", JSON.stringify({ username, email, phone, password, country, state }));
+    dispatch(sendLink({ email_id: email, password: password, full_name: username, mobile_number: countryPhoneCode + phone, country: country, state: state }));
+    window.localStorage.setItem("user", JSON.stringify({ username, phone, country, state }));
   }
 
   return (
@@ -70,10 +83,17 @@ const Register = () => {
             <div className='register__auth__form--input'>
               <input type='email' placeholder='Email' name='email' value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
-            <div className='register__auth__form--input'>
-              <input type='text' placeholder='Phone' name='phone' value={phone} onChange={(e) => {
+            <div className='register__auth__form--phone-number'>
+              <select className="country__code" id="country" value={countryPhoneCode} onChange={handleCountryPhoneCodeChange}>
+                {getCountries().map((country) => (
+                  <option key={country.code} value={country.dial_code}>
+                    {country.dial_code}
+                  </option>
+                ))}
+              </select>
+              <input className="register--phone__input" type='text' placeholder='Phone' name='phone' value={phone} onChange={(e) => {
                 setPhone(e.target.value);
-                if (e.target.value.length !== 10) {
+                if (e.target.value.length > 13 || e.target.value.length < 10) {
                   setIsError(true);
                 } else {
                   setIsError(false);

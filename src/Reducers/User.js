@@ -2,72 +2,96 @@ import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
     check: false,
+    loading: false,
+    otpLoading: false,
+    authLoading: false,
 }
 
 export const userReducer = createReducer(initialState, (builder) => {
 
     builder
         .addCase("CheckUserRequest", (state) => {
-            state.loading = true;
+            state.authLoading = true;
         })
         .addCase("CheckUserFailure", (state, action) => {
-            state.loading = false;
+            state.authLoading = false;
             state.error = action.payload;
         })
         .addCase("CheckUserSuccess", (state, action) => {
-            state.loading = false;
+            state.authLoading = false;
             state.check = action.payload;
             state.error = null;
         })
         .addCase("LoginRequest", (state) => {
-            state.loading = true;
+            state.authLoading = true;
         })
         .addCase("LoginFailure", (state, action) => {
-            state.loading = false;
+            state.authLoading = false;
             state.error = action.payload;
             state.isAuthenticated = false;
         })
         .addCase("LoginSuccess", (state, action) => {
-            state.loading = false;
+            state.authLoading = false;
             state.user = action.payload;
             state.error = null;
             state.isAuthenticated = true;
         })
+        .addCase("SendOtpRequest", (state) => {
+            state.otpauthLoading = true;
+        })
+        .addCase("SendOtpFailure", (state, action) => {
+            state.otpauthLoading = false;
+            state.error = action.payload;
+        })
+        .addCase("SendOtpSuccess", (state) => {
+            state.otpauthLoading = false;
+            state.error = null;
+        })
+        
         .addCase("ForgotPasswordRequest", (state) => {
-            state.loading = true;
+            state.authLoading = true;
         })
         .addCase("ForgotPasswordFailure", (state, action) => {
-            state.loading = false;
+            state.authLoading = false;
             state.error = action.payload;
         })
         .addCase("ForgotPasswordSuccess", (state) => {
-            state.loading = false;
+            state.authLoading = false;
             state.error = null;
         })
         .addCase("ResetPasswordRequest", (state) => {
-            state.loading = true;
+            state.authLoading = true;
         })
         .addCase("ResetPasswordFailure", (state, action) => {
-            state.loading = false;
+            state.authLoading = false;
             state.error = action.payload;
         })
         .addCase("ResetPasswordSuccess", (state) => {
-            state.loading = false;
+            state.authLoading = false;
             state.error = null;
         })
         .addCase("RegisterRequest", (state) => {
-            state.loading = true;
+            state.authLoading = true;
         })
         .addCase("RegisterFailure", (state, action) => {
-            state.loading = false;
+            state.authLoading = false;
             state.error = action.payload;
-            state.isAuthenticated = false;
         })
         .addCase("RegisterSuccess", (state, action) => {
-            state.loading = false;
+            state.authLoading = false;
             state.user = action.payload;
             state.error = null;
-            state.isAuthenticated = true;
+        })
+        .addCase("ResendEmailRequest", (state) => {
+            state.authLoading = true;
+        })
+        .addCase("ResendEmailFailure", (state, action) => {
+            state.authLoading = false;
+            state.error = action.payload;
+        })
+        .addCase("ResendEmailSuccess", (state) => {
+            state.authLoading = false;
+            state.error = null;
         })
         .addCase("LoadUserRequest", (state) => {
             state.loading = true;

@@ -16,11 +16,11 @@ export const saveCompanyDetails = (data) => async (dispatch) => {
                         token: token,
                     },
                 };
-                const response = await axios.post(`${url}/private/client/save-company-details`, data, config);
+                const response = await axios.post(`${url}/private/client/onboarding/save-company-details`, data, config);
                 dispatch({ type: "CompanyDetailsSuccess", payload: response.data });
-                toast.success(response.data.message);
-                dispatch({ type: "CompanyDetailsSuccess", payload: response.data });
+                dispatch({ type: "LoadUserRequest" });
                 window.location.href = "/onboard/bank";
+                toast.success("Company Details Saved Successfully");
             }
         });
     } catch (error) {
@@ -41,10 +41,11 @@ export const saveBankDetails = (data) => async (dispatch) => {
                         token: token,
                     },
                 };
-                const response = await axios.post(`${url}/private/client/save-primary-bank-details`, data, config);
+                const response = await axios.post(`${url}/private/client/onboarding/save-primary-bank-details`, data, config);
                 dispatch({ type: "BankDetailsSuccess", payload: response.data });
-                toast.success(response.data.message);
                 window.location.href = "/onboard/upload";
+                toast.success("Bank Details Saved Successfully");
+                dispatch({ type: "LoadUserRequest" });
             }
         });
     } catch (error) {
@@ -73,16 +74,17 @@ export const uploadDocuments = (data) => async (dispatch) => {
                 if (data.vat_file) {
                     form.append("vat_file", data.vat_file);
                 }
-                const response = await axios.post(`${url}/private/client/update-documents-details`, form , config);
-                dispatch({ type: "UploadDocumentsSuccess", payload: response.data });
-                toast.success(response.data.message);
+                const response = await axios.post(`${url}/private/client/onboarding/save-documents`, form , config);
+                toast.success("Documents Uploaded Successfully! Redirecting to Home Page");
                 window.location.href = "/";
+                dispatch({ type: "UploadDocumentsSuccess", payload: response.data });
+                dispatch({ type: "LoadUserRequest" });
             }
         });
 
     } catch (error) {
         console.log(error);
-        dispatch({ type: "BankDetailsFailure", payload: error.response?.data.message || error.message });
+        dispatch({ type: "UploadDocumentsFaliure", payload: error.response?.data.message || error.message });
         toast.error(error.response?.data.message || error.message);
     }
 }    
@@ -108,6 +110,27 @@ export const getCompanyType = () => async (dispatch) => {
     }
 }
 
+export const getIndustry = () => async (dispatch) => {
+    try {
+        dispatch({ type: "GetIndustryRequest" });
+        await onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const token = await user.getIdToken();
+                const config = {
+                    headers: {
+                        token: token,
+                    },
+                };
+                const response = await axios.get(`${url}/private/read-box/industry`, config);
+                dispatch({ type: "GetIndustrySuccess", payload: response.data });
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "GetIndustryFailure", payload: error.response?.data.message || error.message });
+    }
+}
+
 export const getCurrency = () => async (dispatch) => {
     try {
         dispatch({ type: "GetCurrencyRequest" });
@@ -129,23 +152,4 @@ export const getCurrency = () => async (dispatch) => {
     }
 }
 
-export const getIndustry = () => async (dispatch) => {
-    try {
-        dispatch({ type: "GetIndustryRequest" });
-        await onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const token = await user.getIdToken();
-                const config = {
-                    headers: {
-                        token: token,
-                    },
-                };
-                const response = await axios.get(`${url}/private/read-box/industry`, config);
-                dispatch({ type: "GetIndustrySuccess", payload: response.data });
-            }
-        });
-    } catch (error) {
-        console.log(error);
-        dispatch({ type: "GetIndustryFailure", payload: error.response?.data.message || error.message });
-    }
-}
+

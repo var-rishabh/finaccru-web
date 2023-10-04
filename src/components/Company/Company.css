@@ -3,7 +3,7 @@
     flex-direction: column;
     align-self: start;
     width: 100%;
-    margin: 4rem 0;
+    margin: 2rem 0;
 }
 
 .company__heading {
@@ -51,7 +51,7 @@
     color: var(--dark-blue);
     height: 2.3rem;
     width: 25rem;
-    border-radius: 1px;
+    border-radius: 0.25rem;
     border: 1px solid var(--light-gray);
 }
 
@@ -60,7 +60,7 @@ input:focus {
 }
 
 .company__form--button>button {
-    margin-top: 3rem;
+    margin-top: 2rem;
     width: 100%;
     height: 4rem;
     padding: 1rem 0;

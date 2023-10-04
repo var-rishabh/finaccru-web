@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom'
 import "./Onboard.css"
 
 import logo_with_name from "../../assets/logo_with_name.png"
-import onboard1 from "../../assets/onboard1.png"
+import onboard1 from "../../assets/onboardBG.svg"
 
 const Onboard = () => {
     return (

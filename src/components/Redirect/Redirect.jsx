@@ -12,9 +12,9 @@ const Redirect = () => {
     useEffect(() => {
         if (oobCode && mode) {
             if (mode === 'resetPassword') {
-                window.location.href = `/reset-password?oobCode=${oobCode}`;
+                window.location.href = `/reset?oobCode=${oobCode}`;
             }
-            else if (mode === 'signIn') {
+            else if (mode === 'verifyEmail') {
                 dispatch(confirmEmail({ oobCode: oobCode }));
             }
         }

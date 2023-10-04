@@ -1,6 +1,7 @@
 import { useState } from "react";
-import "./ForgetPassword.css";
 import { useDispatch, useSelector } from "react-redux";
+
+import "./ForgetPassword.css";
 import { forgotPassword } from "../../Actions/User";
 import { toast } from "react-toastify";
 

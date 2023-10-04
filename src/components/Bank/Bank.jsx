@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
 import "./Bank.css";
 
 import bankMainImage from "../../assets/bank_main.png"
-import { toast } from 'react-toastify';
-import { useDispatch, useSelector } from 'react-redux';
 import { getCurrency, saveBankDetails } from '../../Actions/Onboarding';
 
 const Bank = () => {
@@ -12,7 +12,7 @@ const Bank = () => {
     const [accountNumber, setAccountNumber] = useState("");
     const [iban, steIban] = useState("");
     const [branchName, setBranchName] = useState("");
-    const [currency, setCurrency] = useState("");
+    const [currency, setCurrency] = useState(0);
     const dispatch = useDispatch();
     const { currencies } = useSelector((state) => state.onboardingReducer);
     useEffect(() => {
@@ -21,7 +21,7 @@ const Bank = () => {
 
     const handleBank = (e) => {
         e.preventDefault();
-        if (bankName == "" || accountHolderName == "" || accountNumber == "" || iban == "" || branchName == "" || currency == "") {
+        if (bankName == "" || accountHolderName == "" || accountNumber == "" || iban == "" || branchName == "" || currency == 0) {
             toast.error("Please fill all the fields");
             return;
         }
@@ -31,7 +31,7 @@ const Bank = () => {
             account_number: accountNumber,
             iban_number: iban,
             branch_name: branchName,
-            currency_id: 1
+            currency_id: currency
         }
         dispatch(saveBankDetails(data));
     }
@@ -54,8 +54,8 @@ const Bank = () => {
                             <input type='text' placeholder='Account Holder Name' name='accountHolderName' value={accountHolderName} onChange={(e) => setAccountHolderName(e.target.value)} />
                         </div>
                         <div className='bank__form--input'>
-                            <span>Account Name</span>
-                            <input type='text' placeholder='Account Name' name='accountNumber' value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} />
+                            <span>Account Number</span>
+                            <input type='text' placeholder='Account Number' name='accountNumber' value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} />
                         </div>
                         <div className='bank__form--input'>
                             <span>IBAN</span>

@@ -7,14 +7,16 @@
   padding: 0;
   box-sizing: border-box;
   font-family: 'Work Sans', sans-serif;
+  overflow: hidden;
 }
 
 :root {
-  --main-color: #75DFAE;
-  --sub-color: #047D80;
+  --main-color: #36BAA6;
+  --sub-color: #36BAA6;
   --black: #000;
   --white: #fff;
-  --blue: #4EB7F2;
+  --blue: #3463AE;
+  --light-blue: #4EB7F2;
   --dark-blue: #03014C;
   --gray: #979696;
   --bg-gray: #F6F6F6;

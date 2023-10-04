@@ -1,8 +1,9 @@
 import { useState } from "react";
-import "./ResetPassword.css"
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from 'react-router-dom';
 import { toast } from "react-toastify";
+
+import "./ResetPassword.css"
 import { resetPassword } from "../../Actions/User";
 
 const ResetPassword = () => {
@@ -49,11 +50,11 @@ const ResetPassword = () => {
                 <div className="reset__form">
                     <form className='reset__auth__form' onSubmit={handleReset}>
                         <div className='reset__auth__form--input'>
-                            <span>Password</span>
+                            <span>New Password</span>
                             <input type='password' placeholder='New Password' name='newPassword' value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
                         </div>
                         <div className='reset__auth__form--input'>
-                            <span>Password</span>
+                            <span>Confirm Password</span>
                             <input type='password' placeholder='Confirm Password' name='confirmPassword' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
                         </div>
                         <div className='reset__auth__form--button--reset'>
@@ -62,6 +63,11 @@ const ResetPassword = () => {
                     </form>
                 </div>
             </div>
+            <script>
+                {
+                    oobCode === null ? window.location.href = "/" : null
+                }
+            </script>
         </div>
     )
 }

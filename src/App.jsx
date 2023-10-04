@@ -20,62 +20,68 @@ import Redirect from './components/Redirect/Redirect';
 
 function App() {
   const dispatch = useDispatch();
-  const { isAuthenticated, loading, user } = useSelector(state => state.userReducer);
+  const { isAuthenticated, loading, user, authLoading } = useSelector(state => state.userReducer);
+  const { loading: onbordingLoading } = useSelector(state => state.onboardingReducer);
   useEffect(() => {
     dispatch(loadUser());
-  }, []);
+  }, [dispatch]);
 
   return (
     <Router>
       <Routes>
-        {!loading ? (
+        {
           isAuthenticated ? (
+            !loading ? (
+              <>
+              {user?.localInfo?.status !== 0 ? (
+                  <>
+                    {onbordingLoading ? <Route path="*" element={<Loader />} /> :
+                      <>
+                        <Route path="/onboard" element={<Onboard />}>
+                          {user?.localInfo?.status === 3 && (
+                            <Route path="/onboard" element={<Company />} />
+                          )}
+                          {user?.localInfo?.status === 2 && (
+                            <Route path="/onboard/bank" element={<Bank />} />
+                          )}
+                          {user?.localInfo?.status === 1 && (
+                            <Route path="/onboard/upload" element={<Upload />} />
+                          )}
+                        </Route>
+                        <Route path="*" element={<Loader />} />
+                      </>
+                    }
+                  </>
+                ) : (
+                  <>
+                    <Route path="/" element={<>
+                      <h1>Home</h1>
+                      <button onClick={() => dispatch(logout())}>Logout</button>
+                    </>} />
+                    <Route path="*" element={<NotFound />} />
+                  </>
+                )}
+              </>
+            ) : (
+              <Route path="*" element={<Loader />} />
+            )) : (
             <>
-              {user?.localInfo?.status > 0 ? (
+              {authLoading || loading ? <Route path="*" element={<Loader />} /> :
                 <>
-                  <Route path="/" element={<>
-                    <h1>Home</h1>
-                    <button onClick={() => dispatch(logout())}>Logout</button>
-                  </>} />
-                  {/* <Route path="/" element={<Loader />} /> */}
-                  <Route path="/onboard" element={<Onboard />}>
-                    {user?.localInfo?.status > 2 && (
-                      <Route path="/onboard" element={<Company />} />
-                    )}
-                    {user?.localInfo?.status > 1 && (
-                      <Route path="/onboard/bank" element={<Bank />} />
-                    )}
-                    {user?.localInfo?.status > 0 && (
-                      <Route path="/onboard/upload" element={<Upload />} />
-                    )}
+                  <Route path="/" element={<Auth />} >
+                    <Route path="/" element={<Login />} />
+                    <Route path="/forget" element={<ForgetPassword />} />
+                    <Route path="/reset" element={<ResetPassword />} />
+                    <Route path="/verifyotp" element={<VerifyOTP />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/confirm" element={<ConfirmEmail />} />
+                    <Route path="/redirect" element={<Redirect />} />
                   </Route>
+                  {!loading ? <Route path="*" element={<NotFound />} /> : <Route path="*" element={<Loader />} />}
                 </>
-              ) : (
-                <>
-                  <Route path="/" element={<>
-                    <h1>Home</h1>
-                    <button onClick={() => dispatch(logout())}>Logout</button>
-                  </>} />
-                </>
-              )}
-              <Route path="*" element={<NotFound />} />
+              }
             </>
-          ) : (
-            <>
-              <Route path="/" element={<Auth />} >
-                <Route path="/" element={<Login />} />
-                <Route path="/forget" element={<ForgetPassword />} />
-                <Route path="/reset" element={<ResetPassword />} />
-                <Route path="/verifyotp" element={<VerifyOTP />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/confirm" element={<ConfirmEmail />} />
-                <Route path="/redirect" element={<Redirect />} />
-              </Route>
-              <Route path="*" element={<NotFound />} />
-            </>
-          )) : (
-          <Route path="/" element={<Loader />} />
-        )}
+          )}
       </Routes>
     </Router>
   );
