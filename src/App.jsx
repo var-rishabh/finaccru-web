@@ -10,13 +10,15 @@ import Onboard from './components/Onboard/Onboard';
 import ConfirmEmail from './components/ConfirmEmail/ConfirmEmail';
 import Company from './components/Company/Company';
 import Bank from './components/Bank/Bank';
-import Upload from './components/Upload/Upload';
+import UploadFiles from './components/Upload/Upload';
 import Loader from './components/Loader/Loader';
 import NotFound from './components/NotFound/NotFound';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadUser, logout } from './Actions/User';
+import { loadUser } from './Actions/User';
 import Redirect from './components/Redirect/Redirect';
+import Home from './components/Home/Home';
+import menuItems from './MenuItems';
 
 function App() {
   const dispatch = useDispatch();
@@ -30,12 +32,11 @@ function App() {
     <Router>
       <Routes>
         {
-          isAuthenticated ? (
-            !loading ? (
+          !loading ? (
+            isAuthenticated ? (
               <>
-              {user?.localInfo?.status !== 0 ? (
+                {user?.localInfo?.status !== 0 ? (
                   <>
-                    {onbordingLoading ? <Route path="*" element={<Loader />} /> :
                       <>
                         <Route path="/onboard" element={<Onboard />}>
                           {user?.localInfo?.status === 3 && (
@@ -45,28 +46,34 @@ function App() {
                             <Route path="/onboard/bank" element={<Bank />} />
                           )}
                           {user?.localInfo?.status === 1 && (
-                            <Route path="/onboard/upload" element={<Upload />} />
+                            <Route path="/onboard/upload" element={<UploadFiles />} />
                           )}
                         </Route>
                         <Route path="*" element={<Loader />} />
                       </>
-                    }
                   </>
                 ) : (
                   <>
-                    <Route path="/" element={<>
-                      <h1>Home</h1>
-                      <button onClick={() => dispatch(logout())}>Logout</button>
-                    </>} />
+                    <Route path="/" element={<Home />}>
+                      {
+                        menuItems.map((item) => {
+                          return (
+                            <>
+                              <Route key={item.key} path={item.key} element={item.component} />
+                              <Route key={`${item.key}-create`} path={item.key + "/create"} element={item.changecomponent} />
+                              <Route key={`${item.key}-edit`} path={item.key + "/edit/:id"} element={item.changecomponent} />
+                              <Route key={`${item.key}-view`} path={item.key + "/view/:id"} element={item.viewcomponent} />
+                            </> 
+                          )
+                        })
+                      }
+                    </Route>
                     <Route path="*" element={<NotFound />} />
                   </>
                 )}
               </>
-            ) : (
-              <Route path="*" element={<Loader />} />
-            )) : (
-            <>
-              {authLoading || loading ? <Route path="*" element={<Loader />} /> :
+            ) : (<>
+              {authLoading || isAuthenticated ? <Route path="*" element={<Loader />} /> :
                 <>
                   <Route path="/" element={<Auth />} >
                     <Route path="/" element={<Login />} />
@@ -77,10 +84,12 @@ function App() {
                     <Route path="/confirm" element={<ConfirmEmail />} />
                     <Route path="/redirect" element={<Redirect />} />
                   </Route>
-                  {!loading ? <Route path="*" element={<NotFound />} /> : <Route path="*" element={<Loader />} />}
+                  <Route path="*" element={<NotFound />} />
                 </>
               }
             </>
+            )) : (
+            <Route path="*" element={<Loader />} />
           )}
       </Routes>
     </Router>

@@ -16,7 +16,7 @@
 }
 
 .verify__heading--main {
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 700;
     color: var(--main-color);
 }
@@ -24,7 +24,7 @@
 .verify__heading--sub {
     width: 22rem;
     margin-top: 0.9rem;
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     font-weight: 350;
     color: var(--sub-color);
     line-height: 1.8rem;
@@ -37,18 +37,24 @@
     align-items: center;
     flex-direction: column;
     width: 100%;
-    padding-top: 3rem;
 }
 
 .verify__form {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 26rem;
+    width: 22rem;
+}
+
+.verify__auth__form--button--verify {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .verify__auth__form--button--verify>button {
     width: 100%;
+    max-width: 20rem;
     height: 4.5rem;
     padding: 1rem 0;
     margin-top: 2.5rem;

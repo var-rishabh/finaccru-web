@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { resendEmail } from "../../Actions/User";
 import "./ConfirmEmail.css";

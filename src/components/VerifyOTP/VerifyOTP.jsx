@@ -16,10 +16,7 @@ const VerifyOTP = () => {
     const sendOtpFunc = () => {
         const mobile_number = window.localStorage.getItem("mobile_number");
         if (mobile_number === null) {
-            toast.error("Please enter mobile number");
-            setTimeout(() => {
-                window.location.href = "/";
-            }, 1000);
+            toast.error("Please Don't refresh the page");
         } else {
             dispatch(sendOtp({ mobile_number }));
         }
@@ -32,11 +29,6 @@ const VerifyOTP = () => {
         e.preventDefault();
         if (otp.otp1 === "" || otp.otp2 === "" || otp.otp3 === "" || otp.otp4 === "" || otp.otp5 === "" || otp.otp6 === "") {
             toast.error("Please enter OTP");
-            return;
-        }
-        if (window.localStorage.getItem("mobile_number") === null) {
-            toast.error("Please enter mobile number");
-            window.location.href = "/";
             return;
         }
 

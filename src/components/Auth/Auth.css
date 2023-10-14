@@ -25,13 +25,6 @@
     z-index: 1;
 }
 
-.auth__image2 {
-    position: absolute;
-    top: 15rem;
-    left: 52rem;
-    z-index: 999;
-}
-
 .auth__image3 {
     object-fit: cover;
     position: absolute;
@@ -47,4 +40,16 @@
     justify-content: center;
     width: 50%;
     height: 100vh;
+}
+
+@media only screen and (min-width: 1600px) {
+    .auth__image1 {
+        top: 18rem;
+        left: 15rem;
+    }
+
+    .auth__image3 {
+        width: 60%;
+        top: -16rem;
+    }
 }

@@ -2,6 +2,9 @@ import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
     check: false,
+    industries: [],
+    taxRates: [],
+    currencies: [],
 }
 
 export const onboardingReducer = createReducer(initialState, (builder) => {
@@ -77,6 +80,18 @@ export const onboardingReducer = createReducer(initialState, (builder) => {
         .addCase("GetIndustrySuccess", (state, action) => {
             state.industryLoading = false;
             state.industries = action.payload;
+            state.error = null;
+        })
+        .addCase("GetTaxRateRequest", (state) => {
+            state.taxRateLoading = true;
+        })
+        .addCase("GetTaxRateFailure", (state, action) => {
+            state.taxRateLoading = false;
+            state.error = action.payload;
+        })
+        .addCase("GetTaxRateSuccess", (state, action) => {
+            state.taxRateLoading = false;
+            state.taxRates = action.payload;
             state.error = null;
         })
 });

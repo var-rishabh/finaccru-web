@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom';
 import "./Register.css";
 import { sendLink } from "../../Actions/User";
 import { getCountries, getStates } from 'country-state-picker';
+import uaeStates from '../../data/uaeStates';
 
 const Register = () => {
   const query = useLocation().search;
@@ -15,12 +16,12 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState(email_id ? email_id : "");
   const [phone, setPhone] = useState("");
-  const [countryPhoneCode, setCountryPhoneCode] = useState("+91");
+  const [countryPhoneCode, setCountryPhoneCode] = useState("+971");
   const [password, setPassword] = useState("");
-  const [country, setCountry] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState("");
+  const [country, setCountry] = useState("United Arab Emirates");
+  const [selectedCountry, setSelectedCountry] = useState("ae");
   const [state, setState] = useState("");
-  const [allState, setAllStates] = useState([]);
+  const [allState, setAllStates] = useState(uaeStates);
   const [agree, setAgree] = useState(false);
   const [isError, setIsError] = useState(false);
 
@@ -33,9 +34,13 @@ const Register = () => {
     setSelectedCountry(countryCode);
     const selectedCountry = getCountries().find(country => country.code === countryCode);
     setCountry(selectedCountry ? selectedCountry.name : '');
-    if (countryCode) {
+    if (countryCode === 'ae') {
+      setAllStates(uaeStates);
+      setState("");
+    } else if (countryCode) {
       const countryStates = getStates(countryCode);
       setAllStates(countryStates);
+      setState("");
     } else {
       setAllStates([]);
     }
@@ -48,12 +53,24 @@ const Register = () => {
 
   const handleRegister = (e) => {
     e.preventDefault();
+    if (isError) {
+      toast.error("Please Enter Valid Phone Number.");
+      return;
+    }
     if (username == "" || email == "" || phone == "" || password == "" || country == "" || state == "") {
-      toast.error("Please fill all the fields");
+      toast.error("Please fill all the fields.");
+      return;
+    }
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters.");
+      return;
+    }
+    if ((countryPhoneCode + phone).length > 13) {
+      toast.error("Please Enter Valid Phone Number.");
       return;
     }
     if (!agree) {
-      toast.error("Please agree to the terms and conditions");
+      toast.error("Please agree to the terms and conditions.");
       return;
     }
     dispatch(sendLink({ email_id: email, password: password, full_name: username, mobile_number: countryPhoneCode + phone, country: country, state: state }));
@@ -78,7 +95,7 @@ const Register = () => {
         <div className="regiter__form">
           <form className='register__auth__form' onSubmit={handleRegister}>
             <div className='register__auth__form--input'>
-              <input type='text' placeholder='Username' name='username' value={username} onChange={(e) => setUsername(e.target.value)} />
+              <input type='text' placeholder='Full Name' name='username' value={username} onChange={(e) => setUsername(e.target.value)} />
             </div>
             <div className='register__auth__form--input'>
               <input type='email' placeholder='Email' name='email' value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -93,19 +110,19 @@ const Register = () => {
               </select>
               <input className="register--phone__input" type='text' placeholder='Phone' name='phone' value={phone} onChange={(e) => {
                 setPhone(e.target.value);
-                if (e.target.value.length > 13 || e.target.value.length < 10) {
+                if (e.target.value.length > 10 || e.target.value.length < 9) {
                   setIsError(true);
                 } else {
                   setIsError(false);
                 }
               }} />
             </div>
-            {
+            {/* {
               isError ?
-                <span className="phone__error--span__register">Phone number should be of length 10</span>
+                <span className="phone__error--span__register">Wrong Phone Number</span>
                 :
                 <></>
-            }
+            } */}
             <div className='register__auth__form--input'>
               <input type='password' placeholder='Password' name='password' value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>

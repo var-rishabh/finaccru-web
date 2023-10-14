@@ -38,21 +38,43 @@ export const sendLink = (user) => async (dispatch) => {
                     }).then((data) => {
                         dispatch({ type: "RegisterSuccess", payload: data.data });
                         toast.success("User Created");
-                        window.location.href = "/confirm";
+                        signOut(auth).then(() => {
+                            dispatch({
+                                type: "LogoutSuccess",
+                            });
+                            dispatch({ type: "LoadUserRequest" });
+                            window.location.href = "/confirm";
+                            // Redirect to home page after logout
+                        }).catch((error) => {
+                            dispatch({
+                                type: "LogoutFailure",
+                                payload: error.message
+                            });
+                            toast.error(error.response?.data || error.message);
+                        });
                     }).catch((error) => {
+                        if (error.response?.status === 422) {
+                            // I will get an array of errors from the backend in details
+                            const errors = error.response.data.detail;
+                            // I will loop through the array and display the errors
+                            errors?.forEach((err) => {
+                                toast.error(err.loc[1] + ": " + err.msg);
+                            });
+                        } else {
+                            toast.error(error.response?.data || error.message);
+                        }
                         dispatch({ type: "RegisterFailure", payload: error.message });
-                        toast.error(error.message);
                         // delete user from firebase
                         userCredential.user.delete();
                     });
                 }).catch((error) => {
                     dispatch({ type: "RegisterFailure", payload: error.message });
-                    toast.error(error.message);
+                    toast.error(error.response?.data || error.message);
                 });
 
             } else {
                 dispatch({ type: "RegisterFailure", payload: error.message });
-                toast.error(error.message);
+                toast.error(error.response?.data || error.message);
             }
         });
 
@@ -70,6 +92,7 @@ export const confirmEmail = (user) => async (dispatch) => {
         applyActionCode(auth, oobCode).then(() => {
             dispatch({ type: "ConfirmEmailSuccess" });
             toast.success("Email Verified");
+            dispatch({ type: "LoadUserRequest" });
             window.location.href = "/";
         }).catch((error) => {
             dispatch({ type: "ConfirmEmailFailure", payload: error.message });
@@ -79,7 +102,7 @@ export const confirmEmail = (user) => async (dispatch) => {
     } catch (error) {
         console.log(error);
         dispatch({ type: "ConfirmEmailFailure", payload: error.message });
-        toast.error(error.message);
+        toast.error(error.response?.data || error.message);
     }
 };
 
@@ -101,8 +124,41 @@ export const login = (user) => async (dispatch) => {
                 if (!user.user.emailVerified) {
                     dispatch({ type: "LoginFailure", payload: "User not verified" });
                     await sendEmailVerification(user.user);
-                    await toast.error("User not verified! Resent verification link");
+                    toast.error("User not verified! Resent verification link");
                     setTimeout(() => {
+                        dispatch({ type: "LoadUserRequest" })
+                        window.location.href = "/confirm";
+                    }, 1000);
+                    return;
+                }
+
+                const token = await user.user.getIdToken();
+                const data = await axios.get(`${urlObject2.toString()}`, {
+                    headers: {
+                        'accept': 'application/json',
+                        'token': token,
+                    }
+                });
+                const status = data.data.status;
+                console.log(status);
+                dispatch({ type: "LoginSuccess", payload: user.user.reloadUserInfo });
+                toast.success("Login Successfull");
+                if (status === 3) {
+                    if (window.location.pathname !== "/onboard") window.location.href = "/onboard";
+                } else if (status === 2) {
+                    if (window.location.pathname !== "/onboard/bank") window.location.href = "/onboard/bank";
+                } else if (status === 1) {
+                    if (window.location.pathname !== "/onboard/upload") window.location.href = "/onboard/upload";
+                } else if (window.location.pathname !== "/") window.location.href = "/";
+            } else {
+                await setPersistence(auth, browserSessionPersistence);
+                const user = await signInWithEmailAndPassword(auth, email_id, password);
+                if (!user.user.emailVerified) {
+                    dispatch({ type: "LoginFailure", payload: "User not verified" });
+                    await sendEmailVerification(user.user);
+                    toast.error("User not verified! Resent verification link");
+                    setTimeout(() => {
+                        dispatch({ type: "LoadUserRequest" })
                         window.location.href = "/confirm";
                     }, 1000);
                     return;
@@ -117,27 +173,7 @@ export const login = (user) => async (dispatch) => {
                     }
                 });
                 const status = data.data.status;
-                if (status === 3) {
-                    if (window.location.pathname !== "/onboard") window.location.href = "/onboard";
-                } else if (status === 2) {
-                    if (window.location.pathname !== "/onboard/bank") window.location.href = "/onboard/bank";
-                } else if (status === 1) {
-                    if (window.location.pathname !== "/onboard/upload") window.location.href = "/onboard/upload";
-                } else if (window.location.pathname !== "/") window.location.href = "/";
-            } else {
-                await setPersistence(auth, browserSessionPersistence);
-                const user = await signInWithEmailAndPassword(auth, email_id, password);
-
-                dispatch({ type: "LoginSuccess", payload: user.user.reloadUserInfo });
-                toast.success("Login Successfull");
-                const token = await user.user.getIdToken();
-                const data = await axios.get(`${urlObject2.toString()}`, {
-                    headers: {
-                        'accept': 'application/json',
-                        'token': token,
-                    }
-                });
-                const status = data.data.status;
+                // dispatch({ type: "LoadUserRequest" });
                 if (status === 3) {
                     if (window.location.pathname !== "/onboard") window.location.href = "/onboard";
                 } else if (status === 2) {
@@ -157,6 +193,7 @@ export const login = (user) => async (dispatch) => {
             dispatch({ type: "LoginFailure", payload: "User not found" });
             toast.error("User not found. Redirecting to register page");
             setTimeout(() => {
+                dispatch({ type: "LoadUserRequest" });
                 if (email_id) window.location.href = "/register?email_id=" + email_id;
                 else if (mobile_number) window.location.href = "/register?mobile_number=" + mobile_number;
             }, 2000);
@@ -229,30 +266,43 @@ export const verifyOTP = (user) => async (dispatch) => {
         const urlObject = new URL(`${url}/private/user/read`);
         window.confirmationResult.confirm(code).then(async (result) => {
             const user = result.user;
+            // Check if user is verified
+            if (!user.emailVerified) {
+                dispatch({ type: "LoginFailure", payload: "User not verified" });
+                await sendEmailVerification(user);
+                toast.error("User not verified! Resent verification link");
+                setTimeout(() => {
+                    dispatch({ type: "LoadUserRequest" })
+                    window.location.href = "/confirm";
+                }, 1000);
+                return;
+            }
             dispatch({ type: "LoginSuccess", payload: user.reloadUserInfo });
 
-            const token = await user.getIdToken();
-            const data = await axios.get(`${urlObject.toString()}`, {
-                headers: {
-                    'accept': 'application/json',
-                    'token': token,
-                }
-            });
-            const status = data.data.status;
+            // const token = await user.getIdToken();
+            // const data = await axios.get(`${urlObject.toString()}`, {
+            //     headers: {
+            //         'accept': 'application/json',
+            //         'token': token,
+            //     }
+            // });
+            // const status = data.data.status;
+
             toast.success("Login Successfull");
-            if (status === 3) {
-                if (window.location.pathname !== "/onboard") window.location.href = "/onboard";
-            } else if (status === 2) {
-                if (window.location.pathname !== "/onboard/bank") window.location.href = "/onboard/bank";
-            } else if (status === 1) {
-                if (window.location.pathname !== "/onboard/upload") window.location.href = "/onboard/upload";
-            } else if (window.location.pathname !== "/") window.location.href = "/";
+            dispatch({ type: "LoadUserRequest" })
+            // if (status === 3) {
+            //     if (window.location.pathname !== "/onboard") window.location.href = "/onboard";
+            // } else if (status === 2) {
+            //     if (window.location.pathname !== "/onboard/bank") window.location.href = "/onboard/bank";
+            // } else if (status === 1) {
+            //     if (window.location.pathname !== "/onboard/upload") window.location.href = "/onboard/upload";
+            // }
         }).catch((error) => {
             dispatch({
                 type: "LoginFailure",
                 payload: error.message
             });
-            toast.error(error.message);
+            toast.error(error.response?.data || error.message);
         });
     } catch (error) {
         console.log(error);
@@ -283,13 +333,30 @@ export const loadUser = () => async (dispatch) => {
                         'accept': 'application/json',
                         'token': token,
                     }
-                }).then((data) => {
-                    dispatch({
-                        type: "LoadUserSuccess", payload: {
-                            ...user.reloadUserInfo,
-                            localInfo: data.data
-                        }
-                    });
+                }).then(async (data) => {
+                    if (data.data.status === 0) {
+                        const client = await axios.get(`${url}/private/client/read`, {
+                            headers: {
+                                'accept': 'application/json',
+                                'token': token,
+                            }
+                        });
+
+                        await dispatch({
+                            type: "LoadUserSuccess", payload: {
+                                ...user.reloadUserInfo,
+                                localInfo: data.data,
+                                clientInfo: client.data
+                            }
+                        });
+                    } else {
+                        await dispatch({
+                            type: "LoadUserSuccess", payload: {
+                                ...user.reloadUserInfo,
+                                localInfo: data.data,
+                            }
+                        });
+                    }
                     const status = data.data.status;
                     if (status === 3) {
                         if (window.location.pathname !== "/onboard") window.location.href = "/onboard";
@@ -340,6 +407,7 @@ export const logout = () => async (dispatch) => {
             type: "LogoutSuccess",
         });
         // Redirect to home page after logout
+        dispatch({ type: "LoadUserRequest" });
         window.location.href = "/";
         toast.success("Logout Successful");
     }).catch((error) => {
@@ -347,6 +415,6 @@ export const logout = () => async (dispatch) => {
             type: "LogoutFailure",
             payload: error.message
         });
-        toast.error(error.message);
+        toast.error(error.response?.data || error.message);
     });
 }

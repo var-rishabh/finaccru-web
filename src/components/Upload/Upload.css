@@ -44,10 +44,11 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    overflow: hidden;
 }
 
 .upload__form__checkbox {
-    padding-top: 1.5rem;
+    padding-top: 1rem;
 }
 
 .upload__form__checkbox>span {
@@ -56,19 +57,19 @@
 
 .upload__form--input>span {
     font-weight: 500;
-    font-size: 1rem;
+    font-size: 0.9rem;
     padding: 2rem 0 .5rem 0;
     color: var(--dark-blue);
 }
 
 .upload__form--input>label {
     color: var(--black);
-    font-size: 1rem;
+    font-size: 0.8rem;
     font-weight: 400;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0.5rem;
+    padding: 0.4rem;
     font-family: sans-serif;
     cursor: pointer;
     border-radius: 0.25rem;
@@ -79,6 +80,7 @@
 #file-chosen {
     margin: 0.5rem 0;
     font-family: sans-serif;
+    font-size: 0.8rem;
 }
 
 input:focus {

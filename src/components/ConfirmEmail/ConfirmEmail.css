@@ -3,7 +3,7 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    width: 70%;
+    width: 100%;
     margin-top: 2rem;
     padding: 0 2rem 0;
 }
@@ -13,18 +13,19 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    max-width: 22rem;
 }
 
 .confirm__email--heading--main {
-    font-size: 1.2rem;
+    font-size: 0.9rem;
     font-weight: 700;
     text-align: center;
 }
 
 .confirm__email--heading--sub {
-    width: 26rem;
+    max-width: 22rem;
     margin-top: 1rem;
-    font-size: 1.25rem;
+    font-size: 1rem;
     font-weight: 350;
     color: var(--dark-blue);
     line-height: 1.8rem;
@@ -32,45 +33,47 @@
 }
 
 .confirm__email--heading--foot>p {
-    width: 26rem;
-    color: var(--sub-color);
-    font-size: 1.25rem;
-    padding: 3rem 0;
-    text-align: center;
-}
-
-.confirm__email--button {
-    display: flex;
-    text-decoration: none;
-    width: 100%;
     max-width: 22rem;
-    padding: 0.6rem;
-    height: 4rem;
-    justify-content: center;
-    align-items: center;
-    color: var(--white);
-    background-color: var(--blue);
-    border: none;
-    border-radius: 0.25rem;
-    font-size: 1.2rem;
-    font-weight: 500;
-    cursor: pointer;
+    color: var(--sub-color);
+    font-size: 1rem;
+    line-height: 1.5rem;
+    padding: 3rem 0 1rem 0;
+    text-align: center;
 }
 
 .resend__button {   
     display: flex;
     text-decoration: none;
-    max-width: 22rem;
+    max-width: 10rem;
     padding: 0.6rem;
     height: 2rem;
     justify-content: center;
     align-items: center;
     color: var(--white);
     background-color: var(--blue);
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     border: none;
     border-radius: 0.25rem;
     font-size: 0.8rem;
     font-weight: 400;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.confirm__email--button {
+    display: flex;
+    text-decoration: none;
+    width: 100%;
+    max-width: 15rem;
+    padding: 0.6rem;
+    height: 3.5rem;
+    justify-content: center;
+    align-items: center;
+    color: var(--white);
+    background-color: var(--blue);
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    font-weight: 500;
     cursor: pointer;
 }

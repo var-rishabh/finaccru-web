@@ -2,7 +2,7 @@ import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
     check: false,
-    loading: false,
+    loading: true,
     otpLoading: false,
     authLoading: false,
 }

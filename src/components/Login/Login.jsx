@@ -15,7 +15,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
-  const [countryCode, setCountryCode] = useState("+91");
+  const [countryCode, setCountryCode] = useState("+971");
   const [countries, setCountries] = useState([]);
   const [rememberMe, setRememberMe] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -38,13 +38,13 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (isError) {
-      toast.error("Please Enter Valid Phone Number.");
-      return;
-    }
     if (loading) return;
     if (activeIndex === 2) {
-      if (phone !== "") {
+      if ((countryCode + phone).length > 13) {
+        toast.error("Please Enter Valid Phone Number.");
+        return;
+      }
+      if (phone !== "" && !isError) {
         dispatch(login({ mobile_number: countryCode + phone }));
       } else {
         toast.error("Please Enter Phone Number.");
@@ -132,16 +132,18 @@ const Login = () => {
                         </option>
                       ))}
                     </select>
-                    <input type='text' placeholder='Phone' name='phone' value={phone} onChange={(e) => {
-                      setPhone(e.target.value);
-                      if (e.target.value.length !== 10) {
-                        setIsError(true);
-                      } else {
-                        setIsError(false);
-                      }
-                    }} />
+                    <input type='text' placeholder='Phone' name='phone' value={phone}
+                      onChange={(e) => {
+                        const valid = e.target.value.match(/^\d{9,10}$/);
+                        setPhone(e.target.value);
+                        if (valid) {
+                          setIsError(false);
+                        } else {
+                          setIsError(true);
+                        }
+                      }} />
                   </div>
-                  <span className="phone__error--span">{isError ? "Phone number should be of length 10" : ""}</span>
+                  <span className="phone__error--span">{isError ? "Wrong Phone Number" : ""}</span>
                 </div>
                 <div className='login__form--button'>
                   {loading ? <button type='submit' disabled>Loading...</button> : <button type='submit'>Login</button>}
