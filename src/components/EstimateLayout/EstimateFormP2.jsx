@@ -7,7 +7,7 @@ import { PlusOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { Input, Select, AutoComplete } from 'antd';
 const { Option } = Select;
 
-const EstimateFormP2 = ({ items, setItems }) => {
+const EstimateFormP2 = ({ items, setItems, currency }) => {
     const { user } = useSelector(state => state.userReducer);
     const { units, loading: unitLoading } = useSelector(state => state.unitReducer);
     const { taxRates, taxRateLoading } = useSelector(state => state.onboardingReducer);
@@ -54,14 +54,15 @@ const EstimateFormP2 = ({ items, setItems }) => {
         setShowDescription(updatedShowDescription);
     };
 
-    // const handleRemoveDescription = (index) => {
-    //     const updatedShowDescription = [...showDescription];
-    //     updatedShowDescription[index] = false;
-    //     setShowDescription(updatedShowDescription);
-    //     const updatedItems = [...items];
-    //     updatedItems[index].description = '';
-    //     setItems(updatedItems);
-    // };
+    const handleRemoveDescription = (index, e) => {
+        e.preventDefault();
+        const updatedShowDescription = [...showDescription];
+        updatedShowDescription[index] = false;
+        setShowDescription(updatedShowDescription);
+        const updatedItems = [...items];
+        updatedItems[index].description = '';
+        setItems(updatedItems);
+    };
 
     const handleAddPerson = (event) => {
         event.preventDefault();
@@ -126,29 +127,21 @@ const EstimateFormP2 = ({ items, setItems }) => {
                 {items?.map((item, index) => (
                     <div className='estimate__items--main' key={index}>
                         <div className='estimate__items--whole-item'>
-                            <div className='estimate__items--sr'>
-                                {index === 0 ? <span style={{ marginBottom: '1rem' }}>&nbsp;</span> : <></>}
-                                <div>
-                                    {items.length > 1 && (
-                                        <CloseCircleOutlined onClick={(e) => handleRemovePerson(index, e)} />
-                                    )}
-                                </div>
-                            </div>
                             <div className='estimate__items--itemName'>
-                                {index === 0 ? <span style={{ marginBottom: '1rem' }}>Item Name</span> : <></>}
+                                {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem' }}>Item Name</span> : <></>}
                                 <Input
                                     type='text'
                                     placeholder='Item Name'
                                     value={item?.item_name}
                                     defaultValue={item?.item_name}
                                     style={{
-                                        width: 130,
+                                        width: 110,
                                     }}
                                     onChange={(e) => handleInputChange(index, 'item_name', e.target.value)}
                                 />
                             </div>
                             <div className='estimate__items--unitSelect'>
-                                {index === 0 ? <span style={{ marginBottom: '1rem' }}>Unit</span> : <></>}
+                                {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem' }}>Unit</span> : <></>}
                                 <AutoComplete
                                     options={allUnits?.map((unit) => ({
                                         label: unit.unit_name,
@@ -156,7 +149,7 @@ const EstimateFormP2 = ({ items, setItems }) => {
                                     }))
                                     }
                                     style={{
-                                        width: 120,
+                                        width: 100,
                                     }}
                                     value={item?.unit}
                                     defaultValue={item?.unit}
@@ -166,14 +159,14 @@ const EstimateFormP2 = ({ items, setItems }) => {
                                 />
                             </div>
                             <div className='estimate__items--number-item'>
-                                {index === 0 ? <span style={{ marginBottom: '1rem', marginLeft: '3px' }}>Qty</span> : <></>}
+                                {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem', marginLeft: '3px' }}>Qty</span> : <></>}
                                 <Input
                                     type="number"
                                     placeholder="Quantity"
                                     value={item?.qty}
                                     defaultValue={item?.qty}
                                     style={{
-                                        width: 80
+                                        width: 70
                                     }}
                                     onChange={(e) => {
                                         const valid = e.target.value.match(/^\d*\.?\d{0,2}$/);
@@ -184,14 +177,14 @@ const EstimateFormP2 = ({ items, setItems }) => {
                                 />
                             </div>
                             <div className='estimate__items--number-item'>
-                                {index === 0 ? <span style={{ marginBottom: '1rem', marginLeft: '3px' }}>Rate</span> : <></>}
+                                {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem', marginLeft: '3px' }}>Rate</span> : <></>}
                                 <Input
                                     type="number"
                                     placeholder="Rate"
                                     value={item?.rate}
                                     defaultValue={item?.rate}
                                     style={{
-                                        width: 80
+                                        width: 70
                                     }}
                                     onChange={(e) => {
                                         const valid = e.target.value.match(/^\d*\.?\d{0,2}$/);
@@ -245,12 +238,14 @@ const EstimateFormP2 = ({ items, setItems }) => {
                                     defaultValue={item?.tax_id}
                                     loading={taxRateLoading}
                                     style={{
-                                        width: 170
+                                        width: 150
                                     }}
                                 >
                                     {
                                         taxRates?.map((taxRate) => (
-                                            <Option key={taxRate.tax_rate_id} value={taxRate.tax_rate_id}>{taxRate.tax_rate_name}</Option>
+                                            <Option key={taxRate.tax_rate_id} value={taxRate.tax_rate_id}>
+                                                { taxRate.tax_rate_name == 'Standard Rated (5%)' ? '5%' : taxRate.tax_rate_name }
+                                            </Option>
                                         ))
                                     }
                                 </Select>
@@ -263,22 +258,35 @@ const EstimateFormP2 = ({ items, setItems }) => {
                                     defaultValue={itemTotal[index]}
                                     disabled={true}
                                     style={{
-                                        width: 100
+                                        width: 90
                                     }}
                                 />
                             </div>
+                            {items.length > 1 && (
+                                <div className='estimate__items--sr'>
+                                    {index === 0 ? <span style={{ marginBottom: '1rem' }}>&nbsp;</span> : <></>}
+                                    <div>
+                                        <CloseCircleOutlined onClick={(e) => handleRemovePerson(index, e)} />
+                                    </div>
+                                </div>
+                            )}
                         </div>
                         <div className='estimate__items--description'>
                             {showDescription[index] || item?.description ? (
-                                <div className='desc__box'>
-                                    <span>Description</span>
-                                    <input
-                                        type="text"
-                                        value={item?.description}
-                                        defaultValue={item?.description}
-                                        onChange={(e) => handleInputChange(index, 'description', e.target.value)}
-                                    />
-                                </div>
+                                <>
+                                    <div className='remove--description-btn'>
+                                        <button onClick={(e) => handleRemoveDescription(index, e)}>-</button>
+                                        <div className='desc__box'>
+                                            <span>Description</span>
+                                            <input
+                                                type="text"
+                                                value={item?.description}
+                                                defaultValue={item?.description}
+                                                onChange={(e) => handleInputChange(index, 'description', e.target.value)}
+                                            />
+                                        </div>
+                                    </div>
+                                </>
                             ) : (
                                 <div className='add--description-btn'>
                                     <button onClick={(e) => handleAddDescription(index, e)}>
@@ -327,10 +335,10 @@ const EstimateFormP2 = ({ items, setItems }) => {
                                 <span>Total</span>
                             </div>
                             <div className='estimate--details-right-info'>
-                                <span>{subTotal}</span>
-                                <span>{discount}</span>
-                                <span>{tax}</span>
-                                <span>{total}</span>
+                                <span>{currency} &nbsp; {subTotal}</span>
+                                <span>{currency} &nbsp; {discount}</span>
+                                <span>{currency} &nbsp; {tax}</span>
+                                <span>{currency} &nbsp; {total}</span>
                             </div>
                         </div>
                     </div>

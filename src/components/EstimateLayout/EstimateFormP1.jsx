@@ -22,7 +22,7 @@ const EstimateFormP1 = ({ estimateNumber, estimateDate, validTill, reference, cu
 
     const showModal = () => {
         setIsModalOpen(true);
-        setCurrencyId('addCustomer');
+        customerId('addCustomer');
     };
     const handleCancel = () => {
         setIsModalOpen(false);
@@ -79,7 +79,7 @@ const EstimateFormP1 = ({ estimateNumber, estimateDate, validTill, reference, cu
                 </div>
                 <div className='estimate__form--head-info2'>
                     <div className='estimate__form--head-info2-data'>
-                        <span>Estimate Number</span>
+                        <span className='required__field'>Estimate Number</span>
                         <input
                             name="estimateNumber"
                             type="text"
@@ -91,7 +91,7 @@ const EstimateFormP1 = ({ estimateNumber, estimateDate, validTill, reference, cu
                         />
                     </div>
                     <div className='estimate__form--head-info2-data'>
-                        <span>Estimate Date</span>
+                        <span className='required__field'>Estimate Date</span>
                         <input type="date"
                             name='estimateDate'
                             value={estimateDate}
@@ -100,7 +100,7 @@ const EstimateFormP1 = ({ estimateNumber, estimateDate, validTill, reference, cu
                         />
                     </div>
                     <div className='estimate__form--head-info2-data'>
-                        <span>Valid Till</span>
+                        <span className='required__field'>Valid Till</span>
                         <input type="date"
                             name='validTill'
                             value={validTill}
@@ -115,7 +115,7 @@ const EstimateFormP1 = ({ estimateNumber, estimateDate, validTill, reference, cu
                 </div>
             </div>
             <div className='estimate__form--part2-head'>
-                <h3>Estimate For</h3>
+                <h3 className='required__field'>Estimate For</h3>
                 {
                     customerName ?
                         <>
@@ -137,7 +137,7 @@ const EstimateFormP1 = ({ estimateNumber, estimateDate, validTill, reference, cu
                 <AddCustomerModal isModalOpen={isModalOpen} handleCustomerSubmit={handleCustomerSubmit} handleCancel={handleCancel} />
             </div>
             <div className='estimate__form--part2-head'>
-                <h3>Select Currency</h3>
+                <h3 className='required__field'>Select Currency</h3>
                 <div className='estimate__form--currency'>
                     <div className='estimate__form--select-currency'>
                         <Select

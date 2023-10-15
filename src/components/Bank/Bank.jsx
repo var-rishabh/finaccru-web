@@ -14,7 +14,7 @@ const Bank = () => {
     const [iban, steIban] = useState("");
     const [branchName, setBranchName] = useState("");
     const [currency, setCurrency] = useState(0);
-    const [isACNError, setIsACNError] = useState(false);
+    // const [isACNError, setIsACNError] = useState(false);
     const [isIbanError, setIsIbanError] = useState(false);
 
     const dispatch = useDispatch();
@@ -27,10 +27,6 @@ const Bank = () => {
         e.preventDefault();
         if (bankName == "" || accountHolderName == "" || accountNumber == "" || iban == "" || branchName == "" || currency == 0) {
             toast.error("Please fill all the fields correctly.");
-            return;
-        }
-        if (isACNError) {
-            toast.error("Account number should be a number and less than 20 characters.");
             return;
         }
         if (isIbanError) {
@@ -67,20 +63,16 @@ const Bank = () => {
                         </div>
                         <div className='bank__form--input'>
                             <span className='required__field'>Account Number</span>
-                            <input type='text' placeholder='Account Number' name='accountNumber' value={accountNumber}
+                            <input type='text' maxLength={20} placeholder='Account Number' name='accountNumber' value={accountNumber}
                                 onChange={(e) => {
-                                    const valid = e.target.value.match(/^\d{1,20}$/);
-                                    setAccountNumber(e.target.value)
-                                    if (valid) {
-                                        setIsACNError(false);
-                                    } else {
-                                        setIsACNError(true);
-                                    }
+                                    const number = e.target.value;
+                                    const numericPhoneNumber = number.replace(/\D/g, '');
+                                    setAccountNumber(numericPhoneNumber)
                                 }}
                             />
-                            <p style={{ fontSize: "0.8rem", margin: "0.2rem 0 0 0.1rem" }} className="phone__error--span">
-                                {isACNError ? "It should be less than 20 characters." : ""}
-                            </p>
+                            {/* <p style={{ fontSize: "0.8rem", margin: "0.2rem 0 0 0.1rem" }} className="phone__error--span">
+                                {isACNError ? "Only numbers are allowed with atmost 20 digits." : ""}
+                            </p> */}
                         </div>
                         <div className='bank__form--input'>
                             <span className='required__field'>IBAN</span>

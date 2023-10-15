@@ -24,8 +24,10 @@ const UploadFiles = () => {
     const handleFileUpload = (e, errorState, uploadState) => {
         if (e.target.files[0].size > 5 * 1000 * 1024) {
             errorState([true, "File size should be less than 5MB"]);
+            uploadState([]);
         } else if (e.target.files[0].type !== "application/pdf" && e.target.files[0].type !== "image/png" && e.target.files[0].type !== "image/jpeg") {
             errorState([true, "File type should be pdf, png or jpeg"]);
+            uploadState([]);
         } else {
             uploadState(e.target.files[0]);
             errorState([false, ""]);
@@ -78,7 +80,7 @@ const UploadFiles = () => {
                     <div className="upload__form--split">
                         <div className='upload__form--left'>
                             <div className='upload__form--input'>
-                                <span>Trade License</span>
+                                <span className='required__field'>Trade License</span>
                                 <input id="tradeLicense" name='tradeLicense' type='file'
                                     onChange={(e) => handleFileUpload(e, setTradeError, setTradeLicense ) }
                                     hidden
@@ -91,7 +93,7 @@ const UploadFiles = () => {
                                 }
                             </div>
                             <div className='upload__form--input'>
-                                <span>Memorandum of Association (MOA) / <br /> Article of Association (AOA)</span>
+                                <span className='required__field'>Memorandum of Association (MOA) / <br /> Article of Association (AOA)</span>
                                 <input id="moa" type='file' name='moa'
                                     onChange={(e) => handleFileUpload(e, setMoaError, setMoa)}
                                     hidden
@@ -110,7 +112,7 @@ const UploadFiles = () => {
                             {
                                 !vatNeeded ? <></> :
                                     <div className='upload__form--input'>
-                                        <span>VAT</span>
+                                        <span className='required__field'>VAT</span>
                                         <input id="vat" type='file' name='vat'
                                             onChange={(e) => handleFileUpload(e, setVatError, setVat)}
                                             hidden
@@ -133,7 +135,7 @@ const UploadFiles = () => {
                         </div>
                         <div className='upload__form--right'>
                             <div className='upload__form--input'>
-                                <span>Emirates ID</span>
+                                <span className='required__field'>Emirates ID</span>
                                 <input id="emiratedId" type='file' name='emiratedId'
                                     onChange={(e) => handleFileUpload(e, setEmiratedIdError, setEmiratedId)}
                                     hidden
@@ -146,7 +148,7 @@ const UploadFiles = () => {
                                 }
                             </div>
                             <div className='upload__form--input'>
-                                <span>Owners Passport</span>
+                                <span className='required__field'>Owners Passport</span>
                                 <input id="ownerPassport" type='file' name='ownerPassport'
                                     onChange={(e) => handleFileUpload(e, setOwnerPassportError, setOwnerPassport)}
                                     hidden

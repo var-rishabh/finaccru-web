@@ -123,7 +123,7 @@ const Estimate = () => {
                 </div>
                 <div className='estimate__header--right'>
                     <a className='estimate__header--btn1'>Download</a>
-                    <a onClick={() => navigate("/estimate/create")} className='estimate__header--btn2'>Create Estimates</a>
+                    <a onClick={() => navigate("/estimate/create")} className='estimate__header--btn2'>Create Estimate</a>
                 </div>
             </div>
             <div className="table">

@@ -90,7 +90,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 3rem 5rem;
+    padding: 3rem 4rem;
 }
 
 .create__estimate--head {
@@ -365,7 +365,7 @@
 .estimate__items--description {
     display: flex;
     justify-content: flex-start;
-    padding: 0.5rem 2.2rem;
+    padding: 0.5rem 1rem;
     width: 100%;
 }
 
@@ -393,6 +393,23 @@
     font-size: 0.75rem;
     font-weight: 400;
     margin-left: 0.5rem;
+}
+
+.remove--description-btn {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.remove--description-btn>button{
+    background-color: #36BAA6;
+    border: none;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.25rem;
+    color: white;
+    cursor: pointer;
+    margin: 0.5rem 0.5rem 0 0;
 }
 
 .desc__box {
@@ -524,10 +541,6 @@
     font-family: 'Montserrat';
     font-size: 1rem;
     font-weight: 500;
-}
-
-.estimate--details-right-info>span::before {
-    content: '$ ';
 }
 
 .estimate__form--submit-btn {

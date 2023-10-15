@@ -25,7 +25,7 @@ const EstimateLayout = () => {
     const [customerId, setCustomerId] = useState(null);
     const [currencyId, setCurrencyId] = useState(1);
     const [currencyConversionRate, setCurrencyConversionRate] = useState(1);
-    const [items, setItems] = useState([{ item_name: '', unit: '', qty: null, rate: null, discount: null, is_percentage_discount: true, tax_id: 1, description: null }]);
+    const [items, setItems] = useState([{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
     const [currency, setCurrency] = useState('AED');
     const isAdd = window.location.pathname.split('/')[2] === 'create';
     const { loading: estimateLoading, estimate, number } = useSelector(state => state.estimateReducer);
@@ -59,7 +59,7 @@ const EstimateLayout = () => {
             setCurrencyId(estimate?.currency_id);
             setCurrencyConversionRate(estimate?.currency_conversion_rate);
             setCurrency(currencyId !== 1 ? currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv : 'AED');
-            setItems(estimate?.line_items || [{ item_name: '', unit: '', qty: 0, rate: 0, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
+            setItems(estimate?.line_items || [{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
         }
         if (window.location.pathname.split('/')[2] === 'create') {
             setEstimateNumber(number);
@@ -96,12 +96,11 @@ const EstimateLayout = () => {
             return;
         }
         const data = {
+            customer_id: customerId,
             estimate_number: estimateNumber,
             estimate_date: estimateDate,
             valid_till: validTill,
             reference: reference,
-            customer_id: customerId,
-            currency: currency,
             currency_id: currencyId,
             currency_conversion_rate: currencyConversionRate,
             line_items: items,
@@ -129,7 +128,7 @@ const EstimateLayout = () => {
                 <div className="create__estimate--main">
                     <div className="create__estimate--top">
                         <img style={{ width: "9rem" }} src={logo} alt="logo" />
-                        <h1 className='create__estimate--head'>Estimates</h1>
+                        <h1 className='create__estimate--head'>Estimate</h1>
                     </div>
                     <form>
                         <EstimateFormP1 estimateNumber={estimateNumber} setEstimateNumber={setEstimateNumber}
@@ -140,7 +139,7 @@ const EstimateLayout = () => {
                             currency={currency} setCurrency={setCurrency} currencyId={currencyId} setCurrencyId={setCurrencyId}
                             currencyConversionRate={currencyConversionRate} setCurrencyConversionRate={setCurrencyConversionRate}
                         />
-                        <EstimateFormP2 items={items} setItems={setItems} />
+                        <EstimateFormP2 items={items} setItems={setItems} currency={currency} />
                         <div className='estimate__form--submit-btn'>
                             <button type='submit' onClick={handleSubmit}>
                                 {
