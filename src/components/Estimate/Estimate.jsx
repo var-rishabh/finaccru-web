@@ -8,7 +8,7 @@ import "./Estimate.css"
 
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteEstimate, getEstimateList } from '../../Actions/Estimate';
+import { deleteEstimate, downloadEstimateList, getEstimateList } from '../../Actions/Estimate';
 import { useEffect, useState } from 'react';
 
 const Estimate = () => {
@@ -122,7 +122,7 @@ const Estimate = () => {
                     <Input placeholder='Search' onChange={(e) => setSearchText(e.target.value)} value={searchText} />
                 </div>
                 <div className='estimate__header--right'>
-                    <a className='estimate__header--btn1'>Download</a>
+                    <a className='estimate__header--btn1' onClick={() => dispatch(downloadEstimateList())}>Download</a>
                     <a onClick={() => navigate("/estimate/create")} className='estimate__header--btn2'>Create Estimate</a>
                 </div>
             </div>

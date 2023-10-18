@@ -5,6 +5,7 @@ const initialState = {
     customer: null,
     customers: [],
     customersInf: [],
+    shippingAddresses: [],
 }
 
 export const customerReducer = createReducer(initialState, (builder) => {
@@ -57,6 +58,30 @@ export const customerReducer = createReducer(initialState, (builder) => {
             state.loading = false;
             state.customersInf = action.payload.refresh ? action.payload.data.items : [...state.customersInf, ...action.payload.data.items];
             state.totalCustomers = action.payload.data.total_items;
+            state.error = null;
+        })
+        .addCase("CreateShippingAddressRequest", (state) => {
+            state.loading = true;
+        })
+        .addCase("CreateShippingAddressFailure", (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+        .addCase("CreateShippingAddressSuccess", (state, action) => {
+            state.loading = false;
+            state.success = true;
+            state.error = null;
+        })
+        .addCase("ShippingAddressListRequest", (state) => {
+            state.loading = true;
+        })
+        .addCase("ShippingAddressListFailure", (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+        .addCase("ShippingAddressListSuccess", (state, action) => {
+            state.loading = false;
+            state.shippingAddresses = action.payload;
             state.error = null;
         })
 })

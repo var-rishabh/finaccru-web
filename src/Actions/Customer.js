@@ -76,7 +76,7 @@ export const getCustomerDetails = (id) => async (dispatch) => {
 
 
 
-export const getCustomerInfiniteScroll = (page = 1, refresh = false) => async (dispatch) => {
+export const getCustomerInfiniteScroll = (page = 1, refresh = false, keyword="") => async (dispatch) => {
     try {
         dispatch({ type: "CustomerInfiniteScrollRequest" });
         const token = await auth.currentUser.getIdToken();
@@ -85,12 +85,65 @@ export const getCustomerInfiniteScroll = (page = 1, refresh = false) => async (d
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/customers/read-customers-list/${page}`, config);
+        const response = await axios.get(`${url}/private/client/customers/read-customers-list/${page}?keyword=${keyword}`, config);
         dispatch({ type: "CustomerInfiniteScrollSuccess", payload: { data: response.data, refresh: refresh } });
     }
     catch (error) {
         console.log(error);
         dispatch({ type: "CustomerInfiniteScrollFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+
+export const createShippingAddress = (data, customer_id, handleShippingAddressSubmit) => async (dispatch) => {
+    try {
+        dispatch({ type: "CreateShippingAddressRequest" });
+        const token = await auth.currentUser.getIdToken();
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        const response = await axios.post(`${url}/private/client/customers/${customer_id}/create-shipping-address`, data, config);
+        dispatch({ type: "CreateShippingAddressSuccess", payload: response.data });
+        console.log(response.data);
+        toast.success("Shipping Address created successfully");
+        if (handleShippingAddressSubmit) {
+            handleShippingAddressSubmit(response.data);
+        }
+    } catch (error) {
+        console.log(error);
+        if (error.response?.status === 422) {
+            // I will get an array of errors from the backend in details
+            const errors = error.response.data.detail;
+            // I will loop through the array and display the errors
+            errors?.forEach((error) => {
+                toast.error(error.loc[1] + ": " + error.msg);
+            });
+            dispatch({ type: "CreateShippingAddressFailure", payload: error.response?.data || error.message });
+        } else {
+
+            dispatch({ type: "CreateShippingAddressFailure", payload: error.response?.data || error.message });
+            toast.error(error.response?.data || error.message);
+        }
+    }
+}
+
+export const getShippingAddressList = (customer_id) => async (dispatch) => {
+    try {
+        dispatch({ type: "ShippingAddressListRequest" });
+        const token = await auth.currentUser.getIdToken();
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        const response = await axios.get(`${url}/private/client/customers/${customer_id}/read-shipping-address-list`, config);
+        dispatch({ type: "ShippingAddressListSuccess", payload: response.data });
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ShippingAddressListFailure", payload: error.response?.data || error.message });
         toast.error(error.response?.data || error.message);
     }
 }

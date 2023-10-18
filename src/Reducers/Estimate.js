@@ -102,5 +102,17 @@ export const estimateReducer = createReducer(initialState, (builder) => {
         state.number = action.payload;
         state.error = null;
     })
+    .addCase("DownloadEstimateRequest", (state) => {
+        state.loading = true;
+    })
+    .addCase("DownloadEstimateFailure", (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+    })
+    .addCase("DownloadEstimateSuccess", (state, action) => {
+        state.loading = false;
+        state.success = action.payload;
+        state.error = null;
+    })
 })
 

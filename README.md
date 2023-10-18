@@ -5,7 +5,7 @@
 ```
 Step 1: Clone this repository
 
-$ git clone https://github.com/var-rishabh/finaccru-web
+$ git clone https://github.com/shubham1706/finaccru-frontend
 ```
 
 ```

@@ -2,11 +2,24 @@ import React, { useState, useRef, useEffect } from 'react';
 import './InfiniteScrollSelect.css';
 import { useSelector } from 'react-redux';
 import { LoadingOutlined } from '@ant-design/icons';
-const InfiniteScrollSelect = ({ loadMoreOptions, onChange }) => {
+
+const InfiniteScrollSelect = ({ loadMoreOptions, onChange, customerKeyword, setCustomerKeyword }) => {
     const selectRef = useRef(null);
     const { loading, customersInf, totalCustomers } = useSelector(state => state.customerReducer);
     const [visibleOptions, setVisibleOptions] = useState([]);
     const [scrollTop, setScrollTop] = useState(0);
+
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (inputRef.current && !inputRef.current.contains(e.target)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     const handleScroll = (e) => {
         const select = selectRef.current;
@@ -56,10 +69,10 @@ const InfiniteScrollSelect = ({ loadMoreOptions, onChange }) => {
     };
 
     return (
-        <div className={`custom-select-cont ${isOpen ? 'open' : ''}`}>
+        <div className={`custom-select-cont ${isOpen ? 'open' : ''}`} ref={inputRef}>
             <div className={`custom-select ${isOpen ? 'open' : ''}`}>
-                <div className={`select-header ${isOpen ? 'open' : ''}`} onClick={toggleDropdown}>
-                    {'Select Customer'}
+                <div className={`select-header ${isOpen ? 'open' : ''}`} onClick={toggleDropdown} >
+                    <input type='text' placeholder='Select Customer' value={customerKeyword} onChange={(e) => setCustomerKeyword(e.target.value)} />
                     <i className={`arrow ${isOpen ? 'up' : 'down'}`} />
                 </div>
                 <ul className={`options ${isOpen ? 'open' : ''}`} ref={selectRef}>

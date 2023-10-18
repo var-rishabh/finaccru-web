@@ -8,6 +8,7 @@ import Loader from '../Loader/Loader';
 import './EstimateRead.css'
 import backButton from "../../assets/Icons/back.svg"
 import logo from "../../assets/Icons/cropped_logo.svg"
+import PdfDownload from '../PdfDownload/PdfDownload';
 
 const EstimateReadLayout = () => {
     const navigate = useNavigate();
@@ -75,11 +76,6 @@ const EstimateReadLayout = () => {
         setItemTotal(calculateTotalAmount);
     }, [estimate, taxRates]);
 
-    // const handleDownload = () => {
-    //     // Take the component with id "estimate__container" and convert to pdf
-    //     const estimateContainer = document.getElementById("read__estimate--main");
-    // }
-
     return (
         <>
             <div className='read__estimate__header'>
@@ -89,9 +85,8 @@ const EstimateReadLayout = () => {
                 </div>
                 <div className='read__estimate__header--right'>
                     <a className='read__estimate__header--btn1' onClick={() => navigate(`/estimate/edit/${estimate?.estimate_id}`)}>Edit</a>
-                    {/* <a className='read__estimate__header--btn1' onClick={handleDownload}>Download</a> */}
-                    <a className='read__estimate__header--btn1'>Download</a>
-                    <a className='read__estimate__header--btn2'>Share</a>
+                    <a className='read__estimate__header--btn1' onClick={handleDownload}>Download</a>
+                    <a className='read__estimate__header--btn2'>Download</a>
                 </div>
             </div>
             <div className="read__estimate__container">

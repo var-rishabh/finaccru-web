@@ -25,8 +25,18 @@ const EstimateLayout = () => {
     const [customerId, setCustomerId] = useState(null);
     const [currencyId, setCurrencyId] = useState(1);
     const [currencyConversionRate, setCurrencyConversionRate] = useState(1);
+    const [subject, setSubject] = useState(null);
+    const [termsAndConditions, setTermsAndConditions] = useState(null);
+    const [isSetDefaultTncCustomer, setIsSetDefaultTncCustomer] = useState(false);
+    const [isSetDefaultTncClient, setIsSetDefaultTncClient] = useState(false);
     const [items, setItems] = useState([{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
+    const [shippingAddress1, setShippingAddress1] = useState('');
+    const [shippingAddress2, setShippingAddress2] = useState(null); 
+    const [shippingAddress3, setShippingAddress3] = useState(null);
+    const [shippingCountry, setShippingCountry] = useState('');
+    const [shippingState, setShippingState] = useState('');
     const [currency, setCurrency] = useState('AED');
+
     const isAdd = window.location.pathname.split('/')[2] === 'create';
     const { loading: estimateLoading, estimate, number } = useSelector(state => state.estimateReducer);
     const { currencies, currencyLoading } = useSelector(state => state.onboardingReducer);
@@ -75,6 +85,10 @@ const EstimateLayout = () => {
             toast.error("Please fill and check all fields.");
             return;
         }
+        if (shippingAddress1 === "" || shippingCountry === "" || shippingState === "") {
+            toast.error("Please select shipping details.");
+            return;
+        }
         if (items.some((item) => item.item_name === '')) {
             toast.error("Item name cannot be empty.");
             return;
@@ -101,9 +115,18 @@ const EstimateLayout = () => {
             estimate_date: estimateDate,
             valid_till: validTill,
             reference: reference,
+            subject: subject === "" ? null : subject,
+            terms_and_conditions: termsAndConditions === "" ? null : termsAndConditions,
+            is_set_default_tnc_customer: isSetDefaultTncCustomer,
+            is_set_default_tnc_client: isSetDefaultTncClient,
             currency_id: currencyId,
             currency_conversion_rate: currencyConversionRate,
             line_items: items,
+            shipping_address_line_1: shippingAddress1,
+            shipping_address_line_2: shippingAddress2 === "" ? null : shippingAddress2,
+            shipping_address_line_3: shippingAddress3 === "" ? null : shippingAddress3,
+            shipping_state: shippingState,
+            shipping_country: shippingCountry,
         }
         if (isAdd) {
             dispatch(createEstimate(data, navigate));
@@ -120,6 +143,20 @@ const EstimateLayout = () => {
                     <h1 className='create__estimate__header--title'> Estimates List </h1>
                 </div>
                 <div className='create__estimate__header--right'>
+                    {/* <a className='create__estimate__header--btn1'
+                        onClick={() => {
+                            dispatch(markEstimateSent(window.location.pathname.split('/')[3]))
+                        }}
+                    >
+                        Mark Sent
+                    </a>
+                    <a className='create__estimate__header--btn2'
+                        onClick={() => {
+                            dispatch(markEstimateVoid(window.location.pathname.split('/')[3]))
+                        }}
+                    >
+                        Mark Void
+                    </a> */}
                     <a className='create__estimate__header--btn1'>Download</a>
                     <a className='create__estimate__header--btn2'>Share</a>
                 </div>
@@ -138,8 +175,18 @@ const EstimateLayout = () => {
                             customerId={customerId} setCustomerId={setCustomerId}
                             currency={currency} setCurrency={setCurrency} currencyId={currencyId} setCurrencyId={setCurrencyId}
                             currencyConversionRate={currencyConversionRate} setCurrencyConversionRate={setCurrencyConversionRate}
+                            subject={subject} setSubject={setSubject}
+                            shippingAddress1={shippingAddress1} setShippingAddress1={setShippingAddress1}
+                            shippingAddress2={shippingAddress2} setShippingAddress2={setShippingAddress2}
+                            shippingAddress3={shippingAddress3} setShippingAddress3={setShippingAddress3}
+                            shippingCountry={shippingCountry} setShippingCountry={setShippingCountry}
+                            shippingState={shippingState} setShippingState={setShippingState}
                         />
-                        <EstimateFormP2 items={items} setItems={setItems} currency={currency} />
+                        <EstimateFormP2 items={items} setItems={setItems} currency={currency} 
+                            termsAndConditions={termsAndConditions} setTermsAndConditions={setTermsAndConditions}
+                            isSetDefaultTncCustomer={isSetDefaultTncCustomer} setIsSetDefaultTncCustomer={setIsSetDefaultTncCustomer}
+                            isSetDefaultTncClient={isSetDefaultTncClient} setIsSetDefaultTncClient={setIsSetDefaultTncClient}
+                        />
                         <div className='estimate__form--submit-btn'>
                             <button type='submit' onClick={handleSubmit}>
                                 {
@@ -152,7 +199,7 @@ const EstimateLayout = () => {
                         <img style={{ width: "5rem" }} src={logo} alt="logo" />
                         <div className='estimate__footer--text'>
                             <p style={{ fontWeight: "400", fontSize: "0.8rem" }}> This is electronically generated document and does not require sign or stamp. </p>
-                            <span style={{ marginTop: "0.8rem", fontWeight: "700", fontSize: "0.8rem" }}> powered by Finaccru </span>
+                            <span style={{ marginTop: "0.2rem", fontWeight: "600", fontSize: "0.8rem" }}> powered by Finaccru </span>
                         </div>
                     </div>
                 </div>

@@ -2,8 +2,6 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import url from '../data/url';
 import { auth } from "../firebase";
-
-
 export const createEstimate = (data, navigate) => async (dispatch) => {
     try {
         dispatch({ type: "CreateEstimateRequest" });
@@ -176,6 +174,32 @@ export const getNewEstimateNumber = () => async (dispatch) => {
     } catch (error) {
         console.log(error);
         dispatch({ type: "GetNewEstimateNumberFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+export const downloadEstimateList = () => async (dispatch) => {
+    try {
+        dispatch({ type: "DownloadEstimateListRequest" });
+        const token = await auth.currentUser.getIdToken(true);
+        // Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+        const config = {
+            headers: {
+                token: token,
+            },
+            responseType: 'blob'
+        };
+        const response = await axios.get(`${url}/private/client/estimates/download`, config);
+        const url2 = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+        const link = document.createElement('a');
+        link.href = url2;
+        link.setAttribute('download', 'EstimateList.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        dispatch({ type: "DownloadEstimateListSuccess", payload: response.data });
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "DownloadEstimateListFailure", payload: error.response?.data || error.message });
         toast.error(error.response?.data || error.message);
     }
 }

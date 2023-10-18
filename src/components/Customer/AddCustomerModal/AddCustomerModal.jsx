@@ -36,6 +36,8 @@ const AddCustomerModal = ({ isModalOpen, handleCancel, handleCustomerSubmit }) =
     const [allState, setAllStates] = useState(uaeStates);
     const [billingState, setBillingState] = useState(null);
     const [allBillingState, setAllBillingStates] = useState(uaeStates);
+    const [openingBalance, setOpeningBalance] = useState(null);
+    const [openingBalanceDate, setOpeningBalanceDate] = useState(null);
 
     const handleCountryPhoneCodeChange = (value) => {
         const countryPhoneCode = value;
@@ -86,15 +88,15 @@ const AddCustomerModal = ({ isModalOpen, handleCancel, handleCustomerSubmit }) =
         }
     };
 
-    const handleSameBillingAddress = () => {
+    const handleUseBillingAddress = () => {
         if (!sameBillingAddress) {
             setSameBillingAddress(true);
-            setBillingAddress1(address1);
-            setBillingAddress2(address2);
-            setBillingAddress3(address3);
-            setSelectedBillingCountry(selectedCountry);
-            setBillingCountry(country);
-            setBillingState(state);
+            setAddress1(billingAddress1);
+            setAddress2(billingAddress2);
+            setAddress3(billingAddress3);
+            setSelectedCountry(selectedBillingCountry);
+            setCountry(billingCountry);
+            setState(billingState);
         } else {
             setSameBillingAddress(false);
         }
@@ -105,54 +107,58 @@ const AddCustomerModal = ({ isModalOpen, handleCancel, handleCustomerSubmit }) =
             toast.error("Please Enter Valid Phone Number.");
             return;
         }
-        if ((countryPhoneCode+phone).length > 13) {
+        if ((countryPhoneCode + phone).length > 13) {
             toast.error("Phone Number can have atmost 13 digits including country code.");
             return;
         }
-        if (customerName === "" || phone == "" || email === 0 || displayName === "" || address1 === "" || billingAddress1 === "" || billingCountry == "" || billingState == "" || country === "" || state === "" || trnNumber === "") {
+        if (customerName === "" || phone == "" || email === 0 || displayName === "" || address1 === "" || billingAddress1 === "" || billingCountry == "" || billingState == "" || country === "" || state === "") {
             toast.error("Please fill all the fields");
             return;
         }
         const customer = {
             customer_name: customerName,
             contact_name: contactName === "" ? null : contactName,
+            display_name: displayName,
             email: email,
             mobile_number: countryPhoneCode + phone,
-            display_name: displayName,
-            shipping_address_line_1: address1,
-            shipping_address_line_2: address2 === "" ? null : address2,
-            shipping_address_line_3: address3 === "" ? null : address3,
             billing_address_line_1: billingAddress1,
             billing_address_line_2: billingAddress2 === "" ? null : billingAddress2,
             billing_address_line_3: billingAddress3 === "" ? null : billingAddress3,
             billing_state: billingState === "" ? null : billingState,
             billing_country: billingCountry,
+            shipping_address_line_1: address1,
+            shipping_address_line_2: address2 === "" ? null : address2,
+            shipping_address_line_3: address3 === "" ? null : address3,
             shipping_state: state === "" ? null : state,
             shipping_country: country,
             trn: trnNumber === "" ? null : trnNumber,
+            opening_balance: openingBalance === "" ? null : openingBalance,
+            opening_balance_date: openingBalanceDate === "" ? null : openingBalanceDate,
         }
         dispatch(createCustomer(customer, handleCustomerSubmit));
-        setCustomerName("");
-        setEmail("");
-        setPhone("");
-        setDisplayName("");
-        setAddress1("");
-        setAddress2("");
-        setAddress3("");
-        setBillingAddress1("");
-        setBillingAddress2("");
-        setBillingAddress3("");
-        setSameBillingAddress(false);
-        setContactName("");
-        setTrnNumber("");
-        setCountry("United Arab Emirates");
-        setSelectedCountry("ae");
-        setBillingCountry("United Arab Emirates");
-        setSelectedBillingCountry("ae");
-        setState(null);
-        setAllStates(uaeStates);
-        setBillingState(null);
-        setAllBillingStates(uaeStates);
+        // setCustomerName("");
+        // setEmail("");
+        // setPhone("");
+        // setDisplayName("");
+        // setAddress1("");
+        // setAddress2("");
+        // setAddress3("");
+        // setBillingAddress1("");
+        // setBillingAddress2("");
+        // setBillingAddress3("");
+        // setSameBillingAddress(false);
+        // setContactName("");
+        // setTrnNumber("");
+        // setCountry("United Arab Emirates");
+        // setSelectedCountry("ae");
+        // setBillingCountry("United Arab Emirates");
+        // setSelectedBillingCountry("ae");
+        // setState(null);
+        // setAllStates(uaeStates);
+        // setBillingState(null);
+        // setAllBillingStates(uaeStates);
+        // setOpeningBalance(null);
+        // setOpeningBalanceDate(null);
     }
 
     const handleCancelWithReset = () => {
@@ -177,6 +183,8 @@ const AddCustomerModal = ({ isModalOpen, handleCancel, handleCustomerSubmit }) =
         setAllStates(uaeStates);
         setBillingState(null);
         setAllBillingStates(uaeStates);
+        setOpeningBalance(null);
+        setOpeningBalanceDate(null);
         handleCancel();
     }
 
@@ -217,6 +225,76 @@ const AddCustomerModal = ({ isModalOpen, handleCancel, handleCustomerSubmit }) =
                     <div className='add__customer__modal--input'>
                         <span className='required__field'>Display Name</span>
                         <input type="text" name='displayName' value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+                    </div>
+                    <div className='add__customer__modal--input'>
+                        <span className='required__field'>Billing Address 1</span>
+                        <input type="text" name='billingAddress1' value={billingAddress1}
+                            onChange={(e) => setBillingAddress1(e.target.value)}
+                        />
+                    </div>
+                    <div className='add__customer__modal--input'>
+                        <span>Billing Address 2</span>
+                        <input type="text" name='billingAddress2' value={billingAddress2}
+                            onChange={(e) => {
+                                setBillingAddress2(e.target.value)
+                            }}
+                        />
+                    </div>
+                    <div className='add__customer__modal--input'>
+                        <span>Billing Address 3</span>
+                        <input type="text" name='billingAddress3' value={billingAddress3}
+                            onChange={(e) => {
+                                setBillingAddress3(e.target.value)
+                            }}
+                        />
+                    </div>
+                    <div className='add__customer__modal--select'>
+                        <span className='required__field'>Billing Country</span>
+                        <Select
+                            showSearch
+                            id='country'
+                            defaultValue="ae"
+                            value={selectedBillingCountry}
+                            optionFilterProp="children"
+                            filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
+                            options={getCountries().map((country) => ({ value: country.code, label: country.name }))}
+                            onChange={handleBillingCountryChange}
+                        />
+                    </div>
+                    <div className='add__customer__modal--select'>
+                        {selectedBillingCountry && (
+                            <>
+                                <span className='required__field'>{selectedBillingCountry == "ae" ? "Emirates" : "State"}</span>
+                                <Select
+                                    showSearch
+                                    id='state'
+                                    placeholder="Select State"
+                                    value={billingState}
+                                    optionFilterProp="children"
+                                    filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                    filterSort={(optionA, optionB) =>
+                                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                    }
+                                    options={allBillingState.map((state) => ({ value: state, label: state }))}
+                                    onChange={(value) => setBillingState(value)}
+                                />
+                            </>
+                        )}
+                    </div>
+                    <div className='add__customer__modal--btns'>
+                        <a className='add__customer__modal--cancel-btn' onClick={handleCancelWithReset}>Cancel</a>
+                        <a className='add__customer__modal--submit-btn' onClick={handleSubmit}> {
+                            loading ? <LoadingOutlined /> : "Submit"
+                        } </a>
+                    </div>
+                </div>
+                <div className='add__customer__modal--right'>
+                    <div className='add__customer__modal--checkbox'>
+                        <input type="checkbox" value={sameBillingAddress}
+                            checked={sameBillingAddress}
+                            onChange={handleUseBillingAddress}
+                        />
+                        <span>Use Billing Address</span>
                     </div>
                     <div className='add__customer__modal--input'>
                         <span className='required__field'>Shipping Address 1</span>
@@ -276,14 +354,6 @@ const AddCustomerModal = ({ isModalOpen, handleCancel, handleCustomerSubmit }) =
                             </>
                         )}
                     </div>
-                    <div className='add__customer__modal--btns'>
-                        <a className='add__customer__modal--cancel-btn' onClick={handleCancelWithReset}>Cancel</a>
-                        <a className='add__customer__modal--submit-btn' onClick={handleSubmit}> {
-                            loading ? <LoadingOutlined /> : "Submit"
-                        } </a>
-                    </div>
-                </div>
-                <div className='add__customer__modal--right'>
                     <div className='add__customer__modal--input'>
                         <span className='required__field'>Contact Name</span>
                         <input type="text" name='contactName' value={contactName}
@@ -293,70 +363,24 @@ const AddCustomerModal = ({ isModalOpen, handleCancel, handleCustomerSubmit }) =
                         />
                     </div>
                     <div className='add__customer__modal--input'>
-                        <span className='required__field'>TRN Number</span>
+                        <span>TRN Number</span>
                         <input type="text" name='trnNumber' value={trnNumber} onChange={(e) => setTrnNumber(e.target.value)} />
                     </div>
-                    <div className='add__customer__modal--checkbox'>
-                        <input type="checkbox" value={sameBillingAddress}
-                            checked={sameBillingAddress}
-                            onChange={handleSameBillingAddress}
-                        />
-                        <span>Use Shipping Address</span>
-                    </div>
                     <div className='add__customer__modal--input'>
-                        <span className='required__field'>Billing Address 1</span>
-                        <input type="text" name='billingAddress1' value={billingAddress1}
-                            onChange={(e) => setBillingAddress1(e.target.value)}
-                        />
-                    </div>
-                    <div className='add__customer__modal--input'>
-                        <span>Billing Address 2</span>
-                        <input type="text" name='billingAddress2' value={billingAddress2}
+                        <span>Opening Balance</span>
+                        <Input type='text' name='openingBalance' addonBefore={"AED"} value={openingBalance}
                             onChange={(e) => {
-                                setBillingAddress2(e.target.value)
+                                setOpeningBalance(e.target.value);
                             }}
                         />
                     </div>
                     <div className='add__customer__modal--input'>
-                        <span>Billing Address 3</span>
-                        <input type="text" name='billingAddress3' value={billingAddress3}
-                            onChange={(e) => {
-                                setBillingAddress3(e.target.value)
-                            }}
+                        <span>Opening Balance Date</span>
+                        <input type="date"
+                            name='openingBalanceDate'
+                            value={openingBalanceDate}
+                            onChange={(e) => setOpeningBalanceDate(e.target.value)}
                         />
-                    </div>
-                    <div className='add__customer__modal--select'>
-                        <span className='required__field'>Billing Country</span>
-                        <Select
-                            showSearch
-                            id='country'
-                            defaultValue="ae"
-                            value={selectedBillingCountry}
-                            optionFilterProp="children"
-                            filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
-                            options={getCountries().map((country) => ({ value: country.code, label: country.name }))}
-                            onChange={handleBillingCountryChange}
-                        />
-                    </div>
-                    <div className='add__customer__modal--select'>
-                        {selectedBillingCountry && (
-                            <>
-                                <span className='required__field'>{selectedBillingCountry == "ae" ? "Emirates" : "State"}</span>
-                                <Select
-                                    showSearch
-                                    id='state'
-                                    placeholder="Select State"
-                                    value={billingState}
-                                    optionFilterProp="children"
-                                    filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                                    filterSort={(optionA, optionB) =>
-                                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                                    }
-                                    options={allBillingState.map((state) => ({ value: state, label: state }))}
-                                    onChange={(value) => setBillingState(value)}
-                                />
-                            </>
-                        )}
                     </div>
                 </div>
             </form>

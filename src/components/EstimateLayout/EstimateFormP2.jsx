@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getUnit } from '../../Actions/Unit';
 import { getTaxRate } from '../../Actions/Onboarding';
 
-import { PlusOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
+import MinusIcon from '../../assets/Icons/minus.svg'
 import { Input, Select, AutoComplete } from 'antd';
 const { Option } = Select;
 
@@ -13,7 +14,10 @@ const EstimateFormP2 = ({ items, setItems, currency }) => {
     const { taxRates, taxRateLoading } = useSelector(state => state.onboardingReducer);
     const [showDescription, setShowDescription] = useState([]);
 
-    const [itemTotal, setItemTotal] = useState([]);
+    const [itemTotal, setItemTotal] = useState([0]);
+    const [itemTax, setItemTax] = useState([0]);
+    const [taxRateName, setTaxRateName] = useState(null);
+
     const [subTotal, setSubTotal] = useState(0);
     const [discount, setDiscount] = useState(0);
     const [tax, setTax] = useState(0);
@@ -66,7 +70,7 @@ const EstimateFormP2 = ({ items, setItems, currency }) => {
 
     const handleAddPerson = (event) => {
         event.preventDefault();
-        setItems([...items, { item_name: '', unit: '', qty: null, rate: null, discount: null, is_percentage_discount: true, tax_id: 1, description: null }]);
+        setItems([...items, { item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
         setShowDescription([...showDescription, false]);
     };
 
@@ -83,6 +87,7 @@ const EstimateFormP2 = ({ items, setItems, currency }) => {
             let subTotalAmount = 0;
             let discountAmount = 0;
             let taxAmount = 0
+            const calculatedTax = [];
             const calculateFinalAmount = items?.map((item) => {
                 const { qty, rate, discount, is_percentage_discount, tax_id } = item;
                 let finalRate = 0;
@@ -102,6 +107,7 @@ const EstimateFormP2 = ({ items, setItems, currency }) => {
                     tax = overAllRate * (taxItem?.tax_percentage / 100);
                     taxAmount += tax;
                 }
+                calculatedTax.push(tax);
 
                 const finalAmount = parseFloat((overAllRate + tax).toFixed(2));
                 return finalAmount;
@@ -111,6 +117,7 @@ const EstimateFormP2 = ({ items, setItems, currency }) => {
             setDiscount(parseFloat(discountAmount.toFixed(2)));
             setTax(parseFloat(taxAmount.toFixed(2)));
             setTotal(parseFloat((subTotalAmount - discountAmount + taxAmount).toFixed(2)));
+            setItemTax(calculatedTax);
 
             return calculateFinalAmount;
         };
@@ -202,7 +209,7 @@ const EstimateFormP2 = ({ items, setItems, currency }) => {
                                     value={item?.discount}
                                     defaultValue={item?.discount}
                                     style={{
-                                        width: 120
+                                        width: 100
                                     }}
                                     addonAfter={
                                         <Select
@@ -230,32 +237,48 @@ const EstimateFormP2 = ({ items, setItems, currency }) => {
                             </div>
                             <div className='estimate__items--tax'>
                                 {index === 0 ? <span style={{ marginBottom: '0.9rem' }}>Tax</span> : <></>}
-                                <Select
-                                    onChange={(value) => {
-                                        handleInputChange(index, 'tax_id', value);
-                                    }}
-                                    value={item?.tax_id}
-                                    defaultValue={item?.tax_id}
-                                    loading={taxRateLoading}
+                                <Input
+                                    type="number"
+                                    placeholder="Tax"
+                                    value={itemTax[index]}
+                                    defaultValue={itemTax[index]}
+                                    disabled={true}
                                     style={{
-                                        width: 150
+                                        width: 160
                                     }}
-                                >
-                                    {
-                                        taxRates?.map((taxRate) => (
-                                            <Option key={taxRate.tax_rate_id} value={taxRate.tax_rate_id}>
-                                                { taxRate.tax_rate_name == 'Standard Rated (5%)' ? '5%' : taxRate.tax_rate_name }
-                                            </Option>
-                                        ))
+                                    addonAfter={
+                                        <Select
+                                            onChange={(value) => {
+                                                handleInputChange(index, 'tax_id', value);
+                                            }}
+                                            defaultValue={item?.tax_id}
+                                            loading={taxRateLoading}
+                                        >
+                                            {
+                                                taxRates?.map((taxRate) => (
+                                                    <Option key={taxRate.tax_rate_id} value={taxRate.tax_rate_id}>
+                                                        {taxRate.tax_rate_name == 'Standard Rated (5%)' ? '(5%)' : taxRate.tax_rate_name}
+                                                    </Option>
+                                                ))
+                                            }
+                                        </Select>
                                     }
-                                </Select>
+                                    onChange={(e) => {
+                                        const valid = e.target.value.match(/^\d*\.?\d{0,2}$/);
+                                        if (valid) {
+                                            handleInputChange(index, 'discount', e.target.value)
+                                        }
+                                    }}
+                                />
                             </div>
                             <div className='estimate__items--amount'>
                                 {index === 0 ? <span style={{ marginBottom: '1rem' }}>Amount</span> : <></>}
                                 <Input
                                     type='text'
                                     value={itemTotal[index]}
-                                    defaultValue={itemTotal[index]}
+                                    defaultValue={
+                                        taxRateName ? taxRateName : itemTotal[index]
+                                    }
                                     disabled={true}
                                     style={{
                                         width: 90
@@ -265,8 +288,8 @@ const EstimateFormP2 = ({ items, setItems, currency }) => {
                             {items.length > 1 && (
                                 <div className='estimate__items--sr'>
                                     {index === 0 ? <span style={{ marginBottom: '1rem' }}>&nbsp;</span> : <></>}
-                                    <div>
-                                        <CloseCircleOutlined onClick={(e) => handleRemovePerson(index, e)} />
+                                    <div className='estimate--cancel-icon'>
+                                        <img src={MinusIcon} onClick={(e) => handleRemovePerson(index, e)} />
                                     </div>
                                 </div>
                             )}
@@ -275,7 +298,7 @@ const EstimateFormP2 = ({ items, setItems, currency }) => {
                             {showDescription[index] || item?.description ? (
                                 <>
                                     <div className='remove--description-btn'>
-                                        <button onClick={(e) => handleRemoveDescription(index, e)}>-</button>
+                                        <img src={MinusIcon} onClick={(e) => handleRemoveDescription(index, e)} />
                                         <div className='desc__box'>
                                             <span>Description</span>
                                             <input
@@ -316,14 +339,12 @@ const EstimateFormP2 = ({ items, setItems, currency }) => {
                                 <span>Bank Name</span>
                                 <span>Account Number</span>
                                 <span>Account Name</span>
-                                <span>IBAN (AED Acc)</span>
-                                <span>IBAN (USD Acc)</span>
+                                <span>IBAN ({currency} Acc)</span>
                             </div>
                             <div className='estimate--details-left-info'>
                                 <span>{user?.clientInfo?.primary_bank?.bank_name}</span>
                                 <span>{user?.clientInfo?.primary_bank?.account_number}</span>
                                 <span>{user?.clientInfo?.primary_bank?.account_holder_name}</span>
-                                <span>{user?.clientInfo?.primary_bank?.iban_number}</span>
                                 <span>{user?.clientInfo?.primary_bank?.iban_number}</span>
                             </div>
                         </div>
