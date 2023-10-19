@@ -6,17 +6,20 @@ import { getTaxRate } from '../../Actions/Onboarding';
 import { PlusOutlined } from '@ant-design/icons';
 import MinusIcon from '../../assets/Icons/minus.svg'
 import { Input, Select, AutoComplete } from 'antd';
+const { TextArea } = Input;
 const { Option } = Select;
 
-const EstimateFormP2 = ({ items, setItems, currency }) => {
+const EstimateFormP2 = ({
+    items, setItems, currency, termsAndConditions, setTermsAndConditions,
+    isSetDefaultTncCustomer, setIsSetDefaultTncCustomer, isSetDefaultTncClient, setIsSetDefaultTncClient
+}) => {
     const { user } = useSelector(state => state.userReducer);
     const { units, loading: unitLoading } = useSelector(state => state.unitReducer);
     const { taxRates, taxRateLoading } = useSelector(state => state.onboardingReducer);
     const [showDescription, setShowDescription] = useState([]);
 
-    const [itemTotal, setItemTotal] = useState([0]);
-    const [itemTax, setItemTax] = useState([0]);
-    const [taxRateName, setTaxRateName] = useState(null);
+    const [itemTotal, setItemTotal] = useState([]);
+    const [itemTax, setItemTax] = useState([]);
 
     const [subTotal, setSubTotal] = useState(0);
     const [discount, setDiscount] = useState(0);
@@ -246,6 +249,7 @@ const EstimateFormP2 = ({ items, setItems, currency }) => {
                                     style={{
                                         width: 160
                                     }}
+                                    className={item?.tax_id === 1 ? 'tax__select--standard' : 'tax__select--non-standard'}
                                     addonAfter={
                                         <Select
                                             onChange={(value) => {
@@ -275,10 +279,8 @@ const EstimateFormP2 = ({ items, setItems, currency }) => {
                                 {index === 0 ? <span style={{ marginBottom: '1rem' }}>Amount</span> : <></>}
                                 <Input
                                     type='text'
-                                    value={itemTotal[index]}
-                                    defaultValue={
-                                        taxRateName ? taxRateName : itemTotal[index]
-                                    }
+                                    value={itemTotal[index] ? itemTotal[index] : 0}
+                                    defaultValue={itemTotal[index] ? itemTotal[index] : 0}
                                     disabled={true}
                                     style={{
                                         width: 90
@@ -332,20 +334,38 @@ const EstimateFormP2 = ({ items, setItems, currency }) => {
             </div>
             <div className='estimate--details'>
                 <div className='estimate--details--bank'>
-                    <div className='estimte--details--bank-heading'>Bank Details</div>
                     <div className='estimate--details--split'>
                         <div className='estimate--details-left'>
-                            <div className='estimate--details-left-head'>
-                                <span>Bank Name</span>
-                                <span>Account Number</span>
-                                <span>Account Name</span>
-                                <span>IBAN ({currency} Acc)</span>
+                            <div className='estimate--details-tnc'>
+                                <h3>Add Terms and Conditions</h3>
+                                <TextArea
+                                    placeholder="Subject"
+                                    rows={5}
+                                    value={termsAndConditions}
+                                    onChange={(e) => setTermsAndConditions(e.target.value)}
+                                />
                             </div>
-                            <div className='estimate--details-left-info'>
-                                <span>{user?.clientInfo?.primary_bank?.bank_name}</span>
-                                <span>{user?.clientInfo?.primary_bank?.account_number}</span>
-                                <span>{user?.clientInfo?.primary_bank?.account_holder_name}</span>
-                                <span>{user?.clientInfo?.primary_bank?.iban_number}</span>
+                            <div style={{ marginTop: "1rem" }} className='estimate--details__modal--checkbox'>
+                                <input type="checkbox" value={isSetDefaultTncCustomer}
+                                    checked={isSetDefaultTncCustomer}
+                                    onChange={(e) => setIsSetDefaultTncCustomer(e.target.checked)}
+                                />
+                                <span
+                                    style={{
+                                        opacity: isSetDefaultTncCustomer ? '1' : '0.5'
+                                    }}
+                                >Save for this customer</span>
+                            </div>
+                            <div className='estimate--details__modal--checkbox'>
+                                <input type="checkbox" value={isSetDefaultTncClient}
+                                    checked={isSetDefaultTncClient}
+                                    onChange={(e) => setIsSetDefaultTncClient(e.target.checked)}
+                                />
+                                <span
+                                    style={{
+                                        opacity: isSetDefaultTncClient ? '1' : '0.5'
+                                    }}
+                                >Save for all customers.</span>
                             </div>
                         </div>
                         <div className='estimate--details-right'>
@@ -358,8 +378,8 @@ const EstimateFormP2 = ({ items, setItems, currency }) => {
                             <div className='estimate--details-right-info'>
                                 <span>{currency} &nbsp; {subTotal}</span>
                                 <span>{currency} &nbsp; {discount}</span>
-                                <span>{currency} &nbsp; {tax}</span>
-                                <span>{currency} &nbsp; {total}</span>
+                                <span>{currency} &nbsp; {tax ? tax : 0}</span>
+                                <span>{currency} &nbsp; {total ? total : 0}</span>
                             </div>
                         </div>
                     </div>

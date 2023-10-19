@@ -1,0 +1,163 @@
+.customer__header {
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3rem 5rem 0;
+}
+
+.customer__header--left {
+    display: flex;
+    flex-direction: row;
+    width: 50%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.customer__header--title {
+    font-family: 'Work Sans', sans-serif;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 120%;
+    letter-spacing: 0.0125rem;
+}
+
+.customer__header--left>Input {
+    width: 60%;
+    height: 2.2rem;
+    background-color: #fff;
+}
+
+.ant-input,
+.ant-input:hover,
+.ant-input:focus,
+.ant-input::placeholder {
+    color: #5D5FEF;
+    border-color: #5541D7;
+}
+
+.customer__header--right {
+    display: flex;
+    flex-direction: row;
+    width: 50%;
+    justify-content: flex-end;
+}
+
+.customer__header--btn1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 10rem;
+    max-width: 10rem;
+    color: #3463AE;
+    height: 2.5rem;
+    padding: 0.625rem 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border: 2px solid #3463AE;
+    overflow: hidden;
+}
+
+.customer__header--btn2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    height: 2.5rem;
+    margin-left: 2rem;
+    padding: 0.625rem 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    background-color: #3463AE;
+    overflow: hidden;
+}
+
+.table {
+    top: 0;
+    width: 100%;
+    padding: 3rem 3rem 0;
+}
+
+.ant-table-cell {
+    padding: 1rem !important;
+    background-color: #fff !important;
+    font-size: 0.8rem !important;
+    font-weight: 400 !important;
+    letter-spacing: 0.0125rem;
+    text-align: center !important;
+    color: #11142D !important;
+}
+
+.action__button>span>svg {
+    width: 1.2rem !important;
+    height: 1.2rem !important;
+    color: var(--gray) !important;
+}
+
+.action__buttons {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.action__button {
+    cursor: pointer;
+}
+
+.action__button>img {
+    width: 1.2rem;
+}
+
+.ant-empty {
+    margin: 13rem 0 !important;
+}
+
+.ant-empty-image {
+    overflow: hidden !important;
+}
+
+.customer__delete--modal {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.delete__modal__buttons {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+    margin-top: 2rem;
+}
+
+.delete__modal__buttons>button {
+    display: flex;
+    padding: 0.675rem 1.5rem;
+    justify-content: center;
+    align-items: center;
+    gap: 0.625rem;
+    border-radius: 0.25rem;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.delete__modal__buttons #confirm {
+    background: #3463AE;
+}
+
+.delete__modal__buttons #cancel {
+    background: #CB214A;
+}
+
+.ant-modal-mask {
+    background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.customer__list--delete--modal .ant-modal-content {
+    box-shadow: none !important;
+}

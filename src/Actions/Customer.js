@@ -147,3 +147,48 @@ export const getShippingAddressList = (customer_id) => async (dispatch) => {
         toast.error(error.response?.data || error.message);
     }
 }
+
+export const deleteCustomer = (id) => async (dispatch) => {
+    try {
+        dispatch({ type: "DeleteCustomerRequest" });
+        const token = await auth.currentUser.getIdToken();
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        await axios.delete(`${url}/private/client/customers/delete/${id}`, config);
+        dispatch({ type: "DeleteCustomerSuccess", payload: id });
+        toast.success("Customer deleted successfully");
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "DeleteCustomerFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+export const downloadCustomerList = () => async (dispatch) => {
+    try {
+        dispatch({ type: "DownloadCustomerListRequest" });
+        const token = await auth.currentUser.getIdToken(true);
+        // Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+        const config = {
+            headers: {
+                token: token,
+            },
+            responseType: 'blob'
+        };
+        const response = await axios.get(`${url}/private/client/customers/download`, config);
+        const url2 = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+        const link = document.createElement('a');
+        link.href = url2;
+        link.setAttribute('download', 'CustomerList.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        dispatch({ type: "DownloadCustomerListSuccess", payload: response.data });
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "DownloadCustomerListFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}

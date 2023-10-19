@@ -84,4 +84,16 @@ export const customerReducer = createReducer(initialState, (builder) => {
             state.shippingAddresses = action.payload;
             state.error = null;
         })
+        .addCase("DeleteCustomerRequest", (state) => {
+            state.loading = true;
+        })
+        .addCase("DeleteCustomerFailure", (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+        .addCase("DeleteCustomerSuccess", (state, action) => {
+            state.loading = false;
+            state.success = action.payload;
+            state.error = null;
+        })
 })
