@@ -126,13 +126,6 @@ li.ant-menu-item-selected>.ant-menu-item-icon {
     border-radius: 1rem;
 }
 
-td.ant-table-cell {
-    font-size: 0.8rem !important;
-    font-weight: 300 !important;
-    line-height: 120%;
-    letter-spacing: 0.005rem;
-}
-
 .ant-layout-content {
     min-height: 100vh;
     height: max-content;

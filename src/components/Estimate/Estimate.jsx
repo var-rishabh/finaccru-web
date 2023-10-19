@@ -1,4 +1,4 @@
-import { Modal, Input, Table } from 'antd';
+import { Modal, Input, Table, Tooltip } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
 import convertIcon from '../../assets/Icons/convertIcon.svg';
 import editIcon from '../../assets/Icons/editIcon.svg';
@@ -81,16 +81,29 @@ const Estimate = () => {
                 <>
                     <div className="action__buttons">
                         <div className="action__button" onClick={() => navigate(`/estimate/view/${record.estimate_id}`)}>
-                            <EyeOutlined />
+                            <Tooltip title="View" color='gray' placement="bottom">
+                                <EyeOutlined />
+                            </Tooltip>
                         </div>
-                        <div className="action__button">
-                            <img src={convertIcon} alt="convertIcon" />
-                        </div>
+                        {
+                            record?.status === "Converted to PI/TI" ? "" :
+                                <>
+                                    <div className="action__button">
+                                        <Tooltip title="Convert to Invoice" color='green' placement="bottom">
+                                            <img src={convertIcon} alt="convertIcon" />
+                                        </Tooltip>
+                                    </div>
+                                </>
+                        }
                         <div className="action__button" onClick={() => window.location.href = `/estimate/edit/${record.estimate_id}`} >
-                            <img src={editIcon} alt="editIcon" />
+                            <Tooltip title="Edit" color='blue' placement="bottom">
+                                <img src={editIcon} alt="editIcon" />
+                            </Tooltip>
                         </div>
                         <div className="action__button" onClick={showModal}>
-                            <img src={deleteIcon} alt="deleteIcon" />
+                            <Tooltip title="Delete" color='red' placement="bottom">
+                                <img src={deleteIcon} alt="deleteIcon" />
+                            </Tooltip>
                         </div>
                     </div>
                     <Modal

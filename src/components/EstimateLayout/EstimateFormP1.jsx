@@ -19,11 +19,14 @@ const EstimateFormP1 = ({
     }
     const filterOption2 = (input, option) => {
         if (option?.key !== 'addShippingAddress') {
-            return option?.children?.some((child) => {
-                if (typeof child === 'string') {
-                    return child.toLowerCase().includes(input.toLowerCase());
+            const searchStr = option?.children?.props?.children?.reduce((acc, cur) => {
+                if (typeof cur === 'string') {
+                    return acc + cur;
                 }
-            })
+            }, '');
+
+            return searchStr.toLowerCase().includes(input.toLowerCase());
+
         }
         return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
     }
@@ -33,6 +36,7 @@ const EstimateFormP1 = ({
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [shippingId, setShippingId] = useState(null);
     const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
+    const [shippingLabel, setShippingLabel] = useState(null);
 
     const dispatch = useDispatch();
     useEffect(() => {
@@ -78,7 +82,6 @@ const EstimateFormP1 = ({
     }
 
     const onChangeShipping = (value) => {
-        console.log(value)
         if (value === 'addShippingAddress') {
             showShippingModal();
             return;
@@ -89,10 +92,7 @@ const EstimateFormP1 = ({
         setShippingAddress3(shippingAddresses?.find((address) => address.shipping_address_id === value)?.address_line_3);
         setShippingState(shippingAddresses?.find((address) => address.shipping_address_id === value)?.state);
         setShippingCountry(shippingAddresses?.find((address) => address.shipping_address_id === value)?.country);
-        // const customer = customersInf.find((customer) => customer.customer_id === value.customer_id);
-        // setCustomerName(customer.customer_name);
-        // dispatch(getCustomerDetails(value.customer_id));
-        // dispatch(getShippingAddressList(value.customer_id));
+        setShippingLabel(shippingAddresses?.find((address) => address.shipping_address_id === value)?.label);
     }
 
     const onChangeCurrency = (value) => {
@@ -102,17 +102,20 @@ const EstimateFormP1 = ({
     }
 
     const handleCustomerSubmit = (data) => {
+        setIsModalOpen(false);
         dispatch(getCustomerInfiniteScroll(1, true));
         setCurrentCustomerPage(1);
         dispatch(getCustomerDetails(data.customer_id));
         setCustomerId(data.customer_id);
         setCustomerName(data.customer_name);
-        setIsModalOpen(false);
     }
 
     const handleAddShippingAddressSubmit = (data) => {
         dispatch(getShippingAddressList(customerId));
         setShippingId(data.shipping_address_id);
+        setShippingAddress1(data.address_line_1);
+        setShippingAddress2(data.address_line_2);
+        setShippingAddress3(data.address_line_3);
         setIsShippingModalOpen(false);
     }
 
@@ -195,7 +198,7 @@ const EstimateFormP1 = ({
                             </>
 
                     }
-                    <AddCustomerModal openingModal={true} isModalOpen={isModalOpen} handleCustomerSubmit={handleAddShippingAddressSubmit} handleCancel={handleCancel} />
+                    <AddCustomerModal openingModal={true} isModalOpen={isModalOpen} handleCustomerSubmit={handleCustomerSubmit} handleCancel={handleCancel} />
                 </div>
                 <div className='estimate__form--part2-head-customer second-select'>
                     {
@@ -206,14 +209,22 @@ const EstimateFormP1 = ({
                                     shippingId || shippingAddress1 ?
                                         <div className='estimate__form--customer-data'>
                                             <div className='estimate__form--customer-data-info'>
-                                                <span style={{ fontWeight: 500 }}>{customerName}</span>
+                                                {shippingLabel && <span style={{ fontWeight: 500 }}>{shippingLabel}</span>}
                                                 <span>{shippingAddress1}</span>
                                                 {shippingAddress2 && <span>{shippingAddress2}</span>}
                                                 {shippingAddress3 && <span>{shippingAddress3}</span>}
                                                 <span>{shippingState + ', ' + shippingCountry}</span>
 
                                             </div>
-                                            <img src={GreenCross} alt='close' className='estimate__for--anticon-close' onClick={() => { setShippingId(null); setShippingAddress1(null); setShippingAddress2(null); setShippingAddress3(null); setShippingState(null); setShippingCountry(null); dispatch(getShippingAddressList(customerId)) }} />
+                                            <img src={GreenCross} alt='close' className='estimate__for--anticon-close'
+                                                onClick={() => {
+                                                    setShippingId(null); setShippingAddress1(null); 
+                                                    setShippingAddress2(null); setShippingAddress3(null); 
+                                                    setShippingState(null); setShippingCountry(null);
+                                                    setShippingLabel(null);
+                                                    dispatch(getShippingAddressList(customerId))
+                                                }}
+                                            />
                                         </div>
                                         : <>
                                             <Select
@@ -229,15 +240,18 @@ const EstimateFormP1 = ({
                                                 </Option>
                                                 {
                                                     shippingAddresses?.map((address) => (
-                                                        <Option style={{ fontWeight: 400, height: 'max-content' }} key={address.shipping_address_id} value={address.shipping_address_id}>
-                                                            {address.address_line_1}, {address.address_line_2 ? address.address_line_2 + ", " : ""} {address.address_line_3 ? address.address_line_3 + ", " : ""} {address.state}, {address.country}
+                                                        <Option key={address.shipping_address_id} value={address.shipping_address_id}>
+                                                            <div style={{ whiteSpace: 'initial' }}>
+                                                                {address.address_line_1}, {address.address_line_2 ? address.address_line_2 + ", " : ""} {address.address_line_3 ? address.address_line_3 + ", " : ""} {address.state}, {address.country}
+                                                            </div>
                                                         </Option>
+
                                                     ))
                                                 }
                                             </Select>
                                         </>
                                 }
-                                <AddShippingAddress isShippingModalOpen={isShippingModalOpen} handleAddShippingAddressSubmit={handleCustomerSubmit} handleShippingCancel={handleShippingCancel} customerId={customerId} />
+                                <AddShippingAddress isShippingModalOpen={isShippingModalOpen} handleAddShippingAddressSubmit={handleAddShippingAddressSubmit} handleShippingCancel={handleShippingCancel} customerId={customerId} />
                             </> : <></>
 
                     }

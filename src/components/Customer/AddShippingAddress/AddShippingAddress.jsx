@@ -13,13 +13,13 @@ const AddShippingAddress = ({ isShippingModalOpen, handleShippingCancel, custome
     const dispatch = useDispatch();
     const { loading } = useSelector((state) => state.customerReducer);
 
-    const [label, setLabel] = useState(null);
+    const [label, setLabel] = useState('');
     const [address1, setAddress1] = useState('');
-    const [address2, setAddress2] = useState(null);
-    const [address3, setAddress3] = useState(null);
+    const [address2, setAddress2] = useState('');
+    const [address3, setAddress3] = useState('');
     const [country, setCountry] = useState("United Arab Emirates");
     const [selectedCountry, setSelectedCountry] = useState("ae");
-    const [state, setState] = useState(null);
+    const [state, setState] = useState('');
     const [allState, setAllStates] = useState(uaeStates);
 
     const handleCountryChange = (value) => {
@@ -53,24 +53,24 @@ const AddShippingAddress = ({ isShippingModalOpen, handleShippingCancel, custome
             country: country
         }
         dispatch(createShippingAddress(values, customerId, handleAddShippingAddressSubmit));
-        setLabel(null);
+        setLabel('');
         setAddress1('');
-        setAddress2(null);
-        setAddress3(null);
+        setAddress2('');
+        setAddress3('');
         setCountry("United Arab Emirates");
         setSelectedCountry("ae");
-        setState(null);
+        setState('');
         setAllStates(uaeStates);
     }
 
     const handleCancelWithReset = () => {
-        setLabel(null);
+        setLabel('');
         setAddress1('');
-        setAddress2(null);
-        setAddress3(null);
+        setAddress2('');
+        setAddress3('');
         setCountry("United Arab Emirates");
         setSelectedCountry("ae");
-        setState(null);
+        setState('');
         setAllStates(uaeStates);
         handleShippingCancel();
     }
@@ -96,13 +96,11 @@ const AddShippingAddress = ({ isShippingModalOpen, handleShippingCancel, custome
                 </div>
                 <div className='add__shipping__modal--input'>
                     <span>Shipping Address 2</span>
-                    <input type="text" name='address2' value={address2}
-                        onChange={(e) => setAddress2(e.target.value)} />
+                    <input type="text" name='address2' value={address2} onChange={(e) => setAddress2(e.target.value)} />
                 </div>
                 <div className='add__shipping__modal--input'>
                     <span>Shipping Address 3</span>
-                    <input type="text" name='address3' value={address3}
-                        onChange={(e) => setAddress3(e.target.value)} />
+                    <input type="text" name='address3' value={address3} onChange={(e) => setAddress3(e.target.value)} />
                 </div>
                 <div className='add__shipping__modal--select'>
                     <span className='required__field'>Shipping Country</span>

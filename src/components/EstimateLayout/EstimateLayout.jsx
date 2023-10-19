@@ -31,15 +31,15 @@ const EstimateLayout = () => {
     const [isSetDefaultTncClient, setIsSetDefaultTncClient] = useState(false);
     const [items, setItems] = useState([{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
     const [shippingAddress1, setShippingAddress1] = useState('');
-    const [shippingAddress2, setShippingAddress2] = useState(null); 
+    const [shippingAddress2, setShippingAddress2] = useState(null);
     const [shippingAddress3, setShippingAddress3] = useState(null);
     const [shippingCountry, setShippingCountry] = useState('');
     const [shippingState, setShippingState] = useState('');
     const [currency, setCurrency] = useState('AED');
 
     const isAdd = window.location.pathname.split('/')[2] === 'create';
+    const { user } = useSelector(state => state.userReducer);
     const { loading: estimateLoading, estimate, number } = useSelector(state => state.estimateReducer);
-    console.log("🚀 ~ estimate:", estimate);
     const { currencies, currencyLoading } = useSelector(state => state.onboardingReducer);
 
     useEffect(() => {
@@ -83,6 +83,7 @@ const EstimateLayout = () => {
         }
         if (window.location.pathname.split('/')[2] === 'create') {
             setEstimateNumber(number);
+            setTermsAndConditions(user?.clientInfo?.terms_and_conditions);
         }
     }, [currencies, estimate, number]);
 
@@ -153,20 +154,6 @@ const EstimateLayout = () => {
                     <h1 className='create__estimate__header--title'> Estimates List </h1>
                 </div>
                 <div className='create__estimate__header--right'>
-                    {/* <a className='create__estimate__header--btn1'
-                        onClick={() => {
-                            dispatch(markEstimateSent(window.location.pathname.split('/')[3]))
-                        }}
-                    >
-                        Mark Sent
-                    </a>
-                    <a className='create__estimate__header--btn2'
-                        onClick={() => {
-                            dispatch(markEstimateVoid(window.location.pathname.split('/')[3]))
-                        }}
-                    >
-                        Mark Void
-                    </a> */}
                     <a className='create__estimate__header--btn1'>Download</a>
                     <a className='create__estimate__header--btn2'>Share</a>
                 </div>
@@ -192,7 +179,7 @@ const EstimateLayout = () => {
                             shippingCountry={shippingCountry} setShippingCountry={setShippingCountry}
                             shippingState={shippingState} setShippingState={setShippingState}
                         />
-                        <EstimateFormP2 items={items} setItems={setItems} currency={currency} 
+                        <EstimateFormP2 items={items} setItems={setItems} currency={currency}
                             termsAndConditions={termsAndConditions} setTermsAndConditions={setTermsAndConditions}
                             isSetDefaultTncCustomer={isSetDefaultTncCustomer} setIsSetDefaultTncCustomer={setIsSetDefaultTncCustomer}
                             isSetDefaultTncClient={isSetDefaultTncClient} setIsSetDefaultTncClient={setIsSetDefaultTncClient}

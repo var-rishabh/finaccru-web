@@ -13,7 +13,6 @@ const EstimateFormP2 = ({
     items, setItems, currency, termsAndConditions, setTermsAndConditions,
     isSetDefaultTncCustomer, setIsSetDefaultTncCustomer, isSetDefaultTncClient, setIsSetDefaultTncClient
 }) => {
-    const { user } = useSelector(state => state.userReducer);
     const { units, loading: unitLoading } = useSelector(state => state.unitReducer);
     const { taxRates, taxRateLoading } = useSelector(state => state.onboardingReducer);
     const [showDescription, setShowDescription] = useState([]);
@@ -91,6 +90,7 @@ const EstimateFormP2 = ({
             let discountAmount = 0;
             let taxAmount = 0
             const calculatedTax = [];
+            
             const calculateFinalAmount = items?.map((item) => {
                 const { qty, rate, discount, is_percentage_discount, tax_id } = item;
                 let finalRate = 0;
@@ -110,7 +110,7 @@ const EstimateFormP2 = ({
                     tax = overAllRate * (taxItem?.tax_percentage / 100);
                     taxAmount += tax;
                 }
-                calculatedTax.push(tax);
+                calculatedTax.push(parseFloat(tax.toFixed(2)));
 
                 const finalAmount = parseFloat((overAllRate + tax).toFixed(2));
                 return finalAmount;
@@ -220,7 +220,7 @@ const EstimateFormP2 = ({
                                                 handleInputChange(index, 'is_percentage_discount', value);
                                             }}
                                             defaultValue={item?.is_percentage_discount}
-                                            loading={unitLoading}
+                                            value={item?.is_percentage_discount}
                                             style={{
                                                 width: 40,
                                                 padding: 0
@@ -256,6 +256,7 @@ const EstimateFormP2 = ({
                                                 handleInputChange(index, 'tax_id', value);
                                             }}
                                             defaultValue={item?.tax_id}
+                                            value={item?.tax_id}
                                             loading={taxRateLoading}
                                         >
                                             {
@@ -339,7 +340,7 @@ const EstimateFormP2 = ({
                             <div className='estimate--details-tnc'>
                                 <h3>Add Terms and Conditions</h3>
                                 <TextArea
-                                    placeholder="Subject"
+                                    placeholder="Terms and Conditions"
                                     rows={5}
                                     value={termsAndConditions}
                                     onChange={(e) => setTermsAndConditions(e.target.value)}
@@ -376,10 +377,10 @@ const EstimateFormP2 = ({
                                 <span>Total</span>
                             </div>
                             <div className='estimate--details-right-info'>
-                                <span>{currency} &nbsp; {subTotal}</span>
-                                <span>{currency} &nbsp; {discount}</span>
-                                <span>{currency} &nbsp; {tax ? tax : 0}</span>
-                                <span>{currency} &nbsp; {total ? total : 0}</span>
+                                <span><p style={{fontWeight: 500}}>{currency}</p> &nbsp; {subTotal}</span>
+                                <span><p style={{fontWeight: 500}}>{currency}</p> &nbsp; {discount}</span>
+                                <span><p style={{fontWeight: 500}}>{currency}</p> &nbsp; {tax ? tax : 0}</span>
+                                <span><p style={{fontWeight: 500}}>{currency}</p> &nbsp; {total ? total : 0}</span>
                             </div>
                         </div>
                     </div>

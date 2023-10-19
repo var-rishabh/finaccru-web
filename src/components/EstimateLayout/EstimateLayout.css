@@ -660,6 +660,7 @@
 }
 
 .estimate--details-right-info>span {
+    display: flex;
     color: #000;
     font-family: 'Montserrat';
     text-align: right;
