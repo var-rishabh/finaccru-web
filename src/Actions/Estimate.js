@@ -2,6 +2,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import url from '../data/url';
 import { auth } from "../firebase";
+
 export const createEstimate = (data, navigate) => async (dispatch) => {
     try {
         dispatch({ type: "CreateEstimateRequest" });
@@ -14,7 +15,7 @@ export const createEstimate = (data, navigate) => async (dispatch) => {
         const response = await axios.post(`${url}/private/client/estimates/create`, data, config);
         dispatch({ type: "CreateEstimateSuccess", payload: response.data });
         toast.success("Estimate created successfully");
-        navigate("/estimate/view/" + response.data.id);
+        navigate("/estimate");
     }
     catch (err) {
         console.log(err);
@@ -132,6 +133,7 @@ export const markEstimateSent = (id) => async (dispatch) => {
         const response = await axios.put(`${url}/private/client/estimates/mark-sent/${id}`, {}, config);
         dispatch({ type: "EstimateMarkSentSuccess", payload: response.data });
         toast.success("Estimate marked as sent successfully");
+        dispatch(getEstimateDetails(id));
     }
     catch (err) {
         console.log(err);
@@ -152,6 +154,7 @@ export const markEstimateVoid = (id) => async (dispatch) => {
         const response = await axios.put(`${url}/private/client/estimates/mark-void/${id}`, {}, config);
         dispatch({ type: "EstimateMarkVoidSuccess", payload: response.data });
         toast.success("Estimate marked as void successfully");
+        dispatch(getEstimateDetails(id));
     }
     catch (err) {
         console.log(err);
