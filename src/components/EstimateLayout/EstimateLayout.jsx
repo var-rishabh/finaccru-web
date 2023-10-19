@@ -39,6 +39,7 @@ const EstimateLayout = () => {
 
     const isAdd = window.location.pathname.split('/')[2] === 'create';
     const { loading: estimateLoading, estimate, number } = useSelector(state => state.estimateReducer);
+    console.log("🚀 ~ estimate:", estimate);
     const { currencies, currencyLoading } = useSelector(state => state.onboardingReducer);
 
     useEffect(() => {
@@ -70,6 +71,15 @@ const EstimateLayout = () => {
             setCurrencyConversionRate(estimate?.currency_conversion_rate);
             setCurrency(currencyId !== 1 ? currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv : 'AED');
             setItems(estimate?.line_items || [{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
+            setShippingAddress1(estimate?.customer?.shipping_address_line_1);
+            setShippingAddress2(estimate?.customer?.shipping_address_line_2);
+            setShippingAddress3(estimate?.customer?.shipping_address_line_3);
+            setShippingCountry(estimate?.customer?.shipping_country);
+            setShippingState(estimate?.customer?.shipping_state);
+            setSubject(estimate?.subject);
+            setTermsAndConditions(estimate?.terms_and_conditions);
+            setIsSetDefaultTncCustomer(estimate?.is_set_default_tnc_customer);
+            setIsSetDefaultTncClient(estimate?.is_set_default_tnc_client);
         }
         if (window.location.pathname.split('/')[2] === 'create') {
             setEstimateNumber(number);

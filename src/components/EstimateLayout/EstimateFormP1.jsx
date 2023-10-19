@@ -5,7 +5,8 @@ import InfiniteScrollSelect from './InfiniteScrollSelect';
 import AddCustomerModal from '../Customer/AddCustomerModal/AddCustomerModal';
 import AddShippingAddress from '../Customer/AddShippingAddress/AddShippingAddress';
 
-import { Select } from 'antd';
+import { Select, Input } from 'antd';
+const { TextArea } = Input;
 const { Option } = Select;
 import GreenCross from '../../assets/Icons/greenCross.svg'
 
@@ -13,8 +14,19 @@ const EstimateFormP1 = ({
     estimateNumber, estimateDate, validTill, reference, subject, customerName, customerId, currency, currencyId, currencyConversionRate, shippingAddress1, shippingAddress2, shippingAddress3, shippingState, shippingCountry,
     setEstimateNumber, setEstimateDate, setValidTill, setReference, setSubject, setCustomerName, setCustomerId, setCurrency, setCurrencyId, setCurrencyConversionRate, setShippingAddress1, setShippingAddress2, setShippingAddress3, setShippingState, setShippingCountry
 }) => {
-    const filterOption = (input, option) =>
-        (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
+    const filterOption = (input, option) => {
+        return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
+    }
+    const filterOption2 = (input, option) => {
+        if (option?.key !== 'addShippingAddress') {
+            return option?.children?.some((child) => {
+                if (typeof child === 'string') {
+                    return child.toLowerCase().includes(input.toLowerCase());
+                }
+            })
+        }
+        return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
+    }
     const { user } = useSelector(state => state.userReducer);
     const { loading: customerLoading, customersInf, totalCustomers, customer } = useSelector(state => state.customerReducer);
     const [currentCustomerPage, setCurrentCustomerPage] = useState(1);
@@ -66,11 +78,17 @@ const EstimateFormP1 = ({
     }
 
     const onChangeShipping = (value) => {
+        console.log(value)
         if (value === 'addShippingAddress') {
             showShippingModal();
             return;
         }
         setShippingId(value);
+        setShippingAddress1(shippingAddresses?.find((address) => address.shipping_address_id === value)?.address_line_1);
+        setShippingAddress2(shippingAddresses?.find((address) => address.shipping_address_id === value)?.address_line_2);
+        setShippingAddress3(shippingAddresses?.find((address) => address.shipping_address_id === value)?.address_line_3);
+        setShippingState(shippingAddresses?.find((address) => address.shipping_address_id === value)?.state);
+        setShippingCountry(shippingAddresses?.find((address) => address.shipping_address_id === value)?.country);
         // const customer = customersInf.find((customer) => customer.customer_id === value.customer_id);
         // setCustomerName(customer.customer_name);
         // dispatch(getCustomerDetails(value.customer_id));
@@ -90,6 +108,12 @@ const EstimateFormP1 = ({
         setCustomerId(data.customer_id);
         setCustomerName(data.customer_name);
         setIsModalOpen(false);
+    }
+
+    const handleAddShippingAddressSubmit = (data) => {
+        dispatch(getShippingAddressList(customerId));
+        setShippingId(data.shipping_address_id);
+        setIsShippingModalOpen(false);
     }
 
     const addPage = (current) => {
@@ -164,14 +188,14 @@ const EstimateFormP1 = ({
                                     <span>{customer?.billing_state + ', ' + customer?.billing_country}</span>
                                     {customer?.trn && <span>TRN: {customer?.trn}</span>}
                                 </div>
-                                <img src={GreenCross} alt='close' className='estimate__for--anticon-close' onClick={() => { setCustomerName(''); setCustomerId(null) }} />
+                                <img src={GreenCross} alt='close' className='estimate__for--anticon-close' onClick={() => { setCustomerName(''); setCustomerId(null); setShippingId(null) }} />
                             </div>
                             : <>
                                 <InfiniteScrollSelect loadMoreOptions={addPage} onChange={onChangeCustomer} customerKeyword={customerKeyword} setCustomerKeyword={setCustomerKeyword} />
                             </>
 
                     }
-                    <AddCustomerModal openingModal={true} isModalOpen={isModalOpen} handleCustomerSubmit={handleCustomerSubmit} handleCancel={handleCancel} />
+                    <AddCustomerModal openingModal={true} isModalOpen={isModalOpen} handleCustomerSubmit={handleAddShippingAddressSubmit} handleCancel={handleCancel} />
                 </div>
                 <div className='estimate__form--part2-head-customer second-select'>
                     {
@@ -179,17 +203,17 @@ const EstimateFormP1 = ({
                             <>
                                 <h3 className='required__field'>Shipping Address</h3>
                                 {
-                                    shippingId ?
+                                    shippingId || shippingAddress1 ?
                                         <div className='estimate__form--customer-data'>
                                             <div className='estimate__form--customer-data-info'>
                                                 <span style={{ fontWeight: 500 }}>{customerName}</span>
-                                                <span>{customer?.billing_address_line_1}</span>
-                                                {customer?.billing_address_line_2 && <span>{customer?.billing_address_line_2}</span>}
-                                                {customer?.billing_address_line_3 && <span>{customer?.billing_address_line_3}</span>}
-                                                <span>{customer?.billing_state + ', ' + customer?.billing_country}</span>
-                                                {customer?.trn && <span>TRN: {customer?.trn}</span>}
+                                                <span>{shippingAddress1}</span>
+                                                {shippingAddress2 && <span>{shippingAddress2}</span>}
+                                                {shippingAddress3 && <span>{shippingAddress3}</span>}
+                                                <span>{shippingState + ', ' + shippingCountry}</span>
+
                                             </div>
-                                            <img src={GreenCross} alt='close' className='estimate__for--anticon-close' onClick={() => { setCustomerName(''); setCustomerId(null) }} />
+                                            <img src={GreenCross} alt='close' className='estimate__for--anticon-close' onClick={() => { setShippingId(null); setShippingAddress1(null); setShippingAddress2(null); setShippingAddress3(null); setShippingState(null); setShippingCountry(null); dispatch(getShippingAddressList(customerId)) }} />
                                         </div>
                                         : <>
                                             <Select
@@ -198,7 +222,7 @@ const EstimateFormP1 = ({
                                                 optionFilterProp='children'
                                                 value={shippingId}
                                                 onChange={onChangeShipping}
-                                                filterOption={filterOption}
+                                                filterOption={filterOption2}
                                             >
                                                 <Option style={{ fontWeight: 600 }} key="addShippingAddress" value="addShippingAddress">
                                                     Add Shipping Address
@@ -206,17 +230,14 @@ const EstimateFormP1 = ({
                                                 {
                                                     shippingAddresses?.map((address) => (
                                                         <Option style={{ fontWeight: 400, height: 'max-content' }} key={address.shipping_address_id} value={address.shipping_address_id}>
-                                                            {address.address_line_1}, <br/> 
-                                                            {address.address_line_2 ? address.address_line_2 + ", " : "" } {address.address_line_3 ? address.address_line_3 + ", " : ""}
-                                                            {address.address_line_2 ? <br/> : ""}
-                                                            {address.state}, {address.country}
+                                                            {address.address_line_1}, {address.address_line_2 ? address.address_line_2 + ", " : ""} {address.address_line_3 ? address.address_line_3 + ", " : ""} {address.state}, {address.country}
                                                         </Option>
                                                     ))
                                                 }
                                             </Select>
                                         </>
                                 }
-                                <AddShippingAddress isShippingModalOpen={isShippingModalOpen} handleCustomerSubmit={handleCustomerSubmit} handleShippingCancel={handleShippingCancel} />
+                                <AddShippingAddress isShippingModalOpen={isShippingModalOpen} handleAddShippingAddressSubmit={handleCustomerSubmit} handleShippingCancel={handleShippingCancel} customerId={customerId} />
                             </> : <></>
 
                     }
@@ -253,6 +274,15 @@ const EstimateFormP1 = ({
                         <span>AED</span>
                     </div>
                 </div>
+            </div>
+            <div className='estimate__form--part4-head'>
+                <h3>Subject</h3>
+                <TextArea
+                    placeholder="Subject"
+                    rows={1}
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                />
             </div>
         </div>
     )

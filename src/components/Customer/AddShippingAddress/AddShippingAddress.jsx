@@ -52,7 +52,7 @@ const AddShippingAddress = ({ isShippingModalOpen, handleShippingCancel, custome
             state: state,
             country: country
         }
-        dispatch(createShippingAddress(customerId, values, handleAddShippingAddressSubmit));
+        dispatch(createShippingAddress(values, customerId, handleAddShippingAddressSubmit));
         setLabel(null);
         setAddress1('');
         setAddress2(null);

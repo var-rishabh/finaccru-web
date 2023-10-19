@@ -14,7 +14,7 @@ export const createEstimate = (data, navigate) => async (dispatch) => {
         const response = await axios.post(`${url}/private/client/estimates/create`, data, config);
         dispatch({ type: "CreateEstimateSuccess", payload: response.data });
         toast.success("Estimate created successfully");
-        navigate("/estimate");
+        navigate("/estimate/view/" + response.data.id);
     }
     catch (err) {
         console.log(err);

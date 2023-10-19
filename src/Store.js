@@ -4,6 +4,7 @@ import { onboardingReducer } from './Reducers/Onboarding';
 import { customerReducer } from './Reducers/Customer';
 import { estimateReducer } from './Reducers/Estimate';
 import { unitReducer } from './Reducers/Unit';
+import { invoiceReducer } from './Reducers/Invoice';
 
 const store = configureStore({
     reducer: {
@@ -13,6 +14,7 @@ const store = configureStore({
         customerReducer: customerReducer,
         estimateReducer: estimateReducer,
         unitReducer: unitReducer,
+        invoiceReducer: invoiceReducer,
     },
 });
 

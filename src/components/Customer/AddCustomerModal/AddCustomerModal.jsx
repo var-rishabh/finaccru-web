@@ -37,7 +37,7 @@ const AddCustomerModal = ({ isModalOpen, handleCancel, handleCustomerSubmit }) =
     const [billingState, setBillingState] = useState(null);
     const [allBillingState, setAllBillingStates] = useState(uaeStates);
     const [openingBalance, setOpeningBalance] = useState(null);
-    const [openingBalanceDate, setOpeningBalanceDate] = useState(null);
+    const [openingBalanceDate, setOpeningBalanceDate] = useState("");
 
     const handleCountryPhoneCodeChange = (value) => {
         const countryPhoneCode = value;
@@ -136,29 +136,29 @@ const AddCustomerModal = ({ isModalOpen, handleCancel, handleCustomerSubmit }) =
             opening_balance_date: openingBalanceDate === "" ? null : openingBalanceDate,
         }
         dispatch(createCustomer(customer, handleCustomerSubmit));
-        // setCustomerName("");
-        // setEmail("");
-        // setPhone("");
-        // setDisplayName("");
-        // setAddress1("");
-        // setAddress2("");
-        // setAddress3("");
-        // setBillingAddress1("");
-        // setBillingAddress2("");
-        // setBillingAddress3("");
-        // setSameBillingAddress(false);
-        // setContactName("");
-        // setTrnNumber("");
-        // setCountry("United Arab Emirates");
-        // setSelectedCountry("ae");
-        // setBillingCountry("United Arab Emirates");
-        // setSelectedBillingCountry("ae");
-        // setState(null);
-        // setAllStates(uaeStates);
-        // setBillingState(null);
-        // setAllBillingStates(uaeStates);
-        // setOpeningBalance(null);
-        // setOpeningBalanceDate(null);
+        setCustomerName("");
+        setEmail("");
+        setPhone("");
+        setDisplayName("");
+        setAddress1("");
+        setAddress2("");
+        setAddress3("");
+        setBillingAddress1("");
+        setBillingAddress2("");
+        setBillingAddress3("");
+        setSameBillingAddress(false);
+        setContactName("");
+        setTrnNumber("");
+        setCountry("United Arab Emirates");
+        setSelectedCountry("ae");
+        setBillingCountry("United Arab Emirates");
+        setSelectedBillingCountry("ae");
+        setState(null);
+        setAllStates(uaeStates);
+        setBillingState(null);
+        setAllBillingStates(uaeStates);
+        setOpeningBalance(null);
+        setOpeningBalanceDate("");
     }
 
     const handleCancelWithReset = () => {
@@ -184,7 +184,7 @@ const AddCustomerModal = ({ isModalOpen, handleCancel, handleCustomerSubmit }) =
         setBillingState(null);
         setAllBillingStates(uaeStates);
         setOpeningBalance(null);
-        setOpeningBalanceDate(null);
+        setOpeningBalanceDate("");
         handleCancel();
     }
 

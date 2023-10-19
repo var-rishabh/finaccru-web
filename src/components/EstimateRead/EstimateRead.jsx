@@ -11,6 +11,9 @@ import logo from "../../assets/Icons/cropped_logo.svg"
 import PdfDownload from '../PdfDownload/PdfDownload';
 
 const EstimateReadLayout = () => {
+    const handleDownload = () => {
+    }
+
     const navigate = useNavigate();
     const { user } = useSelector(state => state.userReducer);
     const estimate_id = window.location.pathname.split('/')[3];
