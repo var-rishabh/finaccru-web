@@ -24,6 +24,8 @@ const EstimateReadLayout = () => {
     const [itemTotal, setItemTotal] = useState([]);
     const [itemTax, setItemTax] = useState([]);
 
+    const [groupedItems, setGroupedItems] = useState([]);
+
     const [subTotal, setSubTotal] = useState(0);
     const [discount, setDiscount] = useState(0);
     const [tax, setTax] = useState(0);
@@ -56,8 +58,8 @@ const EstimateReadLayout = () => {
                     overAllRate = finalRate * qty;
                     discountAmount += (rate - finalRate) * qty;
                 } else {
-                    discountAmount += +discount;
-                    overAllRate = rate * qty - discount;
+                    discountAmount += ((+discount) * qty);
+                    overAllRate = (rate - discount) * qty;
                 }
                 subTotalAmount += rate * qty;
                 let tax = 0;
@@ -76,6 +78,7 @@ const EstimateReadLayout = () => {
             setDiscount(parseFloat(discountAmount.toFixed(2)));
             setTax(parseFloat(taxAmount.toFixed(2)));
             setTotal(parseFloat((subTotalAmount - discountAmount + taxAmount).toFixed(2)));
+            setItemTax(calculatedTax);
 
             return calculateFinalAmount;
         };
@@ -84,11 +87,29 @@ const EstimateReadLayout = () => {
         setItemTotal(calculateTotalAmount);
     }, [estimate, taxRates]);
 
-    // const groupedByTaxId = taxRates.map((taxRate) => ({
-    //     tax_id: taxRate.tax_rate_id,
-    //     tax_rate_name: taxRate.tax_rate_name,
-    //     totalTaxAmount: itemTotal && itemTotal?.reduce((acc, curr, idx) => estimate?.line_items[idx].tax_id === taxRate.tax_rate_id ? acc + curr : acc, 0),
-    // }));
+    useEffect(() => {
+        const groupedByTaxId = estimate?.line_items?.reduce((acc, item, index) => {
+            const existingGroup = acc.find((group) => group.tax_id === item.tax_id);
+            if (existingGroup) {
+                existingGroup.taxable_amount += (itemTotal?.at(index) - itemTax?.at(index));
+                existingGroup.tax_amount += (itemTax?.at(index));
+                existingGroup.total_amount += (itemTotal?.at(index));
+            } else {
+                const taxItem = taxRates?.find((tr) => tr.tax_rate_id === item.tax_id);
+                acc.push({
+                    tax_id: item.tax_id,
+                    tax_rate_name: taxItem.tax_rate_name,
+                    taxable_amount: (itemTotal?.at(index) - itemTax?.at(index)),
+                    tax_amount: (itemTax?.at(index)),
+                    total_amount: (itemTotal?.at(index)),
+                });
+            }
+            return acc;
+        }, []);
+
+        setGroupedItems(groupedByTaxId);
+    }, [itemTotal, itemTax, estimate, taxRates]);
+
 
     return (
         <>
@@ -177,7 +198,6 @@ const EstimateReadLayout = () => {
                                 <div className='read__estimate--part2-right'>
                                     <h3>Shipping Address</h3>
                                     <div className='read__estimate--customer-data'>
-                                        {estimate?.customer?.shipping_address_lable && <span>{estimate?.customer?.shipping_address_label}</span>}
                                         <span>{estimate?.customer?.shipping_address_line_1}</span>
                                         {estimate?.customer?.shipping_address_line_2 && <span>{estimate?.customer?.shipping_address_line_2}</span>}
                                         {estimate?.customer?.shipping_address_line_3 && <span>{estimate?.customer?.shipping_address_line_3}</span>}
@@ -189,9 +209,6 @@ const EstimateReadLayout = () => {
                             <div className='read__estimate--part3-head'>
                                 <h3> Currency</h3>
                                 <div className='read__estimate--currency'>
-                                    <div className='read__estimate--select-currency'>
-                                        <p>{currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv}</p>
-                                    </div>
                                     <div className='read__estimate--currency-conversion'>
                                         <span>1</span>
                                         <span>{currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv} =</span>
@@ -234,24 +251,21 @@ const EstimateReadLayout = () => {
                                         <div className='read__estimate__items--discount'>
                                             {index === 0 ? <span style={{ marginBottom: '1rem', marginLeft: '3px' }}>Discount</span> : <></>}
                                             <p>
-                                                <span>{item?.discount}</span>
+                                                <span style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', paddingRight: "0.5rem" }}>{item?.discount}</span>
                                                 <span className='discount__symbol'>
                                                     {item?.is_percentage_discount ? '%' : '$'}
                                                 </span>
                                             </p>
                                         </div>
                                         <div className='read__estimate__items--tax'>
-                                            {/* {index === 0 ? <span style={{ marginBottom: '0.9rem' }}>Tax</span> : <></>}
-                                            <p>
-                                                <span>{itemTax && itemTax[index]}</span>
-                                                <span className='tax__rate__names'>
-                                                    {taxRates?.find((tax) => tax.tax_rate_id === item?.tax_id)?.tax_rate_name}
-                                                </span>
-                                            </p> */}
                                             {index === 0 ? <span style={{ marginBottom: '0.9rem' }}>Tax</span> : <></>}
-                                            <p>{
-                                                taxRates?.find((tax) => tax.tax_rate_id === item?.tax_id)?.tax_rate_name
-                                            }</p>
+                                            <p className={item?.tax_id === 1 ? 'standard__tax-style' : 'non-standard__tax-style'}>
+                                                <span className='tax__amount'>{itemTax && itemTax[index]}</span>
+                                                <span className='tax__rate__names'>
+                                                    {taxRates?.find((tax) => tax.tax_rate_id === item?.tax_id)?.tax_rate_name == 'Standard Rated (5%)' ?
+                                                        '(5%)' : taxRates?.find((tax) => tax.tax_rate_id === item?.tax_id)?.tax_rate_name}
+                                                </span>
+                                            </p>
                                         </div>
                                         <div className='read__estimate__items--amount'>
                                             {index === 0 ? <span style={{ marginBottom: '1rem' }}>Amount</span> : <></>}
@@ -290,7 +304,7 @@ const EstimateReadLayout = () => {
                                             </div>
                                         </div>
                                         {
-                                            user?.clientInfo?.bank_accounts.map((bank, index) => (
+                                            user?.clientInfo?.other_bank_accounts?.map((bank, index) => (
                                                 <div className='read__estimate--details-main' key={index}>
                                                     <div className='read__estimate--details-left-head'>
                                                         <span>Bank Name</span>
@@ -316,10 +330,34 @@ const EstimateReadLayout = () => {
                                             <span>Total</span>
                                         </div>
                                         <div className='read__estimate--details-right-info'>
-                                            <span><p style={{ fontWeight: 500 }}>{currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv}</p> &nbsp; {subTotal}</span>
-                                            <span><p style={{ fontWeight: 500 }}>{currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv}</p> &nbsp; {discount}</span>
-                                            <span><p style={{ fontWeight: 500 }}>{currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv}</p> &nbsp; {tax}</span>
-                                            <span><p style={{ fontWeight: 500 }}>{currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv}</p> &nbsp; {total}</span>
+                                            <span>
+                                                <p style={{ fontWeight: 500 }}>
+                                                    {currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv}
+                                                </p>
+                                                &nbsp; {new Intl.NumberFormat('en-US', {
+                                                }).format(subTotal)}
+                                            </span>
+                                            <span>
+                                                <p style={{ fontWeight: 500 }}>
+                                                    {currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv}
+                                                </p>
+                                                &nbsp; {new Intl.NumberFormat('en-US', {
+                                                }).format(discount)}
+                                            </span>
+                                            <span>
+                                                <p style={{ fontWeight: 500 }}>
+                                                    {currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv}
+                                                </p>
+                                                &nbsp; {new Intl.NumberFormat('en-US', {
+                                                }).format(tax)}
+                                            </span>
+                                            <span>
+                                                <p style={{ fontWeight: 500 }}>
+                                                    {currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv}
+                                                </p>
+                                                &nbsp; {new Intl.NumberFormat('en-US', {
+                                                }).format(total)}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -342,19 +380,38 @@ const EstimateReadLayout = () => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {/* {groupedByTaxId.map((item, idx) => item.totalTaxAmount !== 0 && (
+                                            {groupedItems?.map((item, idx) => item.totalTaxAmount !== 0 && (
                                                 <tr key={idx}>
                                                     <td className='thin__table__font align__text__left'>{item.tax_rate_name}</td>
-                                                    <td className='thin__table__font align__text__right'>{subTotal}</td>
-                                                    <td className='thin__table__font align__text__right'>{itemTotal[idx]}</td>
-                                                    <td className='thin__table__font align__text__right'>{total}</td>
+                                                    <td className='thin__table__font align__text__right'>
+                                                        {new Intl.NumberFormat('en-US', {
+                                                        }).format(parseFloat(((item.taxable_amount) * (estimate?.currency_conversion_rate || 1)).toFixed(2)))}
+                                                    </td>
+                                                    <td className='thin__table__font align__text__right'>
+                                                        {new Intl.NumberFormat('en-US', {
+                                                        }).format(parseFloat(((item.tax_amount) * (estimate?.currency_conversion_rate || 1)).toFixed(2)))}
+                                                    </td>
+                                                    <td className='thin__table__font align__text__right'>
+                                                        {new Intl.NumberFormat('en-US', {
+                                                        }).format(parseFloat(((item.total_amount) * (estimate?.currency_conversion_rate || 1)).toFixed(2)))}
+                                                    </td>
                                                 </tr>
-                                            ))} */}
+                                            ))}
                                             <tr>
                                                 <td className='bold__table__font align__text__left'>Total</td>
-                                                <td className='bold__table__font align__text__right'>{subTotal}</td>
-                                                <td className='bold__table__font align__text__right'>{tax}</td>
-                                                <td className='bold__table__font align__text__right'>{total}</td>
+                                                <td className='bold__table__font align__text__right'>
+                                                    {new Intl.NumberFormat('en-US', {
+                                                    }).format(parseFloat(((subTotal - discount) * (estimate?.currency_conversion_rate || 1)).toFixed(2)))
+                                                    }
+                                                </td>
+                                                <td className='bold__table__font align__text__right'>
+                                                    {new Intl.NumberFormat('en-US', {
+                                                    }).format(parseFloat(((tax) * (estimate?.currency_conversion_rate || 1)).toFixed(2)))}
+                                                </td>
+                                                <td className='bold__table__font align__text__right'>
+                                                    {new Intl.NumberFormat('en-US', {
+                                                    }).format(parseFloat(((total) * (estimate?.currency_conversion_rate || 1)).toFixed(2)))}
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
