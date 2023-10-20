@@ -156,7 +156,7 @@ const ProformaFormP1 = ({
                             value={proformaNumber}
                             onChange={(e) => {
                                 const input = e.target.value
-                                setProformaNumber("EST-" + input.substr("EST-".length))
+                                setProformaNumber("PI-" + input.substr("PI-".length))
                             }}
                         />
                     </div>
