@@ -41,6 +41,7 @@ const EstimateLayout = () => {
     const { user } = useSelector(state => state.userReducer);
     const { loading: estimateLoading, estimate, number } = useSelector(state => state.estimateReducer);
     const { currencies, currencyLoading } = useSelector(state => state.onboardingReducer);
+    const { customer } = useSelector(state => state.customerReducer);
 
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
@@ -51,14 +52,19 @@ const EstimateLayout = () => {
         if (window.location.pathname.split('/')[2] === 'create') {
             dispatch(getCurrency());
             dispatch(getNewEstimateNumber());
-
         }
     }, [dispatch]);
+
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
             dispatch(getCustomerDetails(estimate?.customer?.customer_id));
         }
     }, [dispatch, estimate?.customer?.customer_id]);
+
+    useEffect(() => {
+        setTermsAndConditions(customer?.terms_and_conditions ? customer?.terms_and_conditions : termsAndConditions);
+    }, [customer, termsAndConditions]);
+        
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
             setEstimateNumber(estimate?.estimate_number);
@@ -178,6 +184,7 @@ const EstimateLayout = () => {
                             shippingAddress3={shippingAddress3} setShippingAddress3={setShippingAddress3}
                             shippingCountry={shippingCountry} setShippingCountry={setShippingCountry}
                             shippingState={shippingState} setShippingState={setShippingState}
+                            termsAndConditions={termsAndConditions} setTermsAndConditions={setTermsAndConditions}
                         />
                         <EstimateFormP2 items={items} setItems={setItems} currency={currency}
                             termsAndConditions={termsAndConditions} setTermsAndConditions={setTermsAndConditions}

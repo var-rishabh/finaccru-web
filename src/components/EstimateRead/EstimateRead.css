@@ -242,8 +242,7 @@
 
 .read__estimate--currency-conversion>p {
     border: none;
-    border-bottom: 1px solid var(--main-color);
-    width: 4rem;
+    width: max-content;
     text-align: center;
 }
 
@@ -262,12 +261,12 @@
 
 .read__estimate--part4-head>p {
     border-radius: 0.25rem;
-    border: 1px solid #C9EFD8;
+    border: none;
     background: #FFF;
     color: black;
     font-size: 0.75rem;
     font-weight: 300;
-    padding: 0.5rem 1rem;
+    padding-top: 0.2rem;
 }
 
 
@@ -307,12 +306,73 @@
     justify-content: center;
 }
 
+.read__estimate__items--tax p {
+    text-align: left !important;
+    width: 10rem;
+    max-width: 10rem;
+    display: flex;
+    align-items: center;
+    border-radius: 0.25rem;
+    border: 1px solid #36BAA6;
+    background: #FFF;
+    color: #3463AE;
+    font-size: 0.75rem;
+    font-weight: 400;
+    height: 2.3rem;
+    max-height: 2.3rem;
+    overflow: hidden;
+    -webkit-border-radius: 0.25rem;
+    -moz-border-radius: 0.25rem;
+    -ms-border-radius: 0.25rem;
+    -o-border-radius: 0.25rem;
+}
+
+.read__estimate__items--tax p .tax__amount {
+    background: #FFF;
+    color: black !important;
+    font-size: 0.75rem !important;
+    font-weight: 400 !important;
+    height: 2.1rem !important;
+    text-align: right;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.read__estimate__items--tax p .tax__rate__names {
+    display: flex;
+    align-items: center;
+    background: #ECF1F3;
+    border-left: 1px solid #36BAA6;
+    padding-left: 0.5rem;
+    color: black !important;
+    font-size: 0.75rem !important;
+    font-weight: 400 !important;
+    height: 2.1rem !important;
+    text-align: right;
+}
+
+.read__estimate__items--tax .standard__tax-style .tax__amount {
+    width: 70%;
+}
+
+.read__estimate__items--tax .non-standard__tax-style .tax__amount {
+    width: 30%;
+}
+
+.read__estimate__items--tax .standard__tax-style .tax__rate__names {
+    width: 30%;
+}
+
+.read__estimate__items--tax .non-standard__tax-style .tax__rate__names {
+    width: 70%;
+}
+
 .read__estimate__items--itemName p,
 .read__estimate__items--unitSelect p,
 .read__estimate__items--number-item.qty p,
 .read__estimate__items--number-item.rate p,
 .read__estimate__items--discount p,
-.read__estimate__items--tax p,
 .read__estimate__items--amount p {
     display: flex;
     align-items: center;
@@ -334,23 +394,19 @@
 }
 
 .read__estimate__items--amount p {
-    padding: 0.2rem 2rem 0.2rem 0.5rem;
-    text-align: left !important;
+    padding: 0.2rem 0.5rem 0.2rem 0.2rem;
+    display: flex;
+    justify-content: flex-end;
+    text-align: right !important;
     width: 7rem;
     max-width: 7rem;
 }
 
-.read__estimate__items--tax p {
-    padding: 0.2rem 0.2rem 0.2rem 0.5rem;
-    text-align: left !important;
-    width: 9.5rem;
-    max-width: 9.5rem;
-}
-
 .read__estimate__items--number-item.qty p,
 .read__estimate__items--number-item.rate p {
-    padding: 0.2rem 2rem 0.2rem 0.5rem;
-    text-align: left !important;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0.2rem 0.5rem 0.2rem 0.2rem;
     width: 6rem;
     max-width: 6rem;
 }
@@ -428,13 +484,17 @@
 }
 
 @media screen and (max-width: 1500px) {
+    .read__estimate__items--tax p {
+        padding: 0.2rem 0.2rem 0.2rem 0.5rem;
+        width: 8.5rem;
+        max-width: 8.5rem;
+    }
 
     .read__estimate__items--itemName p,
     .read__estimate__items--unitSelect p,
     .read__estimate__items--number-item.qty p,
     .read__estimate__items--number-item.rate p,
     .read__estimate__items--discount p,
-    .read__estimate__items--tax p,
     .read__estimate__items--amount p {
         font-size: 0.7rem;
         height: 2rem;
@@ -453,12 +513,6 @@
         padding: 0.2rem 0.5rem;
         width: 5rem;
         max-width: 5rem;
-    }
-
-    .read__estimate__items--tax p {
-        padding: 0.2rem 0.2rem 0.2rem 0.5rem;
-        width: 8.5rem;
-        max-width: 8.5rem;
     }
 
     .read__estimate__items--number-item.qty p,
@@ -569,7 +623,7 @@
 
 .read__estimate--details-right {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     gap: 3rem;
     width: 40%;
@@ -603,6 +657,8 @@
     font-family: 'Montserrat';
     font-size: 1rem;
     font-weight: 500;
+    text-align: right;
+    justify-content: flex-end;
 }
 
 .read__estimate--details-bottom {
@@ -642,7 +698,7 @@
 
 .tax-table th,
 .tax-table td {
-    padding: 8px;
+    padding: 8px 0 8px 0;
     text-align: center;
 }
 
@@ -685,12 +741,12 @@
 
 .read__estimate--tnc-data>p {
     border-radius: 0.25rem;
-    border: 1px solid #C9EFD8;
+    border: none;
     background: #FFF;
     color: black;
     font-size: 0.75rem;
     font-weight: 300;
-    padding: 0.5rem 1rem;
+    padding: 0;
     white-space: initial;
     word-wrap: break-word;
     word-break: break-all;

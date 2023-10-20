@@ -15,6 +15,8 @@ const EstimateFormP2 = ({
 }) => {
     const { units, loading: unitLoading } = useSelector(state => state.unitReducer);
     const { taxRates, taxRateLoading } = useSelector(state => state.onboardingReducer);
+    const { customer } = useSelector(state => state.customerReducer);
+
     const [showDescription, setShowDescription] = useState([]);
 
     const [itemTotal, setItemTotal] = useState([]);
@@ -90,7 +92,7 @@ const EstimateFormP2 = ({
             let discountAmount = 0;
             let taxAmount = 0
             const calculatedTax = [];
-            
+
             const calculateFinalAmount = items?.map((item) => {
                 const { qty, rate, discount, is_percentage_discount, tax_id } = item;
                 let finalRate = 0;
@@ -100,8 +102,8 @@ const EstimateFormP2 = ({
                     overAllRate = finalRate * qty;
                     discountAmount += (rate - finalRate) * qty;
                 } else {
-                    discountAmount += +discount;
-                    overAllRate = rate * qty - discount;
+                    discountAmount += ((+discount) * qty);
+                    overAllRate = (rate - discount) * qty;
                 }
                 subTotalAmount += rate * qty;
                 let tax = 0;
@@ -246,9 +248,6 @@ const EstimateFormP2 = ({
                                     value={itemTax[index]}
                                     defaultValue={itemTax[index]}
                                     disabled={true}
-                                    style={{
-                                        width: 160
-                                    }}
                                     className={item?.tax_id === 1 ? 'tax__select--standard' : 'tax__select--non-standard'}
                                     addonAfter={
                                         <Select
@@ -377,10 +376,26 @@ const EstimateFormP2 = ({
                                 <span>Total</span>
                             </div>
                             <div className='estimate--details-right-info'>
-                                <span><p style={{fontWeight: 500}}>{currency}</p> &nbsp; {subTotal}</span>
-                                <span><p style={{fontWeight: 500}}>{currency}</p> &nbsp; {discount}</span>
-                                <span><p style={{fontWeight: 500}}>{currency}</p> &nbsp; {tax ? tax : 0}</span>
-                                <span><p style={{fontWeight: 500}}>{currency}</p> &nbsp; {total ? total : 0}</span>
+                                <span>
+                                    <p style={{ fontWeight: 500 }}>{currency}</p>
+                                    &nbsp; {new Intl.NumberFormat('en-US', {
+                                    }).format(subTotal)}
+                                </span>
+                                <span>
+                                    <p style={{ fontWeight: 500 }}>{currency}</p>
+                                    &nbsp; {new Intl.NumberFormat('en-US', {
+                                    }).format(discount)}
+                                </span>
+                                <span>
+                                    <p style={{ fontWeight: 500 }}>{currency}</p>
+                                    &nbsp; {new Intl.NumberFormat('en-US', {
+                                    }).format(tax)}
+                                </span>
+                                <span>
+                                    <p style={{ fontWeight: 500 }}>{currency}</p>
+                                    &nbsp; {new Intl.NumberFormat('en-US', {
+                                    }).format(total)}
+                                </span>
                             </div>
                         </div>
                     </div>

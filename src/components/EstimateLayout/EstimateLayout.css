@@ -199,7 +199,8 @@
 }
 
 .estimate__for--anticon-close {
-    width: 1rem;
+    width: 0.7rem;
+    color: #36BAA6;
     cursor: pointer;
 }
 
@@ -235,7 +236,7 @@
     width: 100% !important;
     max-width: 18rem !important;
     border-radius: 0.25rem !important;
-    border: 1px solid #36BAA6 !important;
+    border: 1px solid #C9EFD8 !important;
     -webkit-border-radius: 0.25rem !important;
     -moz-border-radius: 0.25rem !important;
     -ms-border-radius: 0.25rem !important;
@@ -256,7 +257,7 @@
 
 .estimate__form--currency-conversion>input {
     border: none;
-    border-bottom: 1px solid var(--main-color);
+    border-bottom: 1px solid #C9EFD8;
     width: 4rem;
     text-align: center;
 }
@@ -273,8 +274,9 @@
 
 .estimate__form--part4-head>textarea {
     margin: 0.5rem 0;
+    padding-top: 0.3rem;
     border-radius: 0.25rem;
-    border: 1px solid #36BAA6;
+    border: 1px solid #C9EFD8;
     background: #FFF;
     color: black;
     font-size: 0.75rem;
@@ -287,7 +289,7 @@
     box-shadow: none;
     margin: 0.5rem 0;
     border-radius: 0.25rem;
-    border: 1px solid #36BAA6;
+    border: 1px solid #C9EFD8;
     background: #FFF;
     color: black;
     font-size: 0.75rem;
@@ -416,10 +418,15 @@
     text-align: right;
 }
 
+.estimate__items--tax {
+    width: 12rem;
+}
+
 .estimate__items--tax .ant-input-group-wrapper:hover,
 .estimate__items--tax .ant-input-group-wrapper:active,
 .estimate__items--tax .ant-input-group-wrapper:focus,
 .estimate__items--tax .ant-input-group-wrapper {
+    width: 100%;
     border-radius: 0.25rem !important;
     border: 1px solid #36BAA6 !important;
     height: 2.1rem !important;
@@ -432,14 +439,8 @@
 
 .estimate__items--tax .ant-input-group-wrapper .ant-input-group {
     border: none !important;
-}
-
-.estimate__items--tax .ant-input-group-wrapper .ant-input-group .ant-input-group-addon .ant-select .ant-select-selector {
-    padding: 0.2rem 0 0 0.2rem !important;
-    width: 10rem !important;
-    text-align: left;
-    font-size: 0.8rem;
-    overflow: hidden;
+    width: 100%;
+    display: flex;
 }
 
 .estimate__items--tax .ant-input-group-wrapper .ant-input-group .ant-input {
@@ -451,20 +452,43 @@
     text-align: right;
 }
 
-.estimate__items--tax .tax__select--standard .ant-input-wrapper .ant-input {
-    width: 6rem;
+.estimate__items--tax .tax__select--standard .ant-input-group .ant-input {
+    width: 70%;
 }
 
-.estimate__items--tax .tax__select--non-standard .ant-input-wrapper .ant-input {
-    width: 2rem;
+.estimate__items--tax .tax__select--non-standard .ant-input-group .ant-input {
+    width: 20%;
 }
+
+.estimate__items--tax .tax__select--standard .ant-input-group .ant-input-group-addon {
+    width: 30%;
+}
+
+.estimate__items--tax .tax__select--non-standard .ant-input-group .ant-input-group-addon {
+    width: 80%;
+}
+
+.estimate__items--tax .ant-input-group-wrapper .ant-input-wrapper .ant-input-group-addon {
+    padding: 0 !important;
+}
+
+.estimate__items--tax .ant-input-group-wrapper .ant-input-wrapper .ant-input-group-addon .ant-select {
+    margin: 0 !important;
+}
+
+.estimate__items--tax .ant-input-group-wrapper .ant-input-wrapper .ant-input-group-addon .ant-select .ant-select-selector {
+    display: flex;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    width: 10rem;
+}
+
+/* .estimate__items--tax .tax__select--standard .ant-input-group .ant-input-group-addon .ant-select .ant-select-arrow {
+    padding-right: 5.5rem;
+} */
 
 .estimate__items--tax .tax__select--non-standard .ant-input-group .ant-input-group-addon .ant-select .ant-select-arrow {
-    padding-right: 1.8rem;
-}
-
-.estimate__items--tax .tax__select--standard .ant-input-group .ant-input-group-addon .ant-select .ant-select-arrow {
-    padding-right: 6rem;
+    padding-right: 0.5rem;
 }
 
 .estimate__items--amount .ant-input {
@@ -609,7 +633,7 @@
 .estimate--details-tnc>textarea:focus,
 .estimate--details-tnc>textarea {
     border-radius: 0.25rem !important;
-    border: 1px solid #36BAA6 !important;
+    border: 1px solid #C9EFD8 !important;
     color: black;
     box-shadow: none;
 }
@@ -630,9 +654,9 @@
 }
 
 .estimate--details-right {
-    margin-top: 1.8rem;
+    margin: 1.8rem 0 0 3rem;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     gap: 3rem;
     width: 50%;
@@ -664,6 +688,8 @@
     color: #000;
     font-family: 'Montserrat';
     text-align: right;
+    display: flex;
+    justify-content: flex-end;
     font-size: 1rem;
     font-weight: 500;
 }
@@ -673,7 +699,7 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    padding-right: 4rem;
+    padding-right: 3rem;
 }
 
 .estimate__form--submit-btn>button {

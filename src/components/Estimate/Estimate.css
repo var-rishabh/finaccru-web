@@ -30,12 +30,15 @@
     background-color: #fff;
 }
 
-.ant-input,
-.ant-input:hover,
-.ant-input:focus,
-.ant-input::placeholder {
-    color: #5D5FEF;
-    border-color: #5541D7;
+.estimate__header--left .ant-input,
+.estimate__header--left .ant-input:hover,
+.estimate__header--left .ant-input:focus { 
+    color: black;
+    border-color: #3463AE;
+}
+.estimate__header--left .ant-input::placeholder {
+    color: #3463AE;
+    opacity: 0.5;
 }
 
 .estimate__header--right {
@@ -105,7 +108,8 @@ th.ant-table-cell {
 
 .action__buttons {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: flex-end !important;
+    gap: 1rem;
 }
 
 .action__button {

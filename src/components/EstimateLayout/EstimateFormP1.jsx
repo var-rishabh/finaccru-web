@@ -8,28 +8,29 @@ import AddShippingAddress from '../Customer/AddShippingAddress/AddShippingAddres
 import { Select, Input } from 'antd';
 const { TextArea } = Input;
 const { Option } = Select;
-import GreenCross from '../../assets/Icons/greenCross.svg'
+import { CloseOutlined } from '@ant-design/icons';
 
 const EstimateFormP1 = ({
     estimateNumber, estimateDate, validTill, reference, subject, customerName, customerId, currency, currencyId, currencyConversionRate, shippingAddress1, shippingAddress2, shippingAddress3, shippingState, shippingCountry,
-    setEstimateNumber, setEstimateDate, setValidTill, setReference, setSubject, setCustomerName, setCustomerId, setCurrency, setCurrencyId, setCurrencyConversionRate, setShippingAddress1, setShippingAddress2, setShippingAddress3, setShippingState, setShippingCountry
+    setEstimateNumber, setEstimateDate, setValidTill, setReference, setSubject, setCustomerName, setCustomerId, setCurrency, setCurrencyId, setCurrencyConversionRate, setShippingAddress1, setShippingAddress2, setShippingAddress3, setShippingState, setShippingCountry,
+    termsAndConditions, setTermsAndConditions
 }) => {
     const filterOption = (input, option) => {
         return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
     }
-    const filterOption2 = (input, option) => {
-        if (option?.key !== 'addShippingAddress') {
-            const searchStr = option?.children?.props?.children?.reduce((acc, cur) => {
-                if (typeof cur === 'string') {
-                    return acc + cur;
-                }
-            }, '');
+    // const filterOption2 = (input, option) => {
+    //     if (option?.key !== 'addShippingAddress') {
+    //         const searchStr = option?.children?.props?.children?.reduce((acc, cur) => {
+    //             if (typeof cur === 'string') {
+    //                 return acc + cur;
+    //             }
+    //         }, '');
 
-            return searchStr.toLowerCase().includes(input.toLowerCase());
+    //         return searchStr.toLowerCase().includes(input.toLowerCase());
 
-        }
-        return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
-    }
+    //     }
+    //     return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
+    // }
     const { user } = useSelector(state => state.userReducer);
     const { loading: customerLoading, customersInf, totalCustomers, customer } = useSelector(state => state.customerReducer);
     const [currentCustomerPage, setCurrentCustomerPage] = useState(1);
@@ -75,10 +76,14 @@ const EstimateFormP1 = ({
             return;
         }
         setCustomerId(value.customer_id);
-        const customer = customersInf.find((customer) => customer.customer_id === value.customer_id);
-        setCustomerName(customer.customer_name);
+        const customerSelected = customersInf.find((customer) => {
+            return customer.customer_id === value.customer_id;
+        });
+        setCustomerName(customerSelected.customer_name);
+        // console.log("🚀 ~ customer?.terms_and_conditions:", customer?.terms_and_conditions);
         dispatch(getCustomerDetails(value.customer_id));
         dispatch(getShippingAddressList(value.customer_id));
+        // setTermsAndConditions(customer?.terms_and_conditions ? customer?.terms_and_conditions : termsAndConditions);
     }
 
     const onChangeShipping = (value) => {
@@ -116,6 +121,8 @@ const EstimateFormP1 = ({
         setShippingAddress1(data.address_line_1);
         setShippingAddress2(data.address_line_2);
         setShippingAddress3(data.address_line_3);
+        setShippingState(data.state);
+        setShippingCountry(data.country);
         setIsShippingModalOpen(false);
     }
 
@@ -191,7 +198,7 @@ const EstimateFormP1 = ({
                                     <span>{customer?.billing_state + ', ' + customer?.billing_country}</span>
                                     {customer?.trn && <span>TRN: {customer?.trn}</span>}
                                 </div>
-                                <img src={GreenCross} alt='close' className='estimate__for--anticon-close' onClick={() => { setCustomerName(''); setCustomerId(null); setShippingId(null) }} />
+                                <CloseOutlined className='estimate__for--anticon-close' onClick={() => { setCustomerName(''); setCustomerId(null); setShippingId(null) }} />
                             </div>
                             : <>
                                 <InfiniteScrollSelect loadMoreOptions={addPage} onChange={onChangeCustomer} customerKeyword={customerKeyword} setCustomerKeyword={setCustomerKeyword} />
@@ -216,10 +223,11 @@ const EstimateFormP1 = ({
                                                 <span>{shippingState + ', ' + shippingCountry}</span>
 
                                             </div>
-                                            <img src={GreenCross} alt='close' className='estimate__for--anticon-close'
+                                            <CloseOutlined
+                                                className='estimate__for--anticon-close'
                                                 onClick={() => {
-                                                    setShippingId(null); setShippingAddress1(null); 
-                                                    setShippingAddress2(null); setShippingAddress3(null); 
+                                                    setShippingId(null); setShippingAddress1(null);
+                                                    setShippingAddress2(null); setShippingAddress3(null);
                                                     setShippingState(null); setShippingCountry(null);
                                                     setShippingLabel(null);
                                                     dispatch(getShippingAddressList(customerId))
@@ -228,12 +236,12 @@ const EstimateFormP1 = ({
                                         </div>
                                         : <>
                                             <Select
-                                                showSearch
+                                                // showSearch
                                                 placeholder='Select Shipping Address'
                                                 optionFilterProp='children'
                                                 value={shippingId}
                                                 onChange={onChangeShipping}
-                                                filterOption={filterOption2}
+                                                // filterOption={filterOption2}
                                             >
                                                 <Option style={{ fontWeight: 600 }} key="addShippingAddress" value="addShippingAddress">
                                                     Add Shipping Address
@@ -242,10 +250,9 @@ const EstimateFormP1 = ({
                                                     shippingAddresses?.map((address) => (
                                                         <Option key={address.shipping_address_id} value={address.shipping_address_id}>
                                                             <div style={{ whiteSpace: 'initial' }}>
-                                                                {address.address_line_1}, {address.address_line_2 ? address.address_line_2 + ", " : ""} {address.address_line_3 ? address.address_line_3 + ", " : ""} {address.state}, {address.country}
+                                                                {address.label ? address.label + ": " : ""} {address.address_line_1}, {address.address_line_2 ? address.address_line_2 + ", " : ""} {address.address_line_3 ? address.address_line_3 + ", " : ""} {address.state}, {address.country}
                                                             </div>
                                                         </Option>
-
                                                     ))
                                                 }
                                             </Select>
