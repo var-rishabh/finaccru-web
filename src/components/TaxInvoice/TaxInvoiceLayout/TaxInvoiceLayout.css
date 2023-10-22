@@ -1,0 +1,767 @@
+.create__taxInvoice__header {
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3rem 5rem 0;
+}
+
+.create__taxInvoice__header--left {
+    display: flex;
+    flex-direction: row;
+    width: 50%;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.create__taxInvoice__header--title {
+    font-family: 'Work Sans', sans-serif;
+    color: #36BAA6;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: 0.0625rem;
+    padding-left: 0.75rem;
+}
+
+.create__taxInvoice__header--back-btn {
+    width: 1.5rem;
+    cursor: pointer;
+}
+
+.create__taxInvoice__header--right {
+    display: flex;
+    flex-direction: row;
+    width: 50%;
+    justify-content: flex-end;
+}
+
+.create__taxInvoice__header--btn1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 1rem;
+    width: 10rem;
+    max-width: 10rem;
+    height: 2.5rem;
+    padding: 0.625rem 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #3463AE;
+    border: 2px solid #3463AE;
+    overflow: hidden;
+}
+
+.create__taxInvoice__header--btn2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 1rem;
+    width: 10rem;
+    max-width: 10rem;
+    height: 2.5rem;
+    padding: 0.625rem 1.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #fff;
+    background-color: #3463AE;
+}
+
+.taxInvoice__container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10rem;
+}
+
+.create__taxInvoice--main {
+    width: 70%;
+    max-width: 60rem;
+    margin-top: 4rem;
+    background-color: var(--white);
+}
+
+.create__taxInvoice--top {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3rem 4rem;
+}
+
+.create__taxInvoice--head {
+    color: #000;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.taxInvoice__form--part1 {
+    display: flex;
+    flex-direction: column;
+}
+
+.taxInvoice__form--part1-head {
+    width: 100%;
+    padding: 0 4rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.taxInvoice__form--head-info1 {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.taxInvoice__form--head-info1>h3 {
+    font-size: 1.125rem;
+    font-weight: 500;
+}
+
+.taxInvoice__form--head-info1>span {
+    font-size: 0.8rem;
+    font-weight: 300;
+}
+
+.taxInvoice__form--head-info2 {
+    display: flex;
+    flex-direction: column;
+}
+
+.taxInvoice__form--head-info2-data {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0;
+}
+
+.taxInvoice__form--head-info2-data>span {
+    font-size: 0.8rem;
+    font-weight: 300;
+}
+
+.taxInvoice__form--head-info2-data>input {
+    max-width: 9rem;
+    width: 9rem;
+    border: none;
+    text-align: left !important;
+    margin-left: 2rem;
+    color: var(--main-color);
+    border: 1px dotted var(--main-color);
+    border-radius: 0.25rem;
+    padding: 0.2rem 0.5rem;
+}
+
+.taxInvoice__form--part2-head {
+    width: 100%;
+    padding: 1rem 4rem 0;
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+}
+
+.taxInvoice__form--part2-head-customer {
+    width: 30%;
+}
+
+.taxInvoice__form--part2-head-customer>h3 {
+    font-size: 1.125rem;
+    font-weight: 500;
+}
+
+.taxInvoice__form--customer-data {
+    overflow: visible !important;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.taxInvoice__form--customer-data-info {
+    overflow: visible !important;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.taxInvoice__form--customer-data span {
+    font-size: 0.8rem;
+    font-weight: 300;
+    text-align: left;
+}
+
+.taxInvoice__for--anticon-close {
+    width: 0.7rem;
+    color: #36BAA6;
+    cursor: pointer;
+}
+
+.taxInvoice__form--part3-head {
+    width: 100%;
+    padding: 1rem 4rem 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.4rem;
+}
+
+.taxInvoice__form--part3-head>h3 {
+    font-size: 1.125rem;
+    font-weight: 500;
+}
+
+.taxInvoice__form--part3-head>span {
+    font-size: 0.8rem;
+    font-weight: 300;
+}
+
+.taxInvoice__form--part2-head-customer.second-select {
+    width: 60%;
+}
+
+.taxInvoice__form--part2-head-customer .ant-select {
+    margin-top: 0.5rem;
+    width: 18rem !important;
+}
+
+.taxInvoice__form--part2-head-customer .ant-select .ant-select-selector {
+    width: 100% !important;
+    max-width: 18rem !important;
+    border-radius: 0.25rem !important;
+    border: 1px solid #C9EFD8 !important;
+    -webkit-border-radius: 0.25rem !important;
+    -moz-border-radius: 0.25rem !important;
+    -ms-border-radius: 0.25rem !important;
+    -o-border-radius: 0.25rem !important;
+}
+
+.taxInvoice__form--currency {
+    display: flex;
+    align-items: center;
+    padding: 0.2rem 0;
+    gap: 1rem;
+}
+
+.taxInvoice__form--currency-conversion {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.taxInvoice__form--currency-conversion>input {
+    border: none;
+    border-bottom: 1px solid #C9EFD8;
+    width: 4rem;
+    text-align: center;
+}
+
+.taxInvoice__form--part4-head {
+    width: 100%;
+    padding: 0.8rem 4rem 2rem 4rem;
+}
+
+.taxInvoice__form--part4-head>h3 {
+    font-size: 1.125rem;
+    font-weight: 500;
+}
+
+.taxInvoice__form--part4-head>textarea {
+    margin: 0.5rem 0;
+    padding-top: 0.3rem;
+    border-radius: 0.25rem;
+    border: 1px solid #C9EFD8;
+    background: #FFF;
+    color: black;
+    font-size: 0.75rem;
+    font-weight: 400;
+}
+
+.taxInvoice__form--part4-head>textarea:hover,
+.taxInvoice__form--part4-head>textarea:focus,
+.taxInvoice__form--part4-head>textarea:active {
+    box-shadow: none;
+    margin: 0.5rem 0;
+    border-radius: 0.25rem;
+    border: 1px solid #C9EFD8;
+    background: #FFF;
+    color: black;
+    font-size: 0.75rem;
+    font-weight: 400;
+    -webkit-border-radius: 0.25rem;
+    -moz-border-radius: 0.25rem;
+    -ms-border-radius: 0.25rem;
+    -o-border-radius: 0.25rem;
+}
+
+.taxInvoice__form--part4-head>textarea::placeholder {
+    color: var(--gray);
+}
+
+.ant-select-selector {
+    width: 8rem;
+    padding: 0 1rem !important;
+    max-width: 15rem;
+    text-align: 'center';
+    border-color: #C9EFD8 !important;
+    border-radius: 0.25rem !important;
+}
+
+/* TaxInvoice Items */
+.taxInvoice__items {
+    background-color: #ECF1F3;
+    width: 100%;
+    padding: 2rem 0 0;
+}
+
+.taxInvoice__items--main {
+    padding: 0.5rem 0;
+    width: 100%;
+}
+
+.taxInvoice__items--whole-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: 'first baseline';
+    padding: 0 1rem;
+}
+
+.taxInvoice__items--sr,
+.taxInvoice__items--itemName,
+.taxInvoice__items--unitSelect,
+.taxInvoice__items--number-item,
+.taxInvoice__items--discount,
+.taxInvoice__items--tax,
+.taxInvoice__items--amount {
+    display: flex;
+    flex-direction: column;
+}
+
+.taxInvoice__items--itemName .ant-input::placeholder,
+.taxInvoice__items--number-item .ant-input::placeholder,
+.taxInvoice__items--discount .ant-input-group-wrapper .ant-input-group .ant-input::placeholder,
+.taxInvoice__items--amount .ant-input::placeholder {
+    color: var(--gray);
+}
+
+.taxInvoice__items--itemName .ant-input,
+.taxInvoice__items--itemName .ant-input:hover,
+.taxInvoice__items--itemName .ant-input:focus,
+.taxInvoice__items--itemName .ant-input:active,
+.taxInvoice__items--number-item .ant-input:hover,
+.taxInvoice__items--number-item .ant-input:focus,
+.taxInvoice__items--number-item .ant-input:active,
+.taxInvoice__items--number-item .ant-input {
+    border-radius: 0.25rem;
+    border: 1px solid #36BAA6;
+    background: #FFF;
+    color: black;
+    font-size: 0.75rem;
+    font-weight: 400;
+    line-height: 200%;
+}
+
+.taxInvoice__items--number-item .ant-input {
+    text-align: right;
+}
+
+.taxInvoice__items--unitSelect .ant-select {
+    border-radius: 0.25rem !important;
+    border: 1px solid #36BAA6 !important;
+    height: 2.1rem !important;
+    overflow: hidden;
+}
+
+.taxInvoice__items--unitSelect .ant-select-selector .ant-select-selection-item {
+    background: #FFF;
+    color: black !important;
+    font-size: 0.75rem !important;
+    font-weight: 400 !important;
+    overflow: hidden;
+}
+
+.taxInvoice__items--discount .ant-input-group-wrapper:active,
+.taxInvoice__items--discount .ant-input-group-wrapper:focus,
+.taxInvoice__items--discount .ant-input-group-wrapper:hover,
+.taxInvoice__items--discount .ant-input-group-wrapper {
+    box-shadow: none;
+    border-radius: 0.25rem !important;
+    border: 1px solid #36BAA6 !important;
+    height: 2.1rem !important;
+    overflow: hidden;
+}
+
+.taxInvoice__items--discount .ant-input-group-wrapper .ant-input-group {
+    border: none !important;
+}
+
+.taxInvoice__items--discount .ant-input-group-wrapper .ant-input-group .ant-input-group-addon .ant-select .ant-select-selector {
+    padding-left: 0.5rem !important;
+}
+
+.taxInvoice__items--discount .ant-input-group-wrapper .ant-input-group .ant-input-group-addon .ant-select .ant-select-arrow {
+    margin-right: -0.5rem;
+}
+
+.taxInvoice__items--discount .ant-input-group-wrapper .ant-input-group .ant-input {
+    background: #FFF;
+    color: black !important;
+    font-size: 0.75rem !important;
+    font-weight: 400 !important;
+    height: 2.1rem !important;
+    text-align: right;
+}
+
+.taxInvoice__items--tax {
+    width: 12rem;
+}
+
+.taxInvoice__items--tax .ant-input-group-wrapper:hover,
+.taxInvoice__items--tax .ant-input-group-wrapper:active,
+.taxInvoice__items--tax .ant-input-group-wrapper:focus,
+.taxInvoice__items--tax .ant-input-group-wrapper {
+    width: 100%;
+    border-radius: 0.25rem !important;
+    border: 1px solid #36BAA6 !important;
+    height: 2.1rem !important;
+    overflow: hidden;
+    -webkit-border-radius: 0.25rem !important;
+    -moz-border-radius: 0.25rem !important;
+    -ms-border-radius: 0.25rem !important;
+    -o-border-radius: 0.25rem !important;
+}
+
+.taxInvoice__items--tax .ant-input-group-wrapper .ant-input-group {
+    border: none !important;
+    width: 100%;
+    display: flex;
+}
+
+.taxInvoice__items--tax .ant-input-group-wrapper .ant-input-group .ant-input {
+    background: #FFF;
+    color: black !important;
+    font-size: 0.75rem !important;
+    font-weight: 400 !important;
+    height: 2.1rem !important;
+    text-align: right;
+}
+
+.taxInvoice__items--tax .tax__select--standard .ant-input-group .ant-input {
+    width: 70%;
+}
+
+.taxInvoice__items--tax .tax__select--non-standard .ant-input-group .ant-input {
+    width: 20%;
+}
+
+.taxInvoice__items--tax .tax__select--standard .ant-input-group .ant-input-group-addon {
+    width: 30%;
+}
+
+.taxInvoice__items--tax .tax__select--non-standard .ant-input-group .ant-input-group-addon {
+    width: 80%;
+}
+
+.taxInvoice__items--tax .ant-input-group-wrapper .ant-input-wrapper .ant-input-group-addon {
+    padding: 0 !important;
+}
+
+.taxInvoice__items--tax .ant-input-group-wrapper .ant-input-wrapper .ant-input-group-addon .ant-select {
+    margin: 0 !important;
+}
+
+.taxInvoice__items--tax .ant-input-group-wrapper .ant-input-wrapper .ant-input-group-addon .ant-select .ant-select-selector {
+    display: flex;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    width: 10rem;
+}
+
+/* .taxInvoice__items--tax .tax__select--standard .ant-input-group .ant-input-group-addon .ant-select .ant-select-arrow {
+    padding-right: 5.5rem;
+} */
+
+.taxInvoice__items--tax .tax__select--non-standard .ant-input-group .ant-input-group-addon .ant-select .ant-select-arrow {
+    padding-right: 0.5rem;
+}
+
+.taxInvoice__items--amount .ant-input {
+    font-size: 0.75rem !important;
+    border-radius: 0.25rem !important;
+    border: 1px solid #36BAA6 !important;
+    height: 2.1rem !important;
+    text-align: right;
+}
+
+.taxInvoice__items--amount .ant-input[disabled] {
+    background-color: #fff;
+    cursor: auto;
+    color: black;
+}
+
+.taxInvoice__items--description {
+    display: flex;
+    justify-content: flex-start;
+    padding: 0.5rem 1rem;
+    width: 100%;
+}
+
+.add--description-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.add--description-btn>button,
+.add--item-btn>button {
+    background-color: #36BAA6;
+    border: none;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.25rem;
+    color: white;
+    cursor: pointer;
+}
+
+.add--description-btn>span,
+.add--item-btn>span {
+    color: #000;
+    font-family: 'Montserrat';
+    font-size: 0.75rem;
+    font-weight: 400;
+    margin-left: 0.5rem;
+}
+
+.remove--description-btn {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.remove--description-btn>img {
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+    margin: 0.5rem 0.5rem 0 0;
+}
+
+.desc__box {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.desc__box>span {
+    color: #000;
+    font-family: 'Montserrat';
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
+.desc__box>input {
+    border: none;
+    border-bottom: 1px dotted black;
+    background-color: transparent;
+    margin-top: 0.5rem;
+    color: #000;
+    font-family: 'Montserrat';
+    font-size: 0.75rem;
+    font-weight: 400;
+    line-height: 150%;
+    width: 40%;
+}
+
+.add--item-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 0 2rem;
+}
+
+/* taxInvoice bank details and stats */
+.taxInvoice--details {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 4rem 3rem 4rem;
+}
+
+.taxInvoice--details--bank {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.taxInvoice--details--split {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 1rem;
+}
+
+.taxInvoice--details-left {
+    display: flex;
+    justify-content: flex-start;
+    width: 50%;
+    flex-direction: column;
+}
+
+.taxInvoice--details-tnc {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    width: 100%;
+}
+
+.taxInvoice--details-tnc>h3 {
+    color: #000;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.taxInvoice--details-tnc>textarea:hover,
+.taxInvoice--details-tnc>textarea:active,
+.taxInvoice--details-tnc>textarea:focus,
+.taxInvoice--details-tnc>textarea {
+    border-radius: 0.25rem !important;
+    border: 1px solid #C9EFD8 !important;
+    color: black;
+    box-shadow: none;
+}
+
+.taxInvoice--details-tnc>textarea::placeholder {
+    color: var(--gray);
+}
+
+.taxInvoice--details__modal--checkbox {
+    margin: 0.25rem 0;
+}
+
+.taxInvoice--details__modal--checkbox>span {
+    margin-left: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 300;
+    line-height: 1.375rem;
+}
+
+.taxInvoice__details-payment {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 2rem;
+    gap: 1rem;
+}
+
+.taxInvoice__details-payment-options {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+.taxInvoice__details-payment-select .ant-select-selector {
+    width: 16rem !important;
+    max-width: 16rem !important;
+}
+
+.taxInvoice--details-right {
+    margin: 1.8rem 0 0 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 3rem;
+    width: 50%;
+    padding: 0;
+}
+
+.taxInvoice--details-right-head {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.taxInvoice--details-right-head>span {
+    color: #36BAA6;
+    font-size: 1rem;
+    font-weight: 600;
+    gap: 1rem;
+}
+
+.taxInvoice--details-right-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.taxInvoice--details-right-info>span {
+    display: flex;
+    color: #000;
+    font-family: 'Montserrat';
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.taxInvoice__form--submit-btn {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 3rem;
+}
+
+.taxInvoice__form--submit-btn>button {
+    background-color: #3463AE;
+    border: none;
+    width: 8rem;
+    height: 3rem;
+    border-radius: 0.4rem;
+    color: white;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin: 0 1rem 2rem 0;
+}
+
+.taxInvoice__footer {
+    background-color: #C9EFD8;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 1rem 2rem;
+}
+
+.taxInvoice__footer--text {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.taxInvoice__items--sr {
+    justify-content: center;
+    margin-left: -0.2rem;
+    cursor: pointer;
+}
+
+.taxInvoice--cancel-icon>img {
+    width: 1rem;
+}
+
+@media only screen and (min-width: 1600px) {
+    .taxInvoice__items--sr {
+        margin-left: -1.2rem;
+    }
+}

@@ -197,7 +197,12 @@ const EstimateFormP1 = ({
                                     <span>{customer?.billing_state + ', ' + customer?.billing_country}</span>
                                     {customer?.trn && <span>TRN: {customer?.trn}</span>}
                                 </div>
-                                <CloseOutlined className='estimate__for--anticon-close' onClick={() => { setCustomerName(''); setCustomerId(null); setShippingId(null) }} />
+                                <CloseOutlined className='estimate__for--anticon-close' 
+                                    onClick={() => {
+                                        setCustomerName(''); setCustomerId(null); setShippingId(null);
+                                        setShippingAddress1(null);
+                                    }}
+                                />
                             </div>
                             : <>
                                 <CustomerInfiniteScrollSelect loadMoreOptions={addPage} onChange={onChangeCustomer} customerKeyword={customerKeyword} setCustomerKeyword={setCustomerKeyword} />

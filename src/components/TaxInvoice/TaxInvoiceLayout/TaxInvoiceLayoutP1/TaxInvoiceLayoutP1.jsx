@@ -10,9 +10,9 @@ const { TextArea } = Input;
 const { Option } = Select;
 import { CloseOutlined } from '@ant-design/icons';
 
-const ProformaFormP1 = ({
-    proformaNumber, proformaDate, validTill, reference, subject, customerName, customerId, currency, currencyId, currencyConversionRate, shippingAddress1, shippingAddress2, shippingAddress3, shippingState, shippingCountry,
-    setProformaNumber, setProformaDate, setValidTill, setReference, setSubject, setCustomerName, setCustomerId, setCurrency, setCurrencyId, setCurrencyConversionRate, setShippingAddress1, setShippingAddress2, setShippingAddress3, setShippingState, setShippingCountry,
+const TaxInvoiceFormP1 = ({
+    taxInvoiceNumber, taxInvoiceDate, validTill, reference, subject, customerName, customerId, currency, currencyId, currencyConversionRate, shippingAddress1, shippingAddress2, shippingAddress3, shippingState, shippingCountry,
+    setTaxInvoiceNumber, setTaxInvoiceDate, setValidTill, setReference, setSubject, setCustomerName, setCustomerId, setCurrency, setCurrencyId, setCurrencyConversionRate, setShippingAddress1, setShippingAddress2, setShippingAddress3, setShippingState, setShippingCountry,
     termsAndConditions, setTermsAndConditions
 }) => {
     const filterOption = (input, option) => {
@@ -136,10 +136,10 @@ const ProformaFormP1 = ({
 
 
     return (
-        <div className='proforma__form--part1'>
-            <div className='proforma__form--part1-head'>
-                <div className='proforma__form--head-info1'>
-                    <h3>Proforma From</h3>
+        <div className='taxInvoice__form--part1'>
+            <div className='taxInvoice__form--part1-head'>
+                <div className='taxInvoice__form--head-info1'>
+                    <h3>Tax Invoice From</h3>
                     <span style={{ fontWeight: 500 }}>{user?.clientInfo?.company_data?.company_name}</span>
                     <span>{user?.clientInfo?.company_data?.address_line_1}</span>
                     <span>{user?.clientInfo?.company_data?.address_line_2}</span>
@@ -147,50 +147,50 @@ const ProformaFormP1 = ({
                     <span>{user?.clientInfo?.company_data?.state + ', ' + user?.clientInfo?.company_data?.country}</span>
                     <span>TRN: {user?.clientInfo?.company_data?.trade_license_number}</span>
                 </div>
-                <div className='proforma__form--head-info2'>
-                    <div className='proforma__form--head-info2-data'>
-                        <span className='required__field'>Proforma Number</span>
+                <div className='taxInvoice__form--head-info2'>
+                    <div className='taxInvoice__form--head-info2-data'>
+                        <span className='required__field'>Tax Invoice Number</span>
                         <input
-                            name="proformaNumber"
+                            name="taxInvoiceNumber"
                             type="text"
-                            value={proformaNumber}
+                            value={taxInvoiceNumber}
                             onChange={(e) => {
                                 const input = e.target.value
-                                setProformaNumber("PI-" + input.substr("PI-".length))
+                                setTaxInvoiceNumber("TI-" + input.substr("TI-".length))
                             }}
                         />
                     </div>
-                    <div className='proforma__form--head-info2-data'>
-                        <span className='required__field'>Proforma Date</span>
+                    <div className='taxInvoice__form--head-info2-data'>
+                        <span className='required__field'>Tax Invoice Date</span>
                         <input type="date"
-                            name='proformaDate'
-                            value={proformaDate}
+                            name='taxInvoiceDate'
+                            value={taxInvoiceDate}
                             min="2023-01-01"
-                            onChange={(e) => setProformaDate(e.target.value)}
+                            onChange={(e) => setTaxInvoiceDate(e.target.value)}
                         />
                     </div>
-                    <div className='proforma__form--head-info2-data'>
+                    <div className='taxInvoice__form--head-info2-data'>
                         <span className='required__field'>Due Date</span>
                         <input type="date"
                             name='validTill'
                             value={validTill}
-                            min={proformaDate}
+                            min={taxInvoiceDate}
                             onChange={(e) => setValidTill(e.target.value)}
                         />
                     </div>
-                    <div className='proforma__form--head-info2-data'>
+                    <div className='taxInvoice__form--head-info2-data'>
                         <span>Reference</span>
                         <input type="text" name='reference' value={reference} onChange={(e) => setReference(e.target.value)} />
                     </div>
                 </div>
             </div>
-            <div className='proforma__form--part2-head'>
-                <div className='proforma__form--part2-head-customer'>
-                    <h3 className='required__field'>Proforma For</h3>
+            <div className='taxInvoice__form--part2-head'>
+                <div className='taxInvoice__form--part2-head-customer'>
+                    <h3 className='required__field'>Tax Invoice For</h3>
                     {
                         customerName ?
-                            <div className='proforma__form--customer-data'>
-                                <div className='proforma__form--customer-data-info'>
+                            <div className='taxInvoice__form--customer-data'>
+                                <div className='taxInvoice__form--customer-data-info'>
                                     <span style={{ fontWeight: 500 }}>{customerName}</span>
                                     <span>{customer?.billing_address_line_1}</span>
                                     {customer?.billing_address_line_2 && <span>{customer?.billing_address_line_2}</span>}
@@ -198,7 +198,7 @@ const ProformaFormP1 = ({
                                     <span>{customer?.billing_state + ', ' + customer?.billing_country}</span>
                                     {customer?.trn && <span>TRN: {customer?.trn}</span>}
                                 </div>
-                                <CloseOutlined className='proforma__for--anticon-close'
+                                <CloseOutlined className='taxInvoice__for--anticon-close'
                                     onClick={() => {
                                         setCustomerName(''); setCustomerId(null); setShippingId(null);
                                         setShippingAddress1(null);
@@ -212,15 +212,15 @@ const ProformaFormP1 = ({
                     }
                     <AddCustomerModal openingModal={true} isModalOpen={isModalOpen} handleCustomerSubmit={handleCustomerSubmit} handleCancel={handleCancel} />
                 </div>
-                <div className='proforma__form--part2-head-customer second-select'>
+                <div className='taxInvoice__form--part2-head-customer second-select'>
                     {
                         customerId ?
                             <>
                                 <h3 className='required__field'>Shipping Address</h3>
                                 {
                                     shippingId || shippingAddress1 ?
-                                        <div className='proforma__form--customer-data'>
-                                            <div className='proforma__form--customer-data-info'>
+                                        <div className='taxInvoice__form--customer-data'>
+                                            <div className='taxInvoice__form--customer-data-info'>
                                                 {shippingLabel && <span style={{ fontWeight: 500 }}>{shippingLabel}</span>}
                                                 <span>{shippingAddress1}</span>
                                                 {shippingAddress2 && <span>{shippingAddress2}</span>}
@@ -229,7 +229,7 @@ const ProformaFormP1 = ({
 
                                             </div>
                                             <CloseOutlined
-                                                className='proforma__for--anticon-close'
+                                                className='taxInvoice__for--anticon-close'
                                                 onClick={() => {
                                                     setShippingId(null); setShippingAddress1(null);
                                                     setShippingAddress2(null); setShippingAddress3(null);
@@ -269,10 +269,10 @@ const ProformaFormP1 = ({
                     }
                 </div>
             </div>
-            <div className='proforma__form--part3-head'>
+            <div className='taxInvoice__form--part3-head'>
                 <h3 className='required__field'>Select Currency</h3>
-                <div className='proforma__form--currency'>
-                    <div className='proforma__form--select-currency'>
+                <div className='taxInvoice__form--currency'>
+                    <div className='taxInvoice__form--select-currency'>
                         <Select
                             showSearch
                             defaultValue="AED"
@@ -284,7 +284,7 @@ const ProformaFormP1 = ({
                             loading={currencyLoading}
                         />
                     </div>
-                    <div className='proforma__form--currency-conversion'>
+                    <div className='taxInvoice__form--currency-conversion'>
                         <span>1</span>
                         <span>{currency} =</span>
                         <input
@@ -301,7 +301,7 @@ const ProformaFormP1 = ({
                     </div>
                 </div>
             </div>
-            <div className='proforma__form--part4-head'>
+            <div className='taxInvoice__form--part4-head'>
                 <h3>Subject</h3>
                 <TextArea
                     placeholder="Subject"
@@ -314,4 +314,4 @@ const ProformaFormP1 = ({
     )
 }
 
-export default ProformaFormP1;
+export default TaxInvoiceFormP1;

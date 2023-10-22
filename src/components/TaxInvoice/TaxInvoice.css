@@ -1,4 +1,4 @@
-.estimate__header {
+.taxInvoice__header {
     top: 0;
     width: 100%;
     display: flex;
@@ -7,7 +7,7 @@
     padding: 3rem 5rem 0;
 }
 
-.estimate__header--left {
+.taxInvoice__header--left {
     display: flex;
     flex-direction: row;
     width: 50%;
@@ -15,7 +15,7 @@
     align-items: center;
 }
 
-.estimate__header--title {
+.taxInvoice__header--title {
     font-family: 'Work Sans', sans-serif;
     font-size: 2rem;
     font-style: normal;
@@ -24,31 +24,32 @@
     letter-spacing: 0.0125rem;
 }
 
-.estimate__header--left>Input {
+.taxInvoice__header--left>Input {
     width: 60%;
     height: 2.2rem;
     background-color: #fff;
 }
 
-.estimate__header--left .ant-input,
-.estimate__header--left .ant-input:hover,
-.estimate__header--left .ant-input:focus { 
+.taxInvoice__header--left .ant-input,
+.taxInvoice__header--left .ant-input:hover,
+.taxInvoice__header--left .ant-input:focus {
     color: black;
     border-color: #3463AE;
 }
-.estimate__header--left .ant-input::placeholder {
+
+.taxInvoice__header--left .ant-input::placeholder {
     color: #3463AE;
     opacity: 0.5;
 }
 
-.estimate__header--right {
+.taxInvoice__header--right {
     display: flex;
     flex-direction: row;
     width: 50%;
     justify-content: flex-end;
 }
 
-.estimate__header--btn1 {
+.taxInvoice__header--btn1 {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -64,7 +65,7 @@
     overflow: hidden;
 }
 
-.estimate__header--btn2 {
+.taxInvoice__header--btn2 {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -100,23 +101,22 @@ th.ant-table-cell {
     font-weight: 300 !important;
 }
 
-.estimate-invoice.action__buttons {
+.tax-invoices.action__buttons {
     display: flex;
-    justify-content: flex-end !important;
-    gap: 0.5rem;
+    justify-content: space-between !important;
 }
 
-.estimate-invoice.action__button>span>svg {
+.tax-invoices.action__button>span>svg {
     width: 1.2rem !important;
     height: 1.2rem !important;
     color: var(--gray) !important;
 }
 
-.estimate-invoice.action__button {
+.tax-invoices.action__button {
     cursor: pointer;
 }
 
-.estimate-invoice.action__button>img {
+.tax-invoices.action__button>img {
     width: 1.2rem;
 }
 
@@ -128,7 +128,7 @@ th.ant-table-cell {
     overflow: hidden !important;
 }
 
-.estimate__delete--modal {
+.taxInvoice__delete--modal {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -167,6 +167,68 @@ th.ant-table-cell {
     background-color: rgba(0, 0, 0, 0.08) !important;
 }
 
-.estimate__list--delete--modal .ant-modal-content {
+.taxInvoice__list--delete--modal .ant-modal-content {
     box-shadow: none !important;
+}
+
+.taxInvoice__create--modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    margin: 2rem 0 1rem 0;
+}
+
+.taxInvoice__modal--btn1 {
+    border: 1px solid #3463AE;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -ms-border-radius: 20px;
+    -o-border-radius: 20px;
+}
+
+.taxInvoice__modal--form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.taxInvoice__modal--form>label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 3rem;
+    border-radius: 1rem;
+    border: 2px dotted #3463AE;
+    cursor: pointer;
+    -webkit-border-radius: 1rem;
+    -moz-border-radius: 1rem;
+    -ms-border-radius: 1rem;
+    -o-border-radius: 1rem;
+}
+
+#create-tax-file-chosen {
+    margin: 0.5rem 0 0 0;
+    font-family: sans-serif;
+    font-size: 0.8rem;
+}
+
+.taxInvoice__modal--btn2{
+    border: none;
+    background-color: #fff;
+    color: #1677ff;
+    margin-top: 2rem;
+    border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -ms-border-radius: 20px;
+    -o-border-radius: 20px;
+}
+
+.taxInvoice__modal--btn2:hover{
+    color: #69b1ff;
 }

@@ -1,4 +1,4 @@
-.estimate__header {
+.creditNote__header {
     top: 0;
     width: 100%;
     display: flex;
@@ -7,7 +7,7 @@
     padding: 3rem 5rem 0;
 }
 
-.estimate__header--left {
+.creditNote__header--left {
     display: flex;
     flex-direction: row;
     width: 50%;
@@ -15,7 +15,7 @@
     align-items: center;
 }
 
-.estimate__header--title {
+.creditNote__header--title {
     font-family: 'Work Sans', sans-serif;
     font-size: 2rem;
     font-style: normal;
@@ -24,31 +24,31 @@
     letter-spacing: 0.0125rem;
 }
 
-.estimate__header--left>Input {
+.creditNote__header--left>Input {
     width: 60%;
     height: 2.2rem;
     background-color: #fff;
 }
 
-.estimate__header--left .ant-input,
-.estimate__header--left .ant-input:hover,
-.estimate__header--left .ant-input:focus { 
+.creditNote__header--left .ant-input,
+.creditNote__header--left .ant-input:hover,
+.creditNote__header--left .ant-input:focus { 
     color: black;
     border-color: #3463AE;
 }
-.estimate__header--left .ant-input::placeholder {
+.creditNote__header--left .ant-input::placeholder {
     color: #3463AE;
     opacity: 0.5;
 }
 
-.estimate__header--right {
+.creditNote__header--right {
     display: flex;
     flex-direction: row;
     width: 50%;
     justify-content: flex-end;
 }
 
-.estimate__header--btn1 {
+.creditNote__header--btn1 {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -64,7 +64,7 @@
     overflow: hidden;
 }
 
-.estimate__header--btn2 {
+.creditNote__header--btn2 {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -100,23 +100,22 @@ th.ant-table-cell {
     font-weight: 300 !important;
 }
 
-.estimate-invoice.action__buttons {
+.credit-note.action__buttons {
     display: flex;
-    justify-content: flex-end !important;
-    gap: 0.5rem;
+    justify-content: space-between !important;
 }
 
-.estimate-invoice.action__button>span>svg {
+.credit-note.action__button>span>svg {
     width: 1.2rem !important;
     height: 1.2rem !important;
     color: var(--gray) !important;
 }
 
-.estimate-invoice.action__button {
+.credit-note.action__button {
     cursor: pointer;
 }
 
-.estimate-invoice.action__button>img {
+.credit-note.action__button>img {
     width: 1.2rem;
 }
 
@@ -128,7 +127,7 @@ th.ant-table-cell {
     overflow: hidden !important;
 }
 
-.estimate__delete--modal {
+.creditNote__delete--modal {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -167,6 +166,6 @@ th.ant-table-cell {
     background-color: rgba(0, 0, 0, 0.08) !important;
 }
 
-.estimate__list--delete--modal .ant-modal-content {
+.creditNote__list--delete--modal .ant-modal-content {
     box-shadow: none !important;
 }
