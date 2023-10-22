@@ -1,24 +1,24 @@
-import EstimateFormP1 from './EstimateFormP1/EstimateFormP1';
-import EstimateFormP2 from './EstimateFormP2/EstimateFormP2';
+import TaxInvoiceLayoutP1 from './TaxInvoiceLayoutP1/TaxInvoiceLayoutP1';
+import TaxInvoiceLayoutP2 from './TaxInvoiceLayoutP2/TaxInvoiceLayoutP2';
 import { useNavigate } from 'react-router-dom';
-import { createEstimate, getEstimateDetails, getNewEstimateNumber, updateEstimate } from '../../../Actions/Estimate';
+import { createTaxInvoice, getTaxInvoiceDetails, getNewTaxInvoiceNumber, updateTaxInvoice } from '../../../Actions/TaxInvoice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { getCurrency } from '../../../Actions/Onboarding';
 import { getDate } from '../../../utils/date';
 import { toast } from 'react-toastify';
 
-import "./EstimateLayout.css"
+import "./TaxInvoiceLayout.css"
 import { LoadingOutlined } from '@ant-design/icons';
 import backButton from "../../../assets/Icons/back.svg"
 import logo from "../../../assets/Icons/cropped_logo.svg"
 import { getCustomerDetails } from '../../../Actions/Customer';
 
-const EstimateLayout = () => {
+const TaxInvoiceLayout = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const [estimateNumber, setEstimateNumber] = useState('');
-    const [estimateDate, setEstimateDate] = useState(getDate());
+    const [taxInvoiceNumber, setTaxInvoiceNumber] = useState('');
+    const [taxInvoiceDate, setTaxInvoiceDate] = useState(getDate());
     const [validTill, setValidTill] = useState(getDate());
     const [reference, setReference] = useState(null);
     const [customerName, setCustomerName] = useState('');
@@ -36,69 +36,72 @@ const EstimateLayout = () => {
     const [shippingCountry, setShippingCountry] = useState('');
     const [shippingState, setShippingState] = useState('');
     const [currency, setCurrency] = useState('AED');
+    const [paymentReceived, setPaymentReceived] = useState(null);
+    const [attachmentUrl, setAttachmentUrl] = useState(null);
 
     const isAdd = window.location.pathname.split('/')[2] === 'create';
     const { user } = useSelector(state => state.userReducer);
-    const { loading: estimateLoading, estimate, number } = useSelector(state => state.estimateReducer);
+    const { loading: taxInvoiceLoading, taxInvoice, number } = useSelector(state => state.taxInvoiceReducer);
     const { currencies, currencyLoading } = useSelector(state => state.onboardingReducer);
     const { customer } = useSelector(state => state.customerReducer);
 
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
             dispatch(getCurrency());
-            dispatch(getEstimateDetails(window.location.pathname.split('/')[3]));
-            // estimate?.customer?.customer_id
+            dispatch(getTaxInvoiceDetails(window.location.pathname.split('/')[3]));
+            // taxInvoice?.customer?.customer_id
         }
         if (window.location.pathname.split('/')[2] === 'create') {
             dispatch(getCurrency());
-            dispatch(getNewEstimateNumber());
+            dispatch(getNewTaxInvoiceNumber());
         }
     }, [dispatch]);
 
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
-            dispatch(getCustomerDetails(estimate?.customer?.customer_id));
+            dispatch(getCustomerDetails(taxInvoice?.customer?.customer_id));
         }
-    }, [dispatch, estimate?.customer?.customer_id]);
+    }, [dispatch, taxInvoice?.customer?.customer_id]);
 
     useEffect(() => {
         setTermsAndConditions(customer?.terms_and_conditions ? customer?.terms_and_conditions : termsAndConditions);
     }, [customer, termsAndConditions]);
-        
+
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
-            setEstimateNumber(estimate?.estimate_number);
-            setEstimateDate(estimate?.estimate_date);
-            setValidTill(estimate?.valid_till);
-            setReference(estimate?.reference);
-            setCustomerName(estimate?.customer?.customer_name);
-            setCustomerId(estimate?.customer?.customer_id);
-            setCurrencyId(estimate?.currency_id);
-            setCurrencyConversionRate(estimate?.currency_conversion_rate);
-            setCurrency(currencyId !== 1 ? currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv : 'AED');
-            setItems(estimate?.line_items || [{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
-            setShippingAddress1(estimate?.customer?.shipping_address_line_1);
-            setShippingAddress2(estimate?.customer?.shipping_address_line_2);
-            setShippingAddress3(estimate?.customer?.shipping_address_line_3);
-            setShippingCountry(estimate?.customer?.shipping_country);
-            setShippingState(estimate?.customer?.shipping_state);
-            setSubject(estimate?.subject);
-            setTermsAndConditions(estimate?.terms_and_conditions);
-            setIsSetDefaultTncCustomer(estimate?.is_set_default_tnc_customer);
-            setIsSetDefaultTncClient(estimate?.is_set_default_tnc_client);
+            setTaxInvoiceNumber(taxInvoice?.ti_number);
+            setTaxInvoiceDate(taxInvoice?.ti_date);
+            setValidTill(taxInvoice?.due_date);
+            setReference(taxInvoice?.reference);
+            setCustomerName(taxInvoice?.customer?.customer_name);
+            setCustomerId(taxInvoice?.customer?.customer_id);
+            setCurrencyId(taxInvoice?.currency_id);
+            setCurrencyConversionRate(taxInvoice?.currency_conversion_rate);
+            setCurrency(currencyId !== 1 ? currencies?.find((currency) => currency.currency_id === taxInvoice?.currency_id)?.currency_abv : 'AED');
+            setItems(taxInvoice?.line_items || [{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
+            setShippingAddress1(taxInvoice?.customer?.shipping_address_line_1);
+            setShippingAddress2(taxInvoice?.customer?.shipping_address_line_2);
+            setShippingAddress3(taxInvoice?.customer?.shipping_address_line_3);
+            setShippingCountry(taxInvoice?.customer?.shipping_country);
+            setShippingState(taxInvoice?.customer?.shipping_state);
+            setSubject(taxInvoice?.subject);
+            setTermsAndConditions(taxInvoice?.terms_and_conditions);
+            setIsSetDefaultTncCustomer(taxInvoice?.is_set_default_tnc_customer);
+            setIsSetDefaultTncClient(taxInvoice?.is_set_default_tnc_client);
+            // set payment received later
         }
         if (window.location.pathname.split('/')[2] === 'create') {
-            setEstimateNumber(number);
+            setTaxInvoiceNumber(number);
             setTermsAndConditions(user?.clientInfo?.terms_and_conditions);
         }
-    }, [currencies, estimate, number]);
+    }, [currencies, taxInvoice, number]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (estimateLoading) {
+        if (taxInvoiceLoading) {
             return;
         }
-        if (estimateNumber == "" || customerId == null || currencyConversionRate <= 0) {
+        if (taxInvoiceNumber == "" || customerId == null || currencyConversionRate <= 0) {
             toast.error("Please fill and check all fields.");
             return;
         }
@@ -128,10 +131,10 @@ const EstimateLayout = () => {
         }
         const data = {
             customer_id: customerId,
-            estimate_number: estimateNumber,
-            estimate_date: estimateDate,
-            valid_till: validTill,
-            reference: reference,
+            ti_number: taxInvoiceNumber,
+            ti_date: taxInvoiceDate,
+            due_date: validTill,
+            reference: reference === "" ? null : reference,
             subject: subject === "" ? null : subject,
             terms_and_conditions: termsAndConditions === "" ? null : termsAndConditions,
             is_set_default_tnc_customer: isSetDefaultTncCustomer,
@@ -144,31 +147,36 @@ const EstimateLayout = () => {
             shipping_address_line_3: shippingAddress3 === "" ? null : shippingAddress3,
             shipping_state: shippingState,
             shipping_country: shippingCountry,
+            attachment_url: attachmentUrl === "" ? null : attachmentUrl
         }
         if (isAdd) {
-            dispatch(createEstimate(data, navigate));
+            dispatch(createTaxInvoice(data, navigate));
         }
         else {
-            dispatch(updateEstimate(window.location.pathname.split('/')[3], data, navigate));
+            dispatch(updateTaxInvoice(window.location.pathname.split('/')[3], data, navigate));
         }
     }
     return (
         <>
-            <div className='create__estimate__header'>
-                <div className='create__estimate__header--left'>
-                    <img src={backButton} alt='back' className='create__estimate__header--back-btn' onClick={() => navigate("/estimate")} />
-                    <h1 className='create__estimate__header--title'> Estimates List </h1>
+            <div className='create__taxInvoice__header'>
+                <div className='create__taxInvoice__header--left'>
+                    <img src={backButton} alt='back' className='create__taxInvoice__header--back-btn' onClick={() => navigate("/tax-invoice")} />
+                    <h1 className='create__taxInvoice__header--title'> Tax Invoices List </h1>
+                </div>
+                <div className='create__taxInvoice__header--right'>
+                    <a className='create__taxInvoice__header--btn1'>Download</a>
+                    <a className='create__taxInvoice__header--btn2'>Share</a>
                 </div>
             </div>
-            <div className="estimate__container">
-                <div className="create__estimate--main">
-                    <div className="create__estimate--top">
+            <div className="taxInvoice__container">
+                <div className="create__taxInvoice--main">
+                    <div className="create__taxInvoice--top">
                         <img style={{ width: "9rem" }} src={logo} alt="logo" />
-                        <h1 className='create__estimate--head'>Estimate</h1>
+                        <h1 className='create__taxInvoice--head'>Tax Invoice</h1>
                     </div>
                     <form>
-                        <EstimateFormP1 estimateNumber={estimateNumber} setEstimateNumber={setEstimateNumber}
-                            estimateDate={estimateDate} setEstimateDate={setEstimateDate} validTill={validTill} setValidTill={setValidTill}
+                        <TaxInvoiceLayoutP1 taxInvoiceNumber={taxInvoiceNumber} setTaxInvoiceNumber={setTaxInvoiceNumber}
+                            taxInvoiceDate={taxInvoiceDate} setTaxInvoiceDate={setTaxInvoiceDate} validTill={validTill} setValidTill={setValidTill}
                             reference={reference} setReference={setReference}
                             customerName={customerName} setCustomerName={setCustomerName}
                             customerId={customerId} setCustomerId={setCustomerId}
@@ -182,22 +190,23 @@ const EstimateLayout = () => {
                             shippingState={shippingState} setShippingState={setShippingState}
                             termsAndConditions={termsAndConditions} setTermsAndConditions={setTermsAndConditions}
                         />
-                        <EstimateFormP2 items={items} setItems={setItems} currency={currency}
+                        <TaxInvoiceLayoutP2 items={items} setItems={setItems} currency={currency}
                             termsAndConditions={termsAndConditions} setTermsAndConditions={setTermsAndConditions}
                             isSetDefaultTncCustomer={isSetDefaultTncCustomer} setIsSetDefaultTncCustomer={setIsSetDefaultTncCustomer}
                             isSetDefaultTncClient={isSetDefaultTncClient} setIsSetDefaultTncClient={setIsSetDefaultTncClient}
+                            paymentReceived={paymentReceived} setPaymentReceived={setPaymentReceived}
                         />
-                        <div className='estimate__form--submit-btn'>
+                        <div className='taxInvoice__form--submit-btn'>
                             <button type='submit' onClick={handleSubmit}>
                                 {
-                                    estimateLoading ? <LoadingOutlined /> : "Submit"
+                                    taxInvoiceLoading ? <LoadingOutlined /> : "Submit"
                                 }
                             </button>
                         </div>
                     </form>
-                    <div className="estimate__footer">
+                    <div className="taxInvoice__footer">
                         <img style={{ width: "5rem" }} src={logo} alt="logo" />
-                        <div className='estimate__footer--text'>
+                        <div className='taxInvoice__footer--text'>
                             <p style={{ fontWeight: "400", fontSize: "0.8rem" }}> This is electronically generated document and does not require sign or stamp. </p>
                             <span style={{ marginTop: "0.2rem", fontWeight: "600", fontSize: "0.8rem" }}> powered by Finaccru </span>
                         </div>
@@ -208,4 +217,4 @@ const EstimateLayout = () => {
     )
 }
 
-export default EstimateLayout;
+export default TaxInvoiceLayout;

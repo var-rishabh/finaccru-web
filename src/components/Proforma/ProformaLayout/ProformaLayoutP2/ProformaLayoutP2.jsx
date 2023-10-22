@@ -365,7 +365,7 @@ const ProformaFormP2 = ({
                                     style={{
                                         opacity: isSetDefaultTncClient ? '1' : '0.5'
                                     }}
-                                >Save for all customers.</span>
+                                >Save for all customers</span>
                             </div>
                         </div>
                         <div className='proforma--details-right'>

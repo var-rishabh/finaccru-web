@@ -1,38 +1,40 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
-import { Font } from '@react-pdf/renderer'
-import logo from "../../assets/Icons/cropped_logo.svg"
+import { Document, Page, Text, View, StyleSheet, Image, Font } from '@react-pdf/renderer';
+import menuIcon from '../../assets/croppedIcon.png';
+import WorkSans from '../../assets/fonts/WorkSans.ttf';
+import WorkSansBold from '../../assets/fonts/WorkSansBold.ttf';
+import WorkSansExtraBold from '../../assets/fonts/WorkSansExtraBold.ttf';
+
+
 const styles = StyleSheet.create({
   page: {
-    // flexDirection: 'column',
+    flexDirection: 'column',
+    fontFamily: 'Work Sans',
   },
   header: {
-    padding: "16px",
     display: "flex",
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
+    height: "110px",
+    padding: "0 40px",
   },
 
   header__image: {
-    width: "50%",
     display: "flex",
-    justifyContent: "center",
     alignItems: "center"
   },
 
   header__text: {
-    width: "50%",
     display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
     fontWeight: 'bold', // Set the font weight to bold
   },
 
   section: {
     marginBottom: 10,
   },
-  read__estimate__footer: {
+
+  footer: {
     position: 'absolute',
     bottom: 0,
     left: 0,
@@ -43,15 +45,27 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     flexDirection: "row",
     alignItems: "center",
-    padding: "16px"
+    height: "60px",
+    padding: "0 40px",
   },
-  read__estimate__footer__text: {
+
+  footer__text: {
     width: "80%",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+
   },
-  read__estimate__footer__image: {
+  footer__text_1: {
+    fontWeight: 'normal',
+    fontSize: "10px"
+  },
+  footer__text_2: {
+    fontWeight: 'bold',
+    paddingTop: "8px",
+    fontSize: "10px"
+  },
+  footer__image: {
     width: "20%",
     display: "flex",
     justifyContent: "center",
@@ -59,7 +73,45 @@ const styles = StyleSheet.create({
   }
 });
 
-const PdfContent = ({ content }) => {
+
+Font.register({
+  family: 'Work Sans',
+  fonts: [
+    {
+      src: WorkSans,
+      fontWeight: 'normal',
+    },
+    {
+      src: WorkSansBold,
+      fontWeight: 'bold',
+    },
+    {
+      src: WorkSansExtraBold,
+      fontWeight: 'extraBold',
+    },
+  ],
+});
+
+
+const component1 = () => {
+  return (
+    <View>
+      <Text>Component 1</Text>
+    </View>
+  );
+}
+
+const component2 = () => {
+  return (
+    <View>
+      <Text>Component 1</Text>
+    </View>
+  );
+}
+
+const contentItems = [{ component: component1, height: 100 }, { component: component2, height: 100 }, { component: component1, height: 100 }, { component: component2, height: 100 }, { component: component1, height: 100 }, { component: component2, height: 100 }, { component: component1, height: 100 }, { component: component2, height: 100 }, { component: component1, height: 500 }, { component: component2, height: 100 }]
+
+const PdfContent = ({ contents, heading }) => {
   const contentPerPage = 600; // Set the maximum height of content per page (adjust as needed)
 
   const pages = [];
@@ -67,8 +119,8 @@ const PdfContent = ({ content }) => {
   let currentPage = [];
   let currentHeight = 0;
 
-  content.forEach((section) => {
-    const sectionHeight = 30; // Adjust as needed
+  contents?.forEach((section) => {
+    const sectionHeight = section.height;
 
     if (currentHeight + sectionHeight > contentPerPage) {
       pages.push(currentPage);
@@ -76,7 +128,7 @@ const PdfContent = ({ content }) => {
       currentHeight = 0;
     }
 
-    currentPage.push(section);
+    currentPage.push(section)
     currentHeight += sectionHeight;
   });
 
@@ -90,26 +142,30 @@ const PdfContent = ({ content }) => {
         <Page key={index} size="A4" style={styles.page}>
           <View style={styles.header}>
             <View style={styles.header__image}>
-              <Image style={{ width: "120px" }} src={"https://res.cloudinary.com/dn2jk5smj/image/upload/c_pad,b_auto:predominant,fl_preserve_transparency/v1697376786/cropped_logo_wfg22r.jpg?_s=public-apps"} alt="logo" />
+              <Image style={{ width: "100px" }} src={menuIcon} alt="logo" />
             </View>
             <View style={styles.header__text}>
-              <Text style={{ fontWeight: "bold", fontSize: "20px" }}>Estimates</Text>
+              <Text>{heading}</Text>
             </View>
           </View>
 
-          {pageContent.map((section, i) => (
-            <View key={i} style={styles.section}>
-              <Text>{section}</Text>
-            </View>
-          ))}
+          {pageContent.map((section, i) => {
+            const Component = section.component;
+            const props = section.props;
 
-          <View style={styles.read__estimate__footer}>
-            <View style={styles.read__estimate__footer__image}>
-              <Image style={{ width: "60px" }} src={"https://res.cloudinary.com/dn2jk5smj/image/upload/c_pad,b_auto:predominant,fl_preserve_transparency/v1697376786/cropped_logo_wfg22r.jpg?_s=public-apps"} alt="logo" />
+            return (
+                <Component {...props} />
+            );
+
+          })}
+
+          <View style={styles.footer}>
+            <View style={styles.footer__image}>
+              <Image style={{ width: "60px" }} src={menuIcon} alt="logo" />
             </View>
-            <View style={styles.read__estimate__footer__text}>
-              <Text style={{ fontWeight: "400", fontSize: "10px" }}> This is electronically generated document and does not require sign or stamp. </Text>
-              <Text style={{ marginTop: "12px", fontWeight: "bold", fontSize: "10px" }}> powered by Finaccru </Text>
+            <View style={styles.footer__text}>
+              <Text style={styles.footer__text_1}> This is electronically generated document and does not require sign or stamp. </Text>
+              <Text style={styles.footer__text_2}> powered by Finaccru </Text>
             </View>
           </View>
         </Page>

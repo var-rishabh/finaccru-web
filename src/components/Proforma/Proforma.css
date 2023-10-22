@@ -30,12 +30,15 @@
     background-color: #fff;
 }
 
-.ant-input,
-.ant-input:hover,
-.ant-input:focus,
-.ant-input::placeholder {
-    color: #5D5FEF;
-    border-color: #5541D7;
+.proforma__header--left .ant-input,
+.proforma__header--left .ant-input:hover,
+.proforma__header--left .ant-input:focus { 
+    color: black;
+    border-color: #3463AE;
+}
+.proforma__header--left .ant-input::placeholder {
+    color: #3463AE;
+    opacity: 0.5;
 }
 
 .proforma__header--right {
@@ -82,32 +85,38 @@
     padding: 3rem 3rem 0;
 }
 
-.ant-table-cell {
+td.ant-table-cell {
     padding: 1rem !important;
     background-color: #fff !important;
-    font-size: 0.8rem !important;
-    font-weight: 400 !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
     letter-spacing: 0.0125rem;
     text-align: center !important;
     color: #11142D !important;
 }
 
-.action__button>span>svg {
+th.ant-table-cell {
+    font-size: 0.8rem !important;
+    font-weight: 300 !important;
+}
+
+.proforma-invoices.action__buttons {
+    display: flex;
+    justify-content: flex-end !important;
+    gap: 0.5rem;
+}
+
+.proforma-invoices.action__button>span>svg {
     width: 1.2rem !important;
     height: 1.2rem !important;
     color: var(--gray) !important;
 }
 
-.action__buttons {
-    display: flex;
-    justify-content: space-evenly;
-}
-
-.action__button {
+.proforma-invoices.action__button {
     cursor: pointer;
 }
 
-.action__button>img {
+.proforma-invoices.action__button>img {
     width: 1.2rem;
 }
 

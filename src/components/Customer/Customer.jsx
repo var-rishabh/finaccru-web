@@ -1,6 +1,5 @@
 import { Modal, Input, Table } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
-import convertIcon from '../../assets/Icons/convertIcon.svg';
 import editIcon from '../../assets/Icons/editIcon.svg';
 import deleteIcon from '../../assets/Icons/deleteIcon.svg';
 import errorIcon from '../../assets/Icons/error.svg';
@@ -14,6 +13,7 @@ import { useEffect, useState } from 'react';
 const Customer = () => {
     const dispatch = useDispatch();
     const { error, loading, customers } = useSelector(state => state.customerReducer);
+    console.log("🚀 ~ customers:", customers);
 
     const navigate = useNavigate();
     useEffect(() => {
@@ -45,34 +45,38 @@ const Customer = () => {
 
     const columns = [
         {
-            title: 'Date',
-            dataIndex: 'Customer_date',
-            key: 'Customer_date',
-        },
-        {
-            title: 'Customer No.',
-            dataIndex: 'Customer_number',
-            key: 'Customer_number',
-        },
-        {
-            title: 'Customer',
+            title: 'Customer Name',
             dataIndex: 'customer_name',
             key: 'customer_name',
         },
         {
-            title: 'Amount (excl. VAT)',
-            dataIndex: 'total_amount_excl_tax',
-            key: 'total_amount_excl_tax',
+            title: 'Display Name',
+            dataIndex: 'display_name',
+            key: 'display_name',
         },
         {
-            title: 'Total',
-            dataIndex: 'total',
-            key: 'total',
+            title: 'Contact Name',
+            dataIndex: 'contact_name',
+            key: 'contact_name',
         },
         {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
+            title: 'Email',
+            dataIndex: 'email',
+            key: 'email',
+        },
+        {
+            title: 'Amount Receivable',
+            dataIndex: 'amount_receivable',
+            key: 'amount_receivable',
+        },
+        {
+            title: 'Active',
+            key: 'is_active',
+            render: (text, record) => (
+                <>
+                    {record.is_active ? <p style={{ color: "green" }}>Active</p> : <p style={{ color: "red" }}>Inactive</p>}
+                </>
+            ),
         },
         {
             title: 'Actions',
@@ -82,9 +86,6 @@ const Customer = () => {
                     <div className="action__buttons">
                         <div className="action__button" onClick={() => navigate(`/customer/view/${record.customer_id}`)}>
                             <EyeOutlined />
-                        </div>
-                        <div className="action__button">
-                            <img src={convertIcon} alt="convertIcon" />
                         </div>
                         <div className="action__button" onClick={() => window.location.href = `/customer/edit/${record.customer_id}`} >
                             <img src={editIcon} alt="editIcon" />
@@ -106,7 +107,7 @@ const Customer = () => {
                             <p>This action cannot be undone.</p>
                             <div className="delete__modal__buttons">
                                 <button id='cancel' onClick={handleCancel}>Cancel</button>
-                                <button id='confirm' onClick={() => handleDelete(record.Customer_id)}>Delete</button>
+                                <button id='confirm' onClick={() => handleDelete(record.customer_id)}>Delete</button>
                             </div>
                         </div>
                     </Modal>

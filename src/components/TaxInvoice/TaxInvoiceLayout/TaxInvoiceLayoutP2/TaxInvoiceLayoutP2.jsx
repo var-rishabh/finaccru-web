@@ -5,19 +5,22 @@ import { getTaxRate } from '../../../../Actions/Onboarding';
 
 import { PlusOutlined } from '@ant-design/icons';
 import MinusIcon from '../../../../assets/Icons/minus.svg'
-import { Input, Select, AutoComplete } from 'antd';
+import { Input, Select, AutoComplete, Radio } from 'antd';
 const { TextArea } = Input;
 const { Option } = Select;
 
-const EstimateFormP2 = ({
-    items, setItems, currency, termsAndConditions, setTermsAndConditions,
+const TaxInvoiceFormP2 = ({
+    items, setItems, currency, termsAndConditions, setTermsAndConditions, paymentReceived, setPaymentReceived,
     isSetDefaultTncCustomer, setIsSetDefaultTncCustomer, isSetDefaultTncClient, setIsSetDefaultTncClient
 }) => {
     const { units, loading: unitLoading } = useSelector(state => state.unitReducer);
     const { taxRates, taxRateLoading } = useSelector(state => state.onboardingReducer);
-    const { customer } = useSelector(state => state.customerReducer);
+    // const { customer } = useSelector(state => state.customerReducer);
+    const { user } = useSelector(state => state.userReducer);
 
     const [showDescription, setShowDescription] = useState([]);
+
+    const [paymentReceivedValue, setPaymentReceivedValue] = useState(2);
 
     const [itemTotal, setItemTotal] = useState([]);
     const [itemTax, setItemTax] = useState([]);
@@ -28,6 +31,13 @@ const EstimateFormP2 = ({
     const [total, setTotal] = useState(0);
 
     const [allUnits, setAllUnits] = useState([]);
+
+    const onChangePaymentReceived = (e) => {
+        setPaymentReceivedValue(e.target.value);
+        if (e.target.value === 2) {
+            setPaymentReceived(null)
+        }
+    };
 
     const dispatch = useDispatch();
     useEffect(() => {
@@ -135,11 +145,11 @@ const EstimateFormP2 = ({
 
     return (
         <>
-            <div className='estimate__items'>
+            <div className='taxInvoice__items'>
                 {items?.map((item, index) => (
-                    <div className='estimate__items--main' key={index}>
-                        <div className='estimate__items--whole-item'>
-                            <div className='estimate__items--itemName'>
+                    <div className='taxInvoice__items--main' key={index}>
+                        <div className='taxInvoice__items--whole-item'>
+                            <div className='taxInvoice__items--itemName'>
                                 {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem' }}>Item Name</span> : <></>}
                                 <Input
                                     type='text'
@@ -152,7 +162,7 @@ const EstimateFormP2 = ({
                                     onChange={(e) => handleInputChange(index, 'item_name', e.target.value)}
                                 />
                             </div>
-                            <div className='estimate__items--unitSelect'>
+                            <div className='taxInvoice__items--unitSelect'>
                                 {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem' }}>Unit</span> : <></>}
                                 <AutoComplete
                                     options={allUnits?.map((unit) => ({
@@ -170,7 +180,7 @@ const EstimateFormP2 = ({
                                     placeholder="Unit"
                                 />
                             </div>
-                            <div className='estimate__items--number-item'>
+                            <div className='taxInvoice__items--number-item'>
                                 {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem', marginLeft: '3px' }}>Qty</span> : <></>}
                                 <Input
                                     type="number"
@@ -188,7 +198,7 @@ const EstimateFormP2 = ({
                                     }}
                                 />
                             </div>
-                            <div className='estimate__items--number-item'>
+                            <div className='taxInvoice__items--number-item'>
                                 {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem', marginLeft: '3px' }}>Rate</span> : <></>}
                                 <Input
                                     type="number"
@@ -206,7 +216,7 @@ const EstimateFormP2 = ({
                                     }}
                                 />
                             </div>
-                            <div className='estimate__items--discount'>
+                            <div className='taxInvoice__items--discount'>
                                 {index === 0 ? <span style={{ marginBottom: '1rem', marginLeft: '3px' }}>Discount</span> : <></>}
                                 <Input
                                     type="number"
@@ -240,7 +250,7 @@ const EstimateFormP2 = ({
                                     }}
                                 />
                             </div>
-                            <div className='estimate__items--tax'>
+                            <div className='taxInvoice__items--tax'>
                                 {index === 0 ? <span style={{ marginBottom: '0.9rem' }}>Tax</span> : <></>}
                                 <Input
                                     type="number"
@@ -275,7 +285,7 @@ const EstimateFormP2 = ({
                                     }}
                                 />
                             </div>
-                            <div className='estimate__items--amount'>
+                            <div className='taxInvoice__items--amount'>
                                 {index === 0 ? <span style={{ marginBottom: '1rem' }}>Amount</span> : <></>}
                                 <Input
                                     type='text'
@@ -288,15 +298,15 @@ const EstimateFormP2 = ({
                                 />
                             </div>
                             {items.length > 1 && (
-                                <div className='estimate__items--sr'>
+                                <div className='taxInvoice__items--sr'>
                                     {index === 0 ? <span style={{ marginBottom: '1rem' }}>&nbsp;</span> : <></>}
-                                    <div className='estimate--cancel-icon'>
+                                    <div className='taxInvoice--cancel-icon'>
                                         <img src={MinusIcon} onClick={(e) => handleRemovePerson(index, e)} />
                                     </div>
                                 </div>
                             )}
                         </div>
-                        <div className='estimate__items--description'>
+                        <div className='taxInvoice__items--description'>
                             {showDescription[index] || item?.description ? (
                                 <>
                                     <div className='remove--description-btn'>
@@ -332,11 +342,11 @@ const EstimateFormP2 = ({
                     </div>
                 ))}
             </div>
-            <div className='estimate--details'>
-                <div className='estimate--details--bank'>
-                    <div className='estimate--details--split'>
-                        <div className='estimate--details-left'>
-                            <div className='estimate--details-tnc'>
+            <div className='taxInvoice--details'>
+                <div className='taxInvoice--details--bank'>
+                    <div className='taxInvoice--details--split'>
+                        <div className='taxInvoice--details-left'>
+                            <div className='taxInvoice--details-tnc'>
                                 <h3>Add Terms and Conditions</h3>
                                 <TextArea
                                     placeholder="Terms and Conditions"
@@ -345,7 +355,7 @@ const EstimateFormP2 = ({
                                     onChange={(e) => setTermsAndConditions(e.target.value)}
                                 />
                             </div>
-                            <div style={{ marginTop: "1rem" }} className='estimate--details__modal--checkbox'>
+                            <div style={{ marginTop: "1rem" }} className='taxInvoice--details__modal--checkbox'>
                                 <input type="checkbox" value={isSetDefaultTncCustomer}
                                     checked={isSetDefaultTncCustomer}
                                     onChange={(e) => setIsSetDefaultTncCustomer(e.target.checked)}
@@ -356,7 +366,7 @@ const EstimateFormP2 = ({
                                     }}
                                 >Save for this customer</span>
                             </div>
-                            <div className='estimate--details__modal--checkbox'>
+                            <div className='taxInvoice--details__modal--checkbox'>
                                 <input type="checkbox" value={isSetDefaultTncClient}
                                     checked={isSetDefaultTncClient}
                                     onChange={(e) => setIsSetDefaultTncClient(e.target.checked)}
@@ -367,15 +377,49 @@ const EstimateFormP2 = ({
                                     }}
                                 >Save for all customers</span>
                             </div>
+                            <div className='taxInvoice__details-payment'>
+                                <div className='taxInvoice__details-payment-options'>
+                                    <p>Payment Received?</p>
+                                    <Radio.Group onChange={onChangePaymentReceived} value={paymentReceivedValue}>
+                                        <Radio value={1}>Yes</Radio>
+                                        <Radio value={2}>No</Radio>
+                                    </Radio.Group>
+                                </div>
+                                {
+                                    paymentReceivedValue === 1 ?
+                                        <div className='taxInvoice__details-payment-select'>
+                                            <Select
+                                                placeholder='Select Payment Method'
+                                                value={paymentReceived}
+                                                onChange={(e) => setPaymentReceived(e)}
+                                            >
+                                                <Option key="0" value="0">
+                                                    Cash
+                                                </Option>
+                                                <Option key={user?.clientInfo?.primary_bank?.bank_id} value={user?.clientInfo?.primary_bank?.bank_id}>
+                                                    {user?.clientInfo?.primary_bank?.bank_name}
+                                                </Option>
+                                                {
+                                                    user?.clientInfo?.other_bank_accounts?.map((bank) => (
+                                                        <Option key={bank.bank_id} value={bank.bank_id}>
+                                                            {bank.bank_name}
+                                                        </Option>
+                                                    ))
+                                                }
+                                            </Select>
+                                        </div> : ""
+
+                                }
+                            </div>
                         </div>
-                        <div className='estimate--details-right'>
-                            <div className='estimate--details-right-head'>
+                        <div className='taxInvoice--details-right'>
+                            <div className='taxInvoice--details-right-head'>
                                 <span>Sub Total</span>
                                 <span>Discount</span>
                                 <span>Tax</span>
                                 <span>Total</span>
                             </div>
-                            <div className='estimate--details-right-info'>
+                            <div className='taxInvoice--details-right-info'>
                                 <span>
                                     <p style={{ fontWeight: 500 }}>{currency}</p>
                                     &nbsp; {new Intl.NumberFormat('en-US', {
@@ -405,4 +449,4 @@ const EstimateFormP2 = ({
     )
 }
 
-export default EstimateFormP2;
+export default TaxInvoiceFormP2;

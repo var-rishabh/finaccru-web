@@ -9,7 +9,7 @@ import { Input, Select, AutoComplete } from 'antd';
 const { TextArea } = Input;
 const { Option } = Select;
 
-const EstimateFormP2 = ({
+const CreditNoteFormP2 = ({
     items, setItems, currency, termsAndConditions, setTermsAndConditions,
     isSetDefaultTncCustomer, setIsSetDefaultTncCustomer, isSetDefaultTncClient, setIsSetDefaultTncClient
 }) => {
@@ -135,11 +135,11 @@ const EstimateFormP2 = ({
 
     return (
         <>
-            <div className='estimate__items'>
+            <div className='creditNote__items'>
                 {items?.map((item, index) => (
-                    <div className='estimate__items--main' key={index}>
-                        <div className='estimate__items--whole-item'>
-                            <div className='estimate__items--itemName'>
+                    <div className='creditNote__items--main' key={index}>
+                        <div className='creditNote__items--whole-item'>
+                            <div className='creditNote__items--itemName'>
                                 {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem' }}>Item Name</span> : <></>}
                                 <Input
                                     type='text'
@@ -152,7 +152,7 @@ const EstimateFormP2 = ({
                                     onChange={(e) => handleInputChange(index, 'item_name', e.target.value)}
                                 />
                             </div>
-                            <div className='estimate__items--unitSelect'>
+                            <div className='creditNote__items--unitSelect'>
                                 {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem' }}>Unit</span> : <></>}
                                 <AutoComplete
                                     options={allUnits?.map((unit) => ({
@@ -170,7 +170,7 @@ const EstimateFormP2 = ({
                                     placeholder="Unit"
                                 />
                             </div>
-                            <div className='estimate__items--number-item'>
+                            <div className='creditNote__items--number-item'>
                                 {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem', marginLeft: '3px' }}>Qty</span> : <></>}
                                 <Input
                                     type="number"
@@ -188,7 +188,7 @@ const EstimateFormP2 = ({
                                     }}
                                 />
                             </div>
-                            <div className='estimate__items--number-item'>
+                            <div className='creditNote__items--number-item'>
                                 {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem', marginLeft: '3px' }}>Rate</span> : <></>}
                                 <Input
                                     type="number"
@@ -206,7 +206,7 @@ const EstimateFormP2 = ({
                                     }}
                                 />
                             </div>
-                            <div className='estimate__items--discount'>
+                            <div className='creditNote__items--discount'>
                                 {index === 0 ? <span style={{ marginBottom: '1rem', marginLeft: '3px' }}>Discount</span> : <></>}
                                 <Input
                                     type="number"
@@ -240,7 +240,7 @@ const EstimateFormP2 = ({
                                     }}
                                 />
                             </div>
-                            <div className='estimate__items--tax'>
+                            <div className='creditNote__items--tax'>
                                 {index === 0 ? <span style={{ marginBottom: '0.9rem' }}>Tax</span> : <></>}
                                 <Input
                                     type="number"
@@ -275,7 +275,7 @@ const EstimateFormP2 = ({
                                     }}
                                 />
                             </div>
-                            <div className='estimate__items--amount'>
+                            <div className='creditNote__items--amount'>
                                 {index === 0 ? <span style={{ marginBottom: '1rem' }}>Amount</span> : <></>}
                                 <Input
                                     type='text'
@@ -288,15 +288,15 @@ const EstimateFormP2 = ({
                                 />
                             </div>
                             {items.length > 1 && (
-                                <div className='estimate__items--sr'>
+                                <div className='creditNote__items--sr'>
                                     {index === 0 ? <span style={{ marginBottom: '1rem' }}>&nbsp;</span> : <></>}
-                                    <div className='estimate--cancel-icon'>
+                                    <div className='creditNote--cancel-icon'>
                                         <img src={MinusIcon} onClick={(e) => handleRemovePerson(index, e)} />
                                     </div>
                                 </div>
                             )}
                         </div>
-                        <div className='estimate__items--description'>
+                        <div className='creditNote__items--description'>
                             {showDescription[index] || item?.description ? (
                                 <>
                                     <div className='remove--description-btn'>
@@ -332,11 +332,11 @@ const EstimateFormP2 = ({
                     </div>
                 ))}
             </div>
-            <div className='estimate--details'>
-                <div className='estimate--details--bank'>
-                    <div className='estimate--details--split'>
-                        <div className='estimate--details-left'>
-                            <div className='estimate--details-tnc'>
+            <div className='creditNote--details'>
+                <div className='creditNote--details--bank'>
+                    <div className='creditNote--details--split'>
+                        <div className='creditNote--details-left'>
+                            <div className='creditNote--details-tnc'>
                                 <h3>Add Terms and Conditions</h3>
                                 <TextArea
                                     placeholder="Terms and Conditions"
@@ -345,7 +345,7 @@ const EstimateFormP2 = ({
                                     onChange={(e) => setTermsAndConditions(e.target.value)}
                                 />
                             </div>
-                            <div style={{ marginTop: "1rem" }} className='estimate--details__modal--checkbox'>
+                            <div style={{ marginTop: "1rem" }} className='creditNote--details__modal--checkbox'>
                                 <input type="checkbox" value={isSetDefaultTncCustomer}
                                     checked={isSetDefaultTncCustomer}
                                     onChange={(e) => setIsSetDefaultTncCustomer(e.target.checked)}
@@ -356,7 +356,7 @@ const EstimateFormP2 = ({
                                     }}
                                 >Save for this customer</span>
                             </div>
-                            <div className='estimate--details__modal--checkbox'>
+                            <div className='creditNote--details__modal--checkbox'>
                                 <input type="checkbox" value={isSetDefaultTncClient}
                                     checked={isSetDefaultTncClient}
                                     onChange={(e) => setIsSetDefaultTncClient(e.target.checked)}
@@ -368,14 +368,14 @@ const EstimateFormP2 = ({
                                 >Save for all customers</span>
                             </div>
                         </div>
-                        <div className='estimate--details-right'>
-                            <div className='estimate--details-right-head'>
+                        <div className='creditNote--details-right'>
+                            <div className='creditNote--details-right-head'>
                                 <span>Sub Total</span>
                                 <span>Discount</span>
                                 <span>Tax</span>
                                 <span>Total</span>
                             </div>
-                            <div className='estimate--details-right-info'>
+                            <div className='creditNote--details-right-info'>
                                 <span>
                                     <p style={{ fontWeight: 500 }}>{currency}</p>
                                     &nbsp; {new Intl.NumberFormat('en-US', {
@@ -405,4 +405,4 @@ const EstimateFormP2 = ({
     )
 }
 
-export default EstimateFormP2;
+export default CreditNoteFormP2;

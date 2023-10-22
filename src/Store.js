@@ -5,6 +5,8 @@ import { customerReducer } from './Reducers/Customer';
 import { estimateReducer } from './Reducers/Estimate';
 import { unitReducer } from './Reducers/Unit';
 import { proformaReducer } from './Reducers/Proforma';
+import { taxInvoiceReducer } from './Reducers/TaxInvoice';
+import { creditNoteReducer } from './Reducers/CreditNote';
 
 const store = configureStore({
     reducer: {
@@ -15,6 +17,8 @@ const store = configureStore({
         estimateReducer: estimateReducer,
         unitReducer: unitReducer,
         proformaReducer: proformaReducer,
+        taxInvoiceReducer: taxInvoiceReducer,
+        creditNoteReducer: creditNoteReducer,
     },
 });
 
