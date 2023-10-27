@@ -208,3 +208,23 @@ export const submitTaxInvoiceForApproval = (id) => async (dispatch) => {
     }
 }
 
+export const extractDataFromTaxInvoice = (file, navigate) => async (dispatch) => {
+    try {
+        dispatch({ type: "ExtractDataFromTaxInvoiceRequest" });
+        const token = await auth.currentUser.getIdToken(true);
+        const form = new FormData();
+        form.append("invoice_file", file);
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        const response = await axios.post(`${url}/private/client/tax-invoices/extract-data-from-invoice`, form, config);
+        navigate("/tax-invoice/create?file=true", { state: response.data });
+        dispatch({ type: "ExtractDataFromTaxInvoiceSuccess", payload: response.data });
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ExtractDataFromTaxInvoiceFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}

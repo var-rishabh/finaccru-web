@@ -1,0 +1,90 @@
+export const styles = {
+    main: {
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '0rem 4rem'
+    },
+    main1: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        fontSize: '0.8rem',
+        fontWeight: '300',
+        lineHeight: '1.5',
+        paddingTop: '1rem'
+    },
+    main1Heading: {
+        fontSize: '1.125rem',
+        fontWeight: '500',
+    },
+    main1Data: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: '0.8rem',
+    },
+    main2: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        fontSize: '0.8rem',
+        fontWeight: '300',
+        lineHeight: '1.5',
+        padding: '1rem 0'
+    },
+    main2Heading: {
+        fontSize: '1.125rem',
+        fontWeight: '500',
+    },
+    main2Data: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
+}
+
+export const pdfStyle = {
+    main: {
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '0 40px 10px 40px',
+        height: '70px',
+        marginBottom: '10px',
+    },
+    main1: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        fontSize: '8px',
+        fontWeight: 'normal',
+        lineHeight: '1.5',
+    },
+    main1Heading: {
+        fontSize: '12px',
+        fontWeight: 'bold',
+    },
+    main1Data: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: '5px',
+    },
+    main2: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        fontSize: '8px',
+        fontWeight: 'normal',
+        lineHeight: '1.5',
+        marginTop: '10px',
+    },
+    main2Heading: {
+        fontSize: '12px',
+        fontWeight: 'bold',
+    },
+    main2Data: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
+}

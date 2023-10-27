@@ -6,15 +6,14 @@ import deleteIcon from '../../assets/Icons/deleteIcon.svg';
 import errorIcon from '../../assets/Icons/error.svg';
 import "./TaxInvoice.css"
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteTaxInvoice, downloadTaxInvoiceList, getTaxInvoiceList } from '../../Actions/TaxInvoice';
+import { deleteTaxInvoice, downloadTaxInvoiceList, extractDataFromTaxInvoice, getTaxInvoiceList } from '../../Actions/TaxInvoice';
 import { useEffect, useState } from 'react';
 
 const TaxInvoice = () => {
     const dispatch = useDispatch();
     const { error, loading, taxInvoices } = useSelector(state => state.taxInvoiceReducer);
-
     const navigate = useNavigate();
     useEffect(() => {
         dispatch(getTaxInvoiceList());
@@ -194,7 +193,7 @@ const TaxInvoice = () => {
                             </p>
                             : <></>
                         }
-                        <button className="taxInvoice__modal--btn2">
+                        <button className="taxInvoice__modal--btn2" onClick={(e) => { e.preventDefault(); !createTaxByFileError[0] && dispatch(extractDataFromTaxInvoice(createTaxByFile, navigate)) }}>
                             Create By File &nbsp;
                             <ArrowRightOutlined />
                         </button>

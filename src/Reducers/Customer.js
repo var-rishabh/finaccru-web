@@ -23,6 +23,30 @@ export const customerReducer = createReducer(initialState, (builder) => {
             state.customer = action.payload;
             state.error = null;
         })
+        .addCase("UpdateCustomerRequest", (state) => {
+            state.loading = true;
+        })
+        .addCase("UpdateCustomerFailure", (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+        .addCase("UpdateCustomerSuccess", (state, action) => {
+            state.loading = false;
+            state.customer = action.payload;
+            state.error = null;
+        })
+        .addCase("CreateInSalesDocumentRequest", (state) => {
+            state.loading = true;
+        })
+        .addCase("CreateInSalesDocumentFailure", (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+        .addCase("CreateInSalesDocumentSuccess", (state, action) => {
+            state.loading = false;
+            state.customer = action.payload;
+            state.error = null;
+        })
         .addCase("CustomerDetailsRequest", (state) => {
             state.loading = true;
         })
@@ -82,6 +106,30 @@ export const customerReducer = createReducer(initialState, (builder) => {
         .addCase("ShippingAddressListSuccess", (state, action) => {
             state.loading = false;
             state.shippingAddresses = action.payload;
+            state.error = null;
+        })
+        .addCase("UpdateShippingAddressRequest", (state) => {
+            state.loading = true;
+        })
+        .addCase("UpdateShippingAddressFailure", (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+        .addCase("UpdateShippingAddressSuccess", (state, action) => {
+            state.loading = false;
+            state.success = true;
+            state.error = null;
+        })
+        .addCase("DeleteShippingAddressRequest", (state) => {
+            state.loading = true;
+        })
+        .addCase("DeleteShippingAddressFailure", (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+        .addCase("DeleteShippingAddressSuccess", (state, action) => {
+            state.loading = false;
+            state.success = true;
             state.error = null;
         })
         .addCase("DeleteCustomerRequest", (state) => {

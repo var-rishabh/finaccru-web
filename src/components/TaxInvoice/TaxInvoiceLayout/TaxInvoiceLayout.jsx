@@ -1,18 +1,19 @@
 import TaxInvoiceLayoutP1 from './TaxInvoiceLayoutP1/TaxInvoiceLayoutP1';
 import TaxInvoiceLayoutP2 from './TaxInvoiceLayoutP2/TaxInvoiceLayoutP2';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { createTaxInvoice, getTaxInvoiceDetails, getNewTaxInvoiceNumber, updateTaxInvoice } from '../../../Actions/TaxInvoice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { getCurrency } from '../../../Actions/Onboarding';
 import { getDate } from '../../../utils/date';
 import { toast } from 'react-toastify';
-
 import "./TaxInvoiceLayout.css"
 import { LoadingOutlined } from '@ant-design/icons';
 import backButton from "../../../assets/Icons/back.svg"
 import logo from "../../../assets/Icons/cropped_logo.svg"
 import { getCustomerDetails } from '../../../Actions/Customer';
+import { getEstimateDetails } from '../../../Actions/Estimate';
+import { getProformaDetails } from '../../../Actions/Proforma';
 
 const TaxInvoiceLayout = () => {
     const navigate = useNavigate();
@@ -42,8 +43,17 @@ const TaxInvoiceLayout = () => {
     const isAdd = window.location.pathname.split('/')[2] === 'create';
     const { user } = useSelector(state => state.userReducer);
     const { loading: taxInvoiceLoading, taxInvoice, number } = useSelector(state => state.taxInvoiceReducer);
-    const { currencies, currencyLoading } = useSelector(state => state.onboardingReducer);
+    const { estimate } = useSelector(state => state.estimateReducer);
+    const { proforma } = useSelector(state => state.proformaReducer);
+    const { currencies } = useSelector(state => state.onboardingReducer);
     const { customer } = useSelector(state => state.customerReducer);
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const file = searchParams.get('file');
+    const convert = searchParams.get('convert');
+    const reference_id = searchParams.get('reference_id');
+    const referenceName = searchParams.get('reference');
+    const location = useLocation();
 
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
@@ -54,8 +64,16 @@ const TaxInvoiceLayout = () => {
         if (window.location.pathname.split('/')[2] === 'create') {
             dispatch(getCurrency());
             dispatch(getNewTaxInvoiceNumber());
+            if (convert) {
+                if (referenceName == 'estimate') {
+                    dispatch(getEstimateDetails(reference_id));
+                }
+                if (referenceName == 'proforma') {
+                    dispatch(getProformaDetails(reference_id));
+                }
+            }
         }
-    }, [dispatch]);
+    }, [dispatch, file]);
 
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
@@ -93,8 +111,62 @@ const TaxInvoiceLayout = () => {
         if (window.location.pathname.split('/')[2] === 'create') {
             setTaxInvoiceNumber(number);
             setTermsAndConditions(user?.clientInfo?.terms_and_conditions);
+            if (file) {
+                console.log(location.state);
+                setCurrencyConversionRate(location.state?.currency_conversion_rate);
+                setCurrencyId(location.state?.currency_id);
+                setCurrency(currencyId !== 1 ? currencies?.find((currency) => currency.currency_id === location.state?.currency_id)?.currency_abv : 'AED');
+                setItems(location.state?.line_items || [{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
+                setReference(location.state?.reference);
+                setSubject(location.state?.subject);
+                setTermsAndConditions(location.state?.terms_and_conditions);
+                setTaxInvoiceDate(location.state?.ti_date);
+                setValidTill(location.state?.due_date);
+                setTaxInvoiceNumber(location.state?.ti_number);
+                setCustomerId(location.state?.customer?.customer_id);
+                setCustomerName(location.state?.customer?.customer_name);
+                setShippingAddress1(location.state?.customer?.shipping_address_line_1);
+                setShippingAddress2(location.state?.customer?.shipping_address_line_2);
+                setShippingAddress3(location.state?.customer?.shipping_address_line_3);
+                setShippingCountry(location.state?.customer?.shipping_country);
+                setShippingState(location.state?.customer?.shipping_state);
+            }
+            if (convert) {
+                if (referenceName == 'estimate') {
+                    setCurrencyConversionRate(estimate?.currency_conversion_rate);
+                    setCurrencyId(estimate?.currency_id);
+                    setCurrency(currencyId !== 1 ? currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv : 'AED');
+                    setItems(estimate?.line_items || [{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
+                    setReference(estimate?.estimate_number);
+                    setSubject(estimate?.subject);
+                    setTermsAndConditions(estimate?.terms_and_conditions);
+                    setCustomerId(estimate?.customer?.customer_id);
+                    setCustomerName(estimate?.customer?.customer_name);
+                    setShippingAddress1(estimate?.customer?.shipping_address_line_1);
+                    setShippingAddress2(estimate?.customer?.shipping_address_line_2);
+                    setShippingAddress3(estimate?.customer?.shipping_address_line_3);
+                    setShippingCountry(estimate?.customer?.shipping_country);
+                    setShippingState(estimate?.customer?.shipping_state);
+                }
+                if (referenceName == 'proforma') {
+                    setCurrencyConversionRate(proforma?.currency_conversion_rate);
+                    setCurrencyId(proforma?.currency_id);
+                    setCurrency(currencyId !== 1 ? currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv : 'AED');
+                    setItems(proforma?.line_items || [{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
+                    setReference(proforma?.pi_number);
+                    setSubject(proforma?.subject);
+                    setTermsAndConditions(proforma?.terms_and_conditions);
+                    setCustomerId(proforma?.customer?.customer_id);
+                    setCustomerName(proforma?.customer?.customer_name);
+                    setShippingAddress1(proforma?.customer?.shipping_address_line_1);
+                    setShippingAddress2(proforma?.customer?.shipping_address_line_2);
+                    setShippingAddress3(proforma?.customer?.shipping_address_line_3);
+                    setShippingCountry(proforma?.customer?.shipping_country);
+                    setShippingState(proforma?.customer?.shipping_state);
+                }
+            }
         }
-    }, [currencies, taxInvoice, number]);
+    }, [currencies, taxInvoice, number, estimate, proforma]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -189,6 +261,7 @@ const TaxInvoiceLayout = () => {
                             shippingCountry={shippingCountry} setShippingCountry={setShippingCountry}
                             shippingState={shippingState} setShippingState={setShippingState}
                             termsAndConditions={termsAndConditions} setTermsAndConditions={setTermsAndConditions}
+                            convert={convert}
                         />
                         <TaxInvoiceLayoutP2 items={items} setItems={setItems} currency={currency}
                             termsAndConditions={termsAndConditions} setTermsAndConditions={setTermsAndConditions}

@@ -8,17 +8,23 @@ import Loader from '../../Loader/Loader';
 import './CreditNoteRead.css'
 import backButton from "../../../assets/Icons/back.svg"
 import logo from "../../../assets/Icons/cropped_logo.svg"
-// import PdfDownload from '../PdfDownload/PdfDownload';
+import PdfDownload from '../../PdfDownload/PdfDownload';
+import CreditNoteHead from './Parts/CreditNoteHead';
+
+
+import { pdfStyle as headPdfStyle, styles as headStyles } from '../../../Styles/ReadHead';
+import CreditNoteFor from './Parts/CreditNoteFor';
+import { styles as forStyles, pdfStyle as forPdfStyles } from '../../../Styles/ReadFor';
+import CreditNoteMeta from './Parts/CreditNoteMeta';
+import { styles as metaStyles, pdfStyle as metaPdfStyles } from '../../../Styles/ReadMeta';
 
 const CreditNoteReadLayout = () => {
-    const handleDownload = () => {
-    }
 
     const navigate = useNavigate();
     const { user } = useSelector(state => state.userReducer);
-    const ti_id = window.location.pathname.split('/')[3];
+    const cn_id = window.location.pathname.split('/')[3];
     const { loading, creditNote } = useSelector(state => state.creditNoteReducer);
-    const { taxRates, taxRateLoading } = useSelector(state => state.onboardingReducer);
+    const { taxRates } = useSelector(state => state.onboardingReducer);
     const dispatch = useDispatch();
 
     const [itemTotal, setItemTotal] = useState([]);
@@ -31,7 +37,7 @@ const CreditNoteReadLayout = () => {
     const [tax, setTax] = useState(0);
     const [total, setTotal] = useState(0);
 
-    const { currencies, currencyLoading } = useSelector(state => state.onboardingReducer);
+    const { currencies } = useSelector(state => state.onboardingReducer);
 
     useEffect(() => {
         dispatch(getCurrency());
@@ -39,7 +45,7 @@ const CreditNoteReadLayout = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        dispatch(getCreditNoteDetails(ti_id));
+        dispatch(getCreditNoteDetails(cn_id));
     }, [dispatch]);
 
     useEffect(() => {
@@ -110,6 +116,55 @@ const CreditNoteReadLayout = () => {
         setGroupedItems(groupedByTaxId);
     }, [itemTotal, itemTax, creditNote, taxRates]);
 
+    const contents = [
+        {
+            component: CreditNoteHead,
+            height: 120,
+            props: {
+                styles: headPdfStyle,
+                address_line_1: user?.clientInfo?.company_data?.address_line_1,
+                address_line_2: user?.clientInfo?.company_data?.address_line_2,
+                address_line_3: user?.clientInfo?.company_data?.address_line_3,
+                company_name: user?.clientInfo?.company_data?.company_name,
+                country: user?.clientInfo?.company_data?.country,
+                state: user?.clientInfo?.company_data?.state,
+                trade_license_number: user?.clientInfo?.company_data?.trade_license_number,
+                cn_number: creditNote?.cn_number,
+                cn_date: creditNote?.cn_date,
+                due_date: creditNote?.due_date,
+                reference: creditNote?.reference
+            }
+        },
+        {
+            component: CreditNoteFor,
+            height: 120,
+            props: {
+                styles: forPdfStyles,
+                customer_name: creditNote?.customer?.customer_name,
+                billing_address_line_1: creditNote?.customer?.billing_address_line_1,
+                billing_address_line_2: creditNote?.customer?.billing_address_line_2,
+                billing_address_line_3: creditNote?.customer?.billing_address_line_3,
+                billing_state: creditNote?.customer?.billing_state,
+                billing_country: creditNote?.customer?.billing_country,
+                shipping_address_line_1: creditNote?.customer?.shipping_address_line_1,
+                shipping_address_line_2: creditNote?.customer?.shipping_address_line_2,
+                shipping_address_line_3: creditNote?.customer?.shipping_address_line_3,
+                shipping_state: creditNote?.customer?.shipping_state,
+                shipping_country: creditNote?.customer?.shipping_country,
+                trn: creditNote?.customer?.trn
+            }
+        },
+        {
+            component: CreditNoteMeta,
+            height: 70,
+            props: {
+                styles: metaPdfStyles,
+                currency_abv: currencies?.find((currency) => currency.currency_id === creditNote?.currency_id)?.currency_abv,
+                currency_conversion_rate: creditNote?.currency_conversion_rate,
+                subject: creditNote?.subject
+            }
+        }
+    ];
 
     return (
         <>
@@ -142,7 +197,7 @@ const CreditNoteReadLayout = () => {
                             </> : ""
                     }
                     <a className='read__creditNote__header--btn1' onClick={() => navigate(`/credit-note/edit/${creditNote?.cn_id}`)}>Edit</a>
-                    <a className='read__creditNote__header--btn2' onClick={handleDownload}>Download</a>
+                    <PdfDownload contents={contents} heading={"Tax Invoice"} />
                 </div>
             </div>
             <div className="read__creditNote__container">
@@ -152,89 +207,9 @@ const CreditNoteReadLayout = () => {
                             <img style={{ width: "9rem" }} src={logo} alt="logo" />
                             <h1 className='read__creditNote--head'>Credit Note</h1>
                         </div>
-                        <div className='read__creditNote--part1'>
-                            <div className='read__creditNote--part1-head'>
-                                <div className='read__creditNote--head-info1'>
-                                    <h3>Credit Note From</h3>
-                                    <span style={{ fontWeight: 500 }}>{user?.clientInfo?.company_data?.company_name}</span>
-                                    <span>{user?.clientInfo?.company_data?.address_line_1}</span>
-                                    <span>{user?.clientInfo?.company_data?.address_line_2}</span>
-                                    <span>{user?.clientInfo?.company_data?.address_line_3}</span>
-                                    <span>{user?.clientInfo?.company_data?.state + ', ' + user?.clientInfo?.company_data?.country}</span>
-                                    <span>TRN: {user?.clientInfo?.company_data?.trade_license_number}</span>
-                                </div>
-                                <div className='read__creditNote--head-info2'>
-                                    <div className='read__creditNote--head-info2-data'>
-                                        <span>Credit Note Number</span>
-                                        <p>
-                                            {creditNote?.cn_number}
-                                        </p>
-                                    </div>
-                                    <div className='read__creditNote--head-info2-data'>
-                                        <span>Credit Note Date</span>
-                                        <p>{creditNote?.cn_date}</p>
-                                    </div>
-                                    <div className='read__creditNote--head-info2-data'>
-                                        <span>Due Date</span>
-                                        <p>{creditNote?.due_date}</p>
-                                    </div>
-                                    <div className='read__creditNote--head-info2-data'>
-                                        {
-                                            creditNote?.reference ?
-                                                <>
-                                                    <span>Reference</span>
-                                                    <p>{creditNote?.reference}</p>
-                                                </>
-                                                : ""
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='read__creditNote--part2-head'>
-                                <div className='read__creditNote--part2-left'>
-                                    <h3>Credit Note For</h3>
-                                    <div className='read__creditNote--customer-data'>
-                                        <span style={{ fontWeight: 500 }}>{creditNote?.customer?.customer_name}</span>
-                                        <span>{creditNote?.customer?.billing_address_line_1}</span>
-                                        {creditNote?.customer?.billing_address_line_2 && <span>{creditNote?.customer?.billing_address_line_2}</span>}
-                                        {creditNote?.customer?.billing_address_line_3 && <span>{creditNote?.customer?.billing_address_line_3}</span>}
-                                        <span>{creditNote?.customer?.billing_state + ', ' + creditNote?.customer?.billing_country}</span>
-                                        {creditNote?.customer?.trn && <span>TRN: {creditNote?.customer?.trn}</span>}
-                                    </div>
-                                </div>
-                                <div className='read__creditNote--part2-right'>
-                                    <h3>Shipping Address</h3>
-                                    <div className='read__creditNote--customer-data'>
-                                        <span>{creditNote?.customer?.shipping_address_line_1}</span>
-                                        {creditNote?.customer?.shipping_address_line_2 && <span>{creditNote?.customer?.shipping_address_line_2}</span>}
-                                        {creditNote?.customer?.shipping_address_line_3 && <span>{creditNote?.customer?.shipping_address_line_3}</span>}
-                                        <span>{creditNote?.customer?.shipping_state + ', ' + creditNote?.customer?.shipping_country}</span>
-                                        {creditNote?.customer?.trn && <span>TRN: {creditNote?.customer?.trn}</span>}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='read__creditNote--part3-head'>
-                                <h3> Currency</h3>
-                                <div className='read__creditNote--currency'>
-                                    <div className='read__creditNote--currency-conversion'>
-                                        <span>1</span>
-                                        <span>{currencies?.find((currency) => currency.currency_id === creditNote?.currency_id)?.currency_abv} =</span>
-                                        <p>{creditNote?.currency_conversion_rate}</p>
-                                        <span>AED</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='read__creditNote--part4-head'>
-                                {
-                                    creditNote?.subject ?
-                                        <>
-                                            <h3>Subject</h3>
-                                            <p>{creditNote?.subject}</p>
-                                        </>
-                                        : ""
-                                }
-                            </div>
-                        </div>
+                        <CreditNoteHead styles={headStyles} address_line_1={user?.clientInfo?.company_data?.address_line_1} address_line_2={user?.clientInfo?.company_data?.address_line_2} address_line_3={user?.clientInfo?.company_data?.address_line_3} company_name={user?.clientInfo?.company_data?.company_name} country={user?.clientInfo?.company_data?.country} state={user?.clientInfo?.company_data?.state} trade_license_number={user?.clientInfo?.company_data?.trade_license_number} cn_number={creditNote?.cn_number} cn_date={creditNote?.cn_date} due_date={creditNote?.due_date} reference={creditNote?.reference} />
+                        <CreditNoteFor styles={forStyles} customer_name={creditNote?.customer?.customer_name} billing_address_line_1={creditNote?.customer?.billing_address_line_1} billing_address_line_2={creditNote?.customer?.billing_address_line_2} billing_address_line_3={creditNote?.customer?.billing_address_line_3} billing_state={creditNote?.customer?.billing_state} billing_country={creditNote?.customer?.billing_country} shipping_address_line_1={creditNote?.customer?.shipping_address_line_1} shipping_address_line_2={creditNote?.customer?.shipping_address_line_2} shipping_address_line_3={creditNote?.customer?.shipping_address_line_3} shipping_state={creditNote?.customer?.shipping_state} shipping_country={creditNote?.customer?.shipping_country} trn={creditNote?.customer?.trn} />
+                        <CreditNoteMeta styles={metaStyles} currency_abv={currencies?.find((currency) => currency.currency_id === creditNote?.currency_id)?.currency_abv} currency_conversion_rate={creditNote?.currency_conversion_rate} subject={creditNote?.subject} />
                         <div className='read__creditNote__items'>
                             {creditNote?.line_items?.map((item, index) => (
                                 <div className='read__creditNote__items--main' key={index}>

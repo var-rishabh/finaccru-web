@@ -69,6 +69,12 @@
     font-weight: 700;
     color: #fff;
     background-color: #3463AE;
+    overflow: hidden;
+}
+
+.read__estimate__header--btn2>a {
+    text-decoration: none !important;
+    color: #fff !important;
 }
 
 
@@ -279,7 +285,7 @@
 .read__estimate__items {
     background-color: #ECF1F3;
     width: 100%;
-    padding: 2rem 0 1.5rem;
+    padding: 1.5rem 2rem;
 }
 
 .read__estimate__items--main {

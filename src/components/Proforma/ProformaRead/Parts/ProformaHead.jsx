@@ -1,12 +1,12 @@
 import React from 'react'
 import { View, Text } from '@react-pdf/renderer'
 
-const EstimateHead = ({ styles, address_line_1, address_line_2, address_line_3, company_name, country, state, trade_license_number, estimate_number, estimate_date, valid_till, reference }) => {
+const ProformaHead = ({ styles, address_line_1, address_line_2, address_line_3, company_name, country, state, trade_license_number, pi_number, pi_date, due_date, reference }) => {
     return (
         <View style={styles.main}>
             <View style={styles.mainLeft}>
                 <Text style={styles.mainLeftHeading}>
-                    Estimate From
+                    Proforma From
                 </Text>
                 <Text style={styles.mainLeftCompany}>
                     {company_name}
@@ -19,15 +19,15 @@ const EstimateHead = ({ styles, address_line_1, address_line_2, address_line_3, 
             </View>
             <View style={styles.mainRight}>
                 <View style={styles.mainRightData}>
-                    <Text>Estimate Number</Text>
-                    <Text>Estimate Date</Text>
-                    <Text>Valid Till</Text>
+                    <Text>Proforma Number</Text>
+                    <Text>Proforma Date</Text>
+                    <Text>Due Date</Text>
                     {reference ? <Text>Reference</Text> : ""}
                 </View>
                 <View style={styles.mainRightData2}>
-                    <Text>{estimate_number}</Text>
-                    <Text>{estimate_date}</Text>
-                    <Text>{valid_till}</Text>
+                    <Text>{pi_number}</Text>
+                    <Text>{pi_date}</Text>
+                    <Text>{due_date}</Text>
                     {reference ? <Text>{reference}</Text> : ""}
                 </View>
             </View>
@@ -35,4 +35,4 @@ const EstimateHead = ({ styles, address_line_1, address_line_2, address_line_3, 
     )
 }
 
-export default EstimateHead
+export default ProformaHead;
