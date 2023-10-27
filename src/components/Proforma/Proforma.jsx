@@ -90,7 +90,7 @@ const Proforma = () => {
                             record?.status === "Converted to PI/TI" ? "" :
                                 <>
                                     <div className="action__button">
-                                        <Tooltip title="Convert to Invoice" color='green' placement="bottom">
+                                        <Tooltip title="Convert to Invoice" color='green' placement="bottom" onClick={() => navigate(`/tax-invoice/create?convert=true&reference=proforma&reference_id=${record.pi_id}`)}>
                                             <img src={convertIcon} alt="convertIcon" />
                                         </Tooltip>
                                     </div>

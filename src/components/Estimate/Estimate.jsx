@@ -96,7 +96,12 @@ const Estimate = () => {
                             record?.status === "Converted to PI/TI" ? "" :
                                 <>
                                     <div className="action__button">
-                                        <Tooltip title="Convert to Invoice" color='green' placement="bottom">
+                                        <Tooltip title="Convert to PI" color='green' placement="bottom" onClick={() => navigate(`/proforma/create?convert=true&reference=estimate&reference_id=${record.estimate_id}`)}>
+                                            <img src={convertIcon} alt="convertIcon" />
+                                        </Tooltip>
+                                    </div>
+                                    <div className="action__button">
+                                        <Tooltip title="Convert to TI" color='blue' placement="bottom" onClick={() => navigate(`/tax-invoice/create?convert=true&reference=estimate&reference_id=${record.estimate_id}`)}>
                                             <img src={convertIcon} alt="convertIcon" />
                                         </Tooltip>
                                     </div>

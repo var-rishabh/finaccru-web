@@ -8,17 +8,23 @@ import Loader from '../../Loader/Loader';
 import './TaxInvoiceRead.css'
 import backButton from "../../../assets/Icons/back.svg"
 import logo from "../../../assets/Icons/cropped_logo.svg"
-// import PdfDownload from '../PdfDownload/PdfDownload';
+import PdfDownload from '../../PdfDownload/PdfDownload';
+import TaxInvoiceHead from './Parts/TaxInvoiceHead';
+
+
+import { pdfStyle as headPdfStyle, styles as headStyles } from '../../../Styles/ReadHead';
+import TaxInvoiceFor from './Parts/TaxInvoiceFor';
+import { styles as forStyles, pdfStyle as forPdfStyles } from '../../../Styles/ReadFor';
+import TaxInvoiceMeta from './Parts/TaxInvoiceMeta';
+import { styles as metaStyles, pdfStyle as metaPdfStyles } from '../../../Styles/ReadMeta';
 
 const TaxInvoiceReadLayout = () => {
-    const handleDownload = () => {
-    }
 
     const navigate = useNavigate();
     const { user } = useSelector(state => state.userReducer);
     const ti_id = window.location.pathname.split('/')[3];
     const { loading, taxInvoice } = useSelector(state => state.taxInvoiceReducer);
-    const { taxRates, taxRateLoading } = useSelector(state => state.onboardingReducer);
+    const { taxRates } = useSelector(state => state.onboardingReducer);
     const dispatch = useDispatch();
 
     const [itemTotal, setItemTotal] = useState([]);
@@ -31,7 +37,7 @@ const TaxInvoiceReadLayout = () => {
     const [tax, setTax] = useState(0);
     const [total, setTotal] = useState(0);
 
-    const { currencies, currencyLoading } = useSelector(state => state.onboardingReducer);
+    const { currencies } = useSelector(state => state.onboardingReducer);
 
     useEffect(() => {
         dispatch(getCurrency());
@@ -110,6 +116,55 @@ const TaxInvoiceReadLayout = () => {
         setGroupedItems(groupedByTaxId);
     }, [itemTotal, itemTax, taxInvoice, taxRates]);
 
+    const contents = [
+        {
+            component: TaxInvoiceHead,
+            height: 120,
+            props: {
+                styles: headPdfStyle,
+                address_line_1: user?.clientInfo?.company_data?.address_line_1,
+                address_line_2: user?.clientInfo?.company_data?.address_line_2,
+                address_line_3: user?.clientInfo?.company_data?.address_line_3,
+                company_name: user?.clientInfo?.company_data?.company_name,
+                country: user?.clientInfo?.company_data?.country,
+                state: user?.clientInfo?.company_data?.state,
+                trade_license_number: user?.clientInfo?.company_data?.trade_license_number,
+                ti_number: taxInvoice?.ti_number,
+                ti_date: taxInvoice?.ti_date,
+                due_date: taxInvoice?.due_date,
+                reference: taxInvoice?.reference
+            }
+        },
+        {
+            component: TaxInvoiceFor,
+            height: 120,
+            props: {
+                styles: forPdfStyles,
+                customer_name: taxInvoice?.customer?.customer_name,
+                billing_address_line_1: taxInvoice?.customer?.billing_address_line_1,
+                billing_address_line_2: taxInvoice?.customer?.billing_address_line_2,
+                billing_address_line_3: taxInvoice?.customer?.billing_address_line_3,
+                billing_state: taxInvoice?.customer?.billing_state,
+                billing_country: taxInvoice?.customer?.billing_country,
+                shipping_address_line_1: taxInvoice?.customer?.shipping_address_line_1,
+                shipping_address_line_2: taxInvoice?.customer?.shipping_address_line_2,
+                shipping_address_line_3: taxInvoice?.customer?.shipping_address_line_3,
+                shipping_state: taxInvoice?.customer?.shipping_state,
+                shipping_country: taxInvoice?.customer?.shipping_country,
+                trn: taxInvoice?.customer?.trn
+            }
+        },
+        {
+            component: TaxInvoiceMeta,
+            height: 70,
+            props: {
+                styles: metaPdfStyles,
+                currency_abv: currencies?.find((currency) => currency.currency_id === taxInvoice?.currency_id)?.currency_abv,
+                currency_conversion_rate: taxInvoice?.currency_conversion_rate,
+                subject: taxInvoice?.subject
+            }
+        }
+    ];
 
     return (
         <>
@@ -142,7 +197,7 @@ const TaxInvoiceReadLayout = () => {
                             </> : ""
                     }
                     <a className='read__taxInvoice__header--btn1' onClick={() => navigate(`/tax-invoice/edit/${taxInvoice?.ti_id}`)}>Edit</a>
-                    <a className='read__taxInvoice__header--btn2' onClick={handleDownload}>Download</a>
+                    <PdfDownload contents={contents} heading={"Tax Invoice"} />
                 </div>
             </div>
             <div className="read__taxInvoice__container">
@@ -152,89 +207,9 @@ const TaxInvoiceReadLayout = () => {
                             <img style={{ width: "9rem" }} src={logo} alt="logo" />
                             <h1 className='read__taxInvoice--head'>Tax Invoice</h1>
                         </div>
-                        <div className='read__taxInvoice--part1'>
-                            <div className='read__taxInvoice--part1-head'>
-                                <div className='read__taxInvoice--head-info1'>
-                                    <h3>Tax Invoice From</h3>
-                                    <span style={{ fontWeight: 500 }}>{user?.clientInfo?.company_data?.company_name}</span>
-                                    <span>{user?.clientInfo?.company_data?.address_line_1}</span>
-                                    <span>{user?.clientInfo?.company_data?.address_line_2}</span>
-                                    <span>{user?.clientInfo?.company_data?.address_line_3}</span>
-                                    <span>{user?.clientInfo?.company_data?.state + ', ' + user?.clientInfo?.company_data?.country}</span>
-                                    <span>TRN: {user?.clientInfo?.company_data?.trade_license_number}</span>
-                                </div>
-                                <div className='read__taxInvoice--head-info2'>
-                                    <div className='read__taxInvoice--head-info2-data'>
-                                        <span>Tax Invoice Number</span>
-                                        <p>
-                                            {taxInvoice?.ti_number}
-                                        </p>
-                                    </div>
-                                    <div className='read__taxInvoice--head-info2-data'>
-                                        <span>Tax Invoice Date</span>
-                                        <p>{taxInvoice?.ti_date}</p>
-                                    </div>
-                                    <div className='read__taxInvoice--head-info2-data'>
-                                        <span>Due Date</span>
-                                        <p>{taxInvoice?.due_date}</p>
-                                    </div>
-                                    <div className='read__taxInvoice--head-info2-data'>
-                                        {
-                                            taxInvoice?.reference ?
-                                                <>
-                                                    <span>Reference</span>
-                                                    <p>{taxInvoice?.reference}</p>
-                                                </>
-                                                : ""
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='read__taxInvoice--part2-head'>
-                                <div className='read__taxInvoice--part2-left'>
-                                    <h3>Tax Invoice For</h3>
-                                    <div className='read__taxInvoice--customer-data'>
-                                        <span style={{ fontWeight: 500 }}>{taxInvoice?.customer?.customer_name}</span>
-                                        <span>{taxInvoice?.customer?.billing_address_line_1}</span>
-                                        {taxInvoice?.customer?.billing_address_line_2 && <span>{taxInvoice?.customer?.billing_address_line_2}</span>}
-                                        {taxInvoice?.customer?.billing_address_line_3 && <span>{taxInvoice?.customer?.billing_address_line_3}</span>}
-                                        <span>{taxInvoice?.customer?.billing_state + ', ' + taxInvoice?.customer?.billing_country}</span>
-                                        {taxInvoice?.customer?.trn && <span>TRN: {taxInvoice?.customer?.trn}</span>}
-                                    </div>
-                                </div>
-                                <div className='read__taxInvoice--part2-right'>
-                                    <h3>Shipping Address</h3>
-                                    <div className='read__taxInvoice--customer-data'>
-                                        <span>{taxInvoice?.customer?.shipping_address_line_1}</span>
-                                        {taxInvoice?.customer?.shipping_address_line_2 && <span>{taxInvoice?.customer?.shipping_address_line_2}</span>}
-                                        {taxInvoice?.customer?.shipping_address_line_3 && <span>{taxInvoice?.customer?.shipping_address_line_3}</span>}
-                                        <span>{taxInvoice?.customer?.shipping_state + ', ' + taxInvoice?.customer?.shipping_country}</span>
-                                        {taxInvoice?.customer?.trn && <span>TRN: {taxInvoice?.customer?.trn}</span>}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='read__taxInvoice--part3-head'>
-                                <h3> Currency</h3>
-                                <div className='read__taxInvoice--currency'>
-                                    <div className='read__taxInvoice--currency-conversion'>
-                                        <span>1</span>
-                                        <span>{currencies?.find((currency) => currency.currency_id === taxInvoice?.currency_id)?.currency_abv} =</span>
-                                        <p>{taxInvoice?.currency_conversion_rate}</p>
-                                        <span>AED</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='read__taxInvoice--part4-head'>
-                                {
-                                    taxInvoice?.subject ?
-                                        <>
-                                            <h3>Subject</h3>
-                                            <p>{taxInvoice?.subject}</p>
-                                        </>
-                                        : ""
-                                }
-                            </div>
-                        </div>
+                        <TaxInvoiceHead styles={headStyles} address_line_1={user?.clientInfo?.company_data?.address_line_1} address_line_2={user?.clientInfo?.company_data?.address_line_2} address_line_3={user?.clientInfo?.company_data?.address_line_3} company_name={user?.clientInfo?.company_data?.company_name} country={user?.clientInfo?.company_data?.country} state={user?.clientInfo?.company_data?.state} trade_license_number={user?.clientInfo?.company_data?.trade_license_number} ti_number={taxInvoice?.ti_number} ti_date={taxInvoice?.ti_date} due_date={taxInvoice?.due_date} reference={taxInvoice?.reference} />
+                        <TaxInvoiceFor styles={forStyles} customer_name={taxInvoice?.customer?.customer_name} billing_address_line_1={taxInvoice?.customer?.billing_address_line_1} billing_address_line_2={taxInvoice?.customer?.billing_address_line_2} billing_address_line_3={taxInvoice?.customer?.billing_address_line_3} billing_state={taxInvoice?.customer?.billing_state} billing_country={taxInvoice?.customer?.billing_country} shipping_address_line_1={taxInvoice?.customer?.shipping_address_line_1} shipping_address_line_2={taxInvoice?.customer?.shipping_address_line_2} shipping_address_line_3={taxInvoice?.customer?.shipping_address_line_3} shipping_state={taxInvoice?.customer?.shipping_state} shipping_country={taxInvoice?.customer?.shipping_country} trn={taxInvoice?.customer?.trn} />
+                        <TaxInvoiceMeta styles={metaStyles} currency_abv={currencies?.find((currency) => currency.currency_id === taxInvoice?.currency_id)?.currency_abv} currency_conversion_rate={taxInvoice?.currency_conversion_rate} subject={taxInvoice?.subject} />
                         <div className='read__taxInvoice__items'>
                             {taxInvoice?.line_items?.map((item, index) => (
                                 <div className='read__taxInvoice__items--main' key={index}>

@@ -4,12 +4,13 @@ import PdfContent from './PdfContent';
 
 const PdfDownload = ({ contents, heading }) => {
   return (
-    <div>
+    <div className='read__estimate__header--btn2'>
       <PDFDownloadLink document={<PdfContent contents={contents} heading={heading} />} fileName={`${heading}.pdf`}>
         {({ blob, url, loading, error }) => {
-          if (loading) return 'Loading document...';
-          if (error) return 'Error loading document...';
-          return <a href={url} target="_blank">Download PDF</a>;
+          if (loading) return 'Loading ...';
+          if (error) return 'Error ...';
+          return <a href={url} style={{ color: "var(--white)" }} target="_blank" rel="noreferrer">Download</a>;
+          // return "Download";
         }}
       </PDFDownloadLink>
     </div>

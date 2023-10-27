@@ -7,7 +7,7 @@ import "./Customer.css"
 
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteCustomer, downloadCustomerList, getCustomerList } from '../../Actions/Customer';
+import { deleteCustomer, getCustomerList } from '../../Actions/Customer';
 import { useEffect, useState } from 'react';
 
 const Customer = () => {

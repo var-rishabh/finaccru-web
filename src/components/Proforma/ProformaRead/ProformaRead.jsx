@@ -8,17 +8,26 @@ import Loader from '../../Loader/Loader';
 import './ProformaRead.css'
 import backButton from "../../../assets/Icons/back.svg"
 import logo from "../../../assets/Icons/cropped_logo.svg"
-// import PdfDownload from '../PdfDownload/PdfDownload';
+import PdfDownload from '../../PdfDownload/PdfDownload';
+import ProformaHead from './Parts/ProformaHead';
+
+import { pdfStyle as headPdfStyle, styles as headStyles } from '../../../Styles/ReadHead';
+import ProformaFor from './Parts/ProformaFor';
+import { styles as forStyles, pdfStyle as forPdfStyles } from '../../../Styles/ReadFor';
+import ProformaMeta from './Parts/ProformaMeta';
+import { styles as metaStyles, pdfStyle as metaPdfStyles } from '../../../Styles/ReadMeta';
+import ProformaBank from './Parts/ProformaBank';
+import { styles as bankStyles, pdfStyle as bankPdfStyles } from '../../../Styles/ReadBank';
+import ProformaTax from './Parts/ProformaTax';
+import { styles as taxStyles, pdfStyle as taxPdfStyles } from '../../../Styles/ReadTax';
 
 const ProformaReadLayout = () => {
-    const handleDownload = () => {
-    }
 
     const navigate = useNavigate();
     const { user } = useSelector(state => state.userReducer);
     const pi_id = window.location.pathname.split('/')[3];
     const { loading, proforma } = useSelector(state => state.proformaReducer);
-    const { taxRates, taxRateLoading } = useSelector(state => state.onboardingReducer);
+    const { taxRates } = useSelector(state => state.onboardingReducer);
     const dispatch = useDispatch();
 
     const [itemTotal, setItemTotal] = useState([]);
@@ -31,7 +40,7 @@ const ProformaReadLayout = () => {
     const [tax, setTax] = useState(0);
     const [total, setTotal] = useState(0);
 
-    const { currencies, currencyLoading } = useSelector(state => state.onboardingReducer);
+    const { currencies } = useSelector(state => state.onboardingReducer);
 
     useEffect(() => {
         dispatch(getCurrency());
@@ -110,6 +119,84 @@ const ProformaReadLayout = () => {
         setGroupedItems(groupedByTaxId);
     }, [itemTotal, itemTax, proforma, taxRates]);
 
+    const contents = [
+        {
+            component: ProformaHead,
+            height: 120,
+            props: {
+                styles: headPdfStyle,
+                address_line_1: user?.clientInfo?.company_data?.address_line_1,
+                address_line_2: user?.clientInfo?.company_data?.address_line_2,
+                address_line_3: user?.clientInfo?.company_data?.address_line_3,
+                company_name: user?.clientInfo?.company_data?.company_name,
+                country: user?.clientInfo?.company_data?.country,
+                state: user?.clientInfo?.company_data?.state,
+                trade_license_number: user?.clientInfo?.company_data?.trade_license_number,
+                pi_number: proforma?.pi_number,
+                pi_date: proforma?.pi_date,
+                due_date: proforma?.due_date,
+                reference: proforma?.reference
+            }
+        },
+        {
+            component: ProformaFor,
+            height: 120,
+            props: {
+                styles: forPdfStyles,
+                customer_name: proforma?.customer?.customer_name,
+                billing_address_line_1: proforma?.customer?.billing_address_line_1,
+                billing_address_line_2: proforma?.customer?.billing_address_line_2,
+                billing_address_line_3: proforma?.customer?.billing_address_line_3,
+                billing_state: proforma?.customer?.billing_state,
+                billing_country: proforma?.customer?.billing_country,
+                shipping_address_line_1: proforma?.customer?.shipping_address_line_1,
+                shipping_address_line_2: proforma?.customer?.shipping_address_line_2,
+                shipping_address_line_3: proforma?.customer?.shipping_address_line_3,
+                shipping_state: proforma?.customer?.shipping_state,
+                shipping_country: proforma?.customer?.shipping_country,
+                trn: proforma?.customer?.trn
+            }
+        },
+        {
+            component: ProformaMeta,
+            height: 70,
+            props: {
+                styles: metaPdfStyles,
+                currency_abv: currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv,
+                currency_conversion_rate: proforma?.currency_conversion_rate,
+                subject: proforma?.subject
+            }
+        },
+        {
+            component: ProformaBank,
+            height: ((user?.clientInfo?.other_bank_accounts || []).length + 1) * 75,
+            props: {
+                styles: bankPdfStyles,
+                primary_bank: user?.clientInfo?.primary_bank,
+                other_bank_accounts: user?.clientInfo?.other_bank_accounts,
+                currency_abv: currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv,
+                subTotal: subTotal,
+                discount: discount,
+                tax: tax,
+                total: total,
+            }
+        },
+        {
+            component: ProformaTax,
+            height: 120,
+            props: {
+                styles: taxPdfStyles,
+                currency_abv: currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv,
+                currency_conversion_rate: proforma?.currency_conversion_rate,
+                subTotal: subTotal,
+                discount: discount,
+                tax: tax,
+                total: total,
+                groupedItems: groupedItems,
+                terms_and_conditions: proforma?.terms_and_conditions
+            }
+        }
+    ];
 
     return (
         <>
@@ -135,7 +222,7 @@ const ProformaReadLayout = () => {
                         </> : ""
                     }
                     <a className='read__proforma__header--btn1' onClick={() => navigate(`/proforma/edit/${proforma?.pi_id}`)}>Edit</a>
-                    <a className='read__proforma__header--btn2' onClick={handleDownload}>Download</a>
+                    <PdfDownload contents={contents} heading={"Proforma"} />
                 </div>
             </div>
             <div className="read__proforma__container">
@@ -145,89 +232,9 @@ const ProformaReadLayout = () => {
                             <img style={{ width: "9rem" }} src={logo} alt="logo" />
                             <h1 className='read__proforma--head'>Proforma</h1>
                         </div>
-                        <div className='read__proforma--part1'>
-                            <div className='read__proforma--part1-head'>
-                                <div className='read__proforma--head-info1'>
-                                    <h3>Proforma From</h3>
-                                    <span style={{ fontWeight: 500 }}>{user?.clientInfo?.company_data?.company_name}</span>
-                                    <span>{user?.clientInfo?.company_data?.address_line_1}</span>
-                                    <span>{user?.clientInfo?.company_data?.address_line_2}</span>
-                                    <span>{user?.clientInfo?.company_data?.address_line_3}</span>
-                                    <span>{user?.clientInfo?.company_data?.state + ', ' + user?.clientInfo?.company_data?.country}</span>
-                                    <span>TRN: {user?.clientInfo?.company_data?.trade_license_number}</span>
-                                </div>
-                                <div className='read__proforma--head-info2'>
-                                    <div className='read__proforma--head-info2-data'>
-                                        <span>Proforma Number</span>
-                                        <p>
-                                            {proforma?.pi_number}
-                                        </p>
-                                    </div>
-                                    <div className='read__proforma--head-info2-data'>
-                                        <span>Proforma Date</span>
-                                        <p>{proforma?.pi_date}</p>
-                                    </div>
-                                    <div className='read__proforma--head-info2-data'>
-                                        <span>Due Date</span>
-                                        <p>{proforma?.due_date}</p>
-                                    </div>
-                                    <div className='read__proforma--head-info2-data'>
-                                        {
-                                            proforma?.reference ?
-                                                <>
-                                                    <span>Reference</span>
-                                                    <p>{proforma?.reference}</p>
-                                                </>
-                                                : ""
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='read__proforma--part2-head'>
-                                <div className='read__proforma--part2-left'>
-                                    <h3>Proforma For</h3>
-                                    <div className='read__proforma--customer-data'>
-                                        <span style={{ fontWeight: 500 }}>{proforma?.customer?.customer_name}</span>
-                                        <span>{proforma?.customer?.billing_address_line_1}</span>
-                                        {proforma?.customer?.billing_address_line_2 && <span>{proforma?.customer?.billing_address_line_2}</span>}
-                                        {proforma?.customer?.billing_address_line_3 && <span>{proforma?.customer?.billing_address_line_3}</span>}
-                                        <span>{proforma?.customer?.billing_state + ', ' + proforma?.customer?.billing_country}</span>
-                                        {proforma?.customer?.trn && <span>TRN: {proforma?.customer?.trn}</span>}
-                                    </div>
-                                </div>
-                                <div className='read__proforma--part2-right'>
-                                    <h3>Shipping Address</h3>
-                                    <div className='read__proforma--customer-data'>
-                                        <span>{proforma?.customer?.shipping_address_line_1}</span>
-                                        {proforma?.customer?.shipping_address_line_2 && <span>{proforma?.customer?.shipping_address_line_2}</span>}
-                                        {proforma?.customer?.shipping_address_line_3 && <span>{proforma?.customer?.shipping_address_line_3}</span>}
-                                        <span>{proforma?.customer?.shipping_state + ', ' + proforma?.customer?.shipping_country}</span>
-                                        {proforma?.customer?.trn && <span>TRN: {proforma?.customer?.trn}</span>}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='read__proforma--part3-head'>
-                                <h3> Currency</h3>
-                                <div className='read__proforma--currency'>
-                                    <div className='read__proforma--currency-conversion'>
-                                        <span>1</span>
-                                        <span>{currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv} =</span>
-                                        <p>{proforma?.currency_conversion_rate}</p>
-                                        <span>AED</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='read__proforma--part4-head'>
-                                {
-                                    proforma?.subject ?
-                                        <>
-                                            <h3>Subject</h3>
-                                            <p>{proforma?.subject}</p>
-                                        </>
-                                        : ""
-                                }
-                            </div>
-                        </div>
+                        <ProformaHead styles={headStyles} address_line_1={user?.clientInfo?.company_data?.address_line_1} address_line_2={user?.clientInfo?.company_data?.address_line_2} address_line_3={user?.clientInfo?.company_data?.address_line_3} company_name={user?.clientInfo?.company_data?.company_name} country={user?.clientInfo?.company_data?.country} state={user?.clientInfo?.company_data?.state} trade_license_number={user?.clientInfo?.company_data?.trade_license_number} pi_number={proforma?.pi_number} pi_date={proforma?.pi_date} due_date={proforma?.due_date} reference={proforma?.reference} />
+                        <ProformaFor styles={forStyles} customer_name={proforma?.customer?.customer_name} billing_address_line_1={proforma?.customer?.billing_address_line_1} billing_address_line_2={proforma?.customer?.billing_address_line_2} billing_address_line_3={proforma?.customer?.billing_address_line_3} billing_state={proforma?.customer?.billing_state} billing_country={proforma?.customer?.billing_country} shipping_address_line_1={proforma?.customer?.shipping_address_line_1} shipping_address_line_2={proforma?.customer?.shipping_address_line_2} shipping_address_line_3={proforma?.customer?.shipping_address_line_3} shipping_state={proforma?.customer?.shipping_state} shipping_country={proforma?.customer?.shipping_country} trn={proforma?.customer?.trn} />
+                        <ProformaMeta styles={metaStyles} currency_abv={currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv} currency_conversion_rate={proforma?.currency_conversion_rate} subject={proforma?.subject} />
                         <div className='read__proforma__items'>
                             {proforma?.line_items?.map((item, index) => (
                                 <div className='read__proforma__items--main' key={index}>
@@ -286,150 +293,16 @@ const ProformaReadLayout = () => {
                                 </div>
                             ))}
                         </div>
-                        <div className='read__proforma--details'>
-                            <div className='read__proforma--details--bank'>
-                                <div className='estimte--details--bank-heading'>Bank Details</div>
-                                <div className='read__proforma--details--split'>
-                                    <div className='read__proforma--details-left'>
-                                        <div className='read__proforma--details-main'>
-                                            <div className='read__proforma--details-left-head'>
-                                                <span>Bank Name</span>
-                                                <span>Account Number</span>
-                                                <span>Account Name</span>
-                                                <span>IBAN ({currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv} Acc)</span>
-                                            </div>
-                                            <div className='read__proforma--details-left-info'>
-                                                <span>{user?.clientInfo?.primary_bank?.bank_name}</span>
-                                                <span>{user?.clientInfo?.primary_bank?.account_number}</span>
-                                                <span>{user?.clientInfo?.primary_bank?.account_holder_name}</span>
-                                                <span>{user?.clientInfo?.primary_bank?.iban_number}</span>
-                                            </div>
-                                        </div>
-                                        {
-                                            user?.clientInfo?.other_bank_accounts?.map((bank, index) => (
-                                                <div className='read__proforma--details-main' key={index}>
-                                                    <div className='read__proforma--details-left-head'>
-                                                        <span>Bank Name</span>
-                                                        <span>Account Number</span>
-                                                        <span>Account Name</span>
-                                                        <span>IBAN ({bank?.currency_abv} Acc)</span>
-                                                    </div>
-                                                    <div className='read__proforma--details-left-info' key={index}>
-                                                        <span>{bank?.bank_name}</span>
-                                                        <span>{bank?.account_number}</span>
-                                                        <span>{bank?.account_holder_name}</span>
-                                                        <span>{bank?.iban_number}</span>
-                                                    </div>
-                                                </div>
-                                            ))
-                                        }
-                                    </div>
-                                    <div className='read__proforma--details-right'>
-                                        <div className='read__proforma--details-right-head'>
-                                            <span>Sub Total</span>
-                                            <span>Discount</span>
-                                            <span>Tax</span>
-                                            <span>Total</span>
-                                        </div>
-                                        <div className='read__proforma--details-right-info'>
-                                            <span>
-                                                <p style={{ fontWeight: 500 }}>
-                                                    {currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv}
-                                                </p>
-                                                &nbsp; {new Intl.NumberFormat('en-US', {
-                                                }).format(subTotal)}
-                                            </span>
-                                            <span>
-                                                <p style={{ fontWeight: 500 }}>
-                                                    {currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv}
-                                                </p>
-                                                &nbsp; {new Intl.NumberFormat('en-US', {
-                                                }).format(discount)}
-                                            </span>
-                                            <span>
-                                                <p style={{ fontWeight: 500 }}>
-                                                    {currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv}
-                                                </p>
-                                                &nbsp; {new Intl.NumberFormat('en-US', {
-                                                }).format(tax)}
-                                            </span>
-                                            <span>
-                                                <p style={{ fontWeight: 500 }}>
-                                                    {currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv}
-                                                </p>
-                                                &nbsp; {new Intl.NumberFormat('en-US', {
-                                                }).format(total)}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className='read__proforma--details-bottom'>
-                            <div className='read__proforma--details--tax-summary'>
-                                <div className='estimte--details--tax-summary-heading'>Tax Summary</div>
-                                <div className='estimte--details--tax-summary-sub-heading'>
-                                    (1 {currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv} = {proforma?.currency_conversion_rate} AED)
-                                </div>
-                                <div className='read__proforma--details--table'>
-                                    <table className="tax-table">
-                                        <thead>
-                                            <tr>
-                                                <th className='thin__table__font align__text__left'>Tax Details</th>
-                                                <th className='thin__table__font align__text__right'>Taxable Amount (AED)</th>
-                                                <th className='thin__table__font align__text__right'>Tax Amount (AED)</th>
-                                                <th className='thin__table__font align__text__right'>Total Amount (AED)</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {groupedItems?.map((item, idx) => item.totalTaxAmount !== 0 && (
-                                                <tr key={idx}>
-                                                    <td className='thin__table__font align__text__left'>{item.tax_rate_name}</td>
-                                                    <td className='thin__table__font align__text__right'>
-                                                        {new Intl.NumberFormat('en-US', {
-                                                        }).format(parseFloat(((item.taxable_amount) * (proforma?.currency_conversion_rate || 1)).toFixed(2)))}
-                                                    </td>
-                                                    <td className='thin__table__font align__text__right'>
-                                                        {new Intl.NumberFormat('en-US', {
-                                                        }).format(parseFloat(((item.tax_amount) * (proforma?.currency_conversion_rate || 1)).toFixed(2)))}
-                                                    </td>
-                                                    <td className='thin__table__font align__text__right'>
-                                                        {new Intl.NumberFormat('en-US', {
-                                                        }).format(parseFloat(((item.total_amount) * (proforma?.currency_conversion_rate || 1)).toFixed(2)))}
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                            <tr>
-                                                <td className='bold__table__font align__text__left'>Total</td>
-                                                <td className='bold__table__font align__text__right'>
-                                                    {new Intl.NumberFormat('en-US', {
-                                                    }).format(parseFloat(((subTotal - discount) * (proforma?.currency_conversion_rate || 1)).toFixed(2)))
-                                                    }
-                                                </td>
-                                                <td className='bold__table__font align__text__right'>
-                                                    {new Intl.NumberFormat('en-US', {
-                                                    }).format(parseFloat(((tax) * (proforma?.currency_conversion_rate || 1)).toFixed(2)))}
-                                                </td>
-                                                <td className='bold__table__font align__text__right'>
-                                                    {new Intl.NumberFormat('en-US', {
-                                                    }).format(parseFloat(((total) * (proforma?.currency_conversion_rate || 1)).toFixed(2)))}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div className='read__proforma--tnc-data'>
-                            {
-                                proforma?.terms_and_conditions ?
-                                    <>
-                                        <h3>Terms and Conditions</h3>
-                                        <p>{proforma?.terms_and_conditions}</p>
-                                    </>
-                                    : ""
-                            }
-                        </div>
+                        <ProformaBank styles={bankStyles} currency_abv={currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv}
+                            primary_bank={user?.clientInfo?.primary_bank}
+                            other_bank_accounts={user?.clientInfo?.other_bank_accounts}
+                            subTotal={subTotal} discount={discount} tax={tax} total={total}
+                        />
+                        <ProformaTax styles={taxStyles} currency_abv={currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv}
+                            currency_conversion_rate={proforma?.currency_conversion_rate}
+                            subTotal={subTotal} discount={discount} tax={tax} total={total}
+                            groupedItems={groupedItems} terms_and_conditions={proforma?.terms_and_conditions}
+                        />
                         <div className="read__proforma__footer">
                             <img style={{ width: "5rem" }} src={logo} alt="logo" />
                             <div className='read__proforma__footer--text'>

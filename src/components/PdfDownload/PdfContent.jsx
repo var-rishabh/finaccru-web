@@ -27,7 +27,8 @@ const styles = StyleSheet.create({
 
   header__text: {
     display: "flex",
-    fontWeight: 'bold', // Set the font weight to bold
+    fontWeight: 'bold',
+    fontSize: "26px",
   },
 
   section: {
@@ -91,25 +92,6 @@ Font.register({
     },
   ],
 });
-
-
-const component1 = () => {
-  return (
-    <View>
-      <Text>Component 1</Text>
-    </View>
-  );
-}
-
-const component2 = () => {
-  return (
-    <View>
-      <Text>Component 1</Text>
-    </View>
-  );
-}
-
-const contentItems = [{ component: component1, height: 100 }, { component: component2, height: 100 }, { component: component1, height: 100 }, { component: component2, height: 100 }, { component: component1, height: 100 }, { component: component2, height: 100 }, { component: component1, height: 100 }, { component: component2, height: 100 }, { component: component1, height: 500 }, { component: component2, height: 100 }]
 
 const PdfContent = ({ contents, heading }) => {
   const contentPerPage = 600; // Set the maximum height of content per page (adjust as needed)

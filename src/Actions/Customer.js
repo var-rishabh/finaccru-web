@@ -56,6 +56,75 @@ export const createCustomer = (data, handleCustomerSubmit) => async (dispatch) =
     }
 }
 
+export const createInSalesDocument = (data, handleCustomerSubmit) => async (dispatch) => {
+    try {
+        dispatch({ type: "CreateInSalesDocumentRequest" });
+        const token = await auth.currentUser.getIdToken();
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        const response = await axios.post(`${url}/private/client/customers/create-in-sales-document`, data, config);
+        dispatch({ type: "CreateInSalesDocumentSuccess", payload: response.data });
+        console.log(response.data);
+        toast.success("InSales Document created successfully");
+        if (handleCustomerSubmit) {
+            handleCustomerSubmit(response.data);
+        }
+        dispatch(getCustomerList());
+    } catch (error) {
+        console.log(error);
+        if (error.response?.status === 422) {
+            // I will get an array of errors from the backend in details
+            const errors = error.response.data.detail;
+            // I will loop through the array and display the errors
+            errors?.forEach((error) => {
+                toast.error(error.loc[1] + ": " + error.msg);
+            });
+            dispatch({ type: "CreateInSalesDocumentFailure", payload: error.response?.data || error.message });
+        } else {
+            dispatch({ type: "CreateInSalesDocumentFailure", payload: error.response?.data || error.message });
+            toast.error(error.response?.data || error.message);
+        }
+    }
+}
+
+export const updateCustomer = (data, id, handleCustomerSubmit) => async (dispatch) => {
+    try {
+        dispatch({ type: "UpdateCustomerRequest" });
+        const token = await auth.currentUser.getIdToken();
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        await axios.put(`${url}/private/client/customers/update/${id}`, data, config);
+        dispatch({ type: "UpdateCustomerSuccess", payload: data });
+        toast.success("Customer updated successfully");
+        if (handleCustomerSubmit) {
+            handleCustomerSubmit(data);
+        }
+    }
+    catch (error) {
+        console.log(error);
+        if (error.response?.status === 422) {
+            // I will get an array of errors from the backend in details
+            const errors = error.response.data.detail;
+            // I will loop through the array and display the errors
+            errors?.forEach((error) => {
+                toast.error(error.loc[1] + ": " + error.msg);
+            });
+            dispatch({ type: "UpdateCustomerFailure", payload: error.response?.data || error.message });
+        } else {
+            dispatch({ type: "UpdateCustomerFailure", payload: error.response?.data || error.message });
+            toast.error(error.response?.data || error.message);
+        }
+    }
+}
+
+
+
 export const getCustomerDetails = (id) => async (dispatch) => {
     try {
         dispatch({ type: "CustomerDetailsRequest" });
@@ -167,28 +236,54 @@ export const deleteCustomer = (id) => async (dispatch) => {
     }
 }
 
-export const downloadCustomerList = () => async (dispatch) => {
+export const updateShippingAddress = (data, shipping_address_id, handleShippingAddressSubmit) => async (dispatch) => {
     try {
-        dispatch({ type: "DownloadCustomerListRequest" });
-        const token = await auth.currentUser.getIdToken(true);
-        // Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+        dispatch({ type: "UpdateShippingAddressRequest" });
+        const token = await auth.currentUser.getIdToken();
         const config = {
             headers: {
                 token: token,
             },
-            responseType: 'blob'
         };
-        const response = await axios.get(`${url}/private/client/customers/download`, config);
-        const url2 = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
-        const link = document.createElement('a');
-        link.href = url2;
-        link.setAttribute('download', 'CustomerList.xlsx');
-        document.body.appendChild(link);
-        link.click();
-        dispatch({ type: "DownloadCustomerListSuccess", payload: response.data });
+        await axios.put(`${url}/private/client/customers/update-shipping-address/${shipping_address_id}`, data, config);
+        dispatch({ type: "UpdateShippingAddressSuccess", payload: data });
+        toast.success("Shipping Address updated successfully");
+        if (handleShippingAddressSubmit) {
+            handleShippingAddressSubmit(data);
+        }
     } catch (error) {
         console.log(error);
-        dispatch({ type: "DownloadCustomerListFailure", payload: error.response?.data || error.message });
+        if (error.response?.status === 422) {
+            // I will get an array of errors from the backend in details
+            const errors = error.response.data.detail;
+            // I will loop through the array and display the errors
+            errors?.forEach((error) => {
+                toast.error(error.loc[1] + ": " + error.msg);
+            });
+            dispatch({ type: "UpdateShippingAddressFailure", payload: error.response?.data || error.message });
+        } else {
+
+            dispatch({ type: "UpdateShippingAddressFailure", payload: error.response?.data || error.message });
+            toast.error(error.response?.data || error.message);
+        }
+    }
+}
+
+export const deleteShippingAddress = (id) => async (dispatch) => {
+    try {
+        dispatch({ type: "DeleteShippingAddressRequest" });
+        const token = await auth.currentUser.getIdToken();
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        await axios.delete(`${url}/private/client/customers/delete-shipping-address/${id}`, config);
+        dispatch({ type: "DeleteShippingAddressSuccess", payload: id });
+        toast.success("Shipping Address deleted successfully");
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "DeleteShippingAddressFailure", payload: error.response?.data || error.message });
         toast.error(error.response?.data || error.message);
     }
 }
