@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from 'react-redux';
 import { getCountries, getStates } from 'country-state-picker';
-import { createCustomer } from '../../../Actions/Customer';
+import { createInSalesDocument } from '../../../Actions/Customer';
 import uaeStates from '../../../data/uaeStates';
 
 import { Modal, Select, Input } from 'antd';
@@ -135,7 +135,7 @@ const AddCustomerModal = ({ isModalOpen, handleCancel, handleCustomerSubmit }) =
             opening_balance: openingBalance === "" ? null : openingBalance,
             opening_balance_date: openingBalanceDate === "" ? null : openingBalanceDate,
         }
-        dispatch(createCustomer(customer, handleCustomerSubmit));
+        dispatch(createInSalesDocument(customer, handleCustomerSubmit));
         setCustomerName("");
         setEmail("");
         setPhone("");

@@ -25,6 +25,7 @@ const TaxInvoice = () => {
     const [isCreateTaxModalOpen, setIsCreateTaxModalOpen] = useState(false);
     const [createTaxByFile, setCreateTaxByFile] = useState([]);
     const [createTaxByFileError, setCreateTaxByFileError] = useState([false, ""]);
+    const [record, setRecord] = useState({});
 
     const handleFileUpload = (e) => {
         if (e.target.files[0].size > 5 * 1000 * 1024) {
@@ -46,8 +47,9 @@ const TaxInvoice = () => {
         setIsCreateTaxModalOpen(false);
     };
 
-    const showModal = () => {
+    const showModal = (record) => {
         setIsModalOpen(true);
+        setRecord(record);
     };
     const handleCancel = () => {
         setIsModalOpen(false);
@@ -123,7 +125,7 @@ const TaxInvoice = () => {
                                             <img src={editIcon} alt="editIcon" />
                                         </Tooltip>
                                     </div>
-                                    <div className="action__button" onClick={showModal}>
+                                    <div className="action__button" onClick={() => { showModal(record) }}>
                                         <Tooltip title="Delete" color='red' placement="bottom">
                                             <img src={deleteIcon} alt="deleteIcon" />
                                         </Tooltip>

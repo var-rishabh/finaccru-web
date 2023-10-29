@@ -22,8 +22,10 @@ const CreditNote = () => {
 
     const [searchText, setSearchText] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const showModal = () => {
+    const [record, setRecord] = useState({});
+    const showModal = (record) => {
         setIsModalOpen(true);
+        setRecord(record);
     };
     const handleCancel = () => {
         setIsModalOpen(false);
@@ -99,7 +101,7 @@ const CreditNote = () => {
                                             <img src={editIcon} alt="editIcon" />
                                         </Tooltip>
                                     </div>
-                                    <div className="action__button" onClick={showModal}>
+                                    <div className="action__button" onClick={() => { showModal(record) }}>
                                         <Tooltip title="Delete" color='red' placement="bottom">
                                             <img src={deleteIcon} alt="deleteIcon" />
                                         </Tooltip>
@@ -107,29 +109,30 @@ const CreditNote = () => {
                                 </>
                         }
                     </div>
-                    <Modal
-                        open={isModalOpen}
-                        onCancel={handleCancel}
-                        footer={null}
-                        width={400}
-                        className='creditNote__list--delete--modal'
-                    >
-                        <div className='creditNote__delete--modal'>
-                            <img src={errorIcon} alt="error" />
-                            <h1>Are you sure you?</h1>
-                            <p>This action cannot be undone.</p>
-                            <div className="delete__modal__buttons">
-                                <button id='cancel' onClick={handleCancel}>Cancel</button>
-                                <button id='confirm' onClick={() => handleDelete(record.cn_id)}>Delete</button>
-                            </div>
-                        </div>
-                    </Modal>
+
                 </>
             ),
         }
     ];
     return (
         <>
+            <Modal
+                open={isModalOpen}
+                onCancel={handleCancel}
+                footer={null}
+                width={400}
+                className='creditNote__list--delete--modal'
+            >
+                <div className='creditNote__delete--modal'>
+                    <img src={errorIcon} alt="error" />
+                    <h1>Are you sure you?</h1>
+                    <p>This action cannot be undone.</p>
+                    <div className="delete__modal__buttons">
+                        <button id='cancel' onClick={handleCancel}>Cancel</button>
+                        <button id='confirm' onClick={() => handleDelete(record.cn_id)}>Delete</button>
+                    </div>
+                </div>
+            </Modal>
             <div className='creditNote__header'>
                 <div className='creditNote__header--left'>
                     <h1 className='creditNote__header--title'> Credit Notes </h1>
