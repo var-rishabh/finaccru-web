@@ -15,6 +15,8 @@ import { pdfStyle as headPdfStyle, styles as headStyles } from '../../../Styles/
 import ProformaFor from './Parts/ProformaFor';
 import { styles as forStyles, pdfStyle as forPdfStyles } from '../../../Styles/ReadFor';
 import ProformaMeta from './Parts/ProformaMeta';
+import LineItem from '../../LineItem/LineItem';
+import { styles as lineItemStyles, pdfStyle as lineItemPdfStyles } from '../../../Styles/LineItem';
 import { styles as metaStyles, pdfStyle as metaPdfStyles } from '../../../Styles/ReadMeta';
 import ProformaBank from './Parts/ProformaBank';
 import { styles as bankStyles, pdfStyle as bankPdfStyles } from '../../../Styles/ReadBank';
@@ -122,7 +124,7 @@ const ProformaReadLayout = () => {
     const contents = [
         {
             component: ProformaHead,
-            height: 120,
+            height: 90,
             props: {
                 styles: headPdfStyle,
                 address_line_1: user?.clientInfo?.company_data?.address_line_1,
@@ -140,7 +142,7 @@ const ProformaReadLayout = () => {
         },
         {
             component: ProformaFor,
-            height: 120,
+            height: 90,
             props: {
                 styles: forPdfStyles,
                 customer_name: proforma?.customer?.customer_name,
@@ -167,9 +169,31 @@ const ProformaReadLayout = () => {
                 subject: proforma?.subject
             }
         },
+        ...(proforma?.line_items || []).map((item, index) => {
+            const taxItem = taxRates?.find((tax) => tax.tax_rate_id === item.tax_id);
+            return {
+                component: LineItem,
+                height: item.description ? 45 : 30,
+                props: {
+                    styles: lineItemPdfStyles,
+                    index: index,
+                    item_name: item.item_name || '',
+                    unit: item.unit || '',
+                    qty: item.qty || '',
+                    rate: item.rate || '',
+                    discount: item.discount || '',
+                    is_percentage_discount: item.is_percentage_discount || '',
+                    tax_id: item.tax_id || '',
+                    taxRateName: taxItem ? taxItem.tax_rate_name : '',
+                    taxAmount: itemTax && itemTax[index],
+                    amount: itemTotal && itemTotal[index],
+                    description: item.description || ''
+                }
+            }
+        }),
         {
             component: ProformaBank,
-            height: ((user?.clientInfo?.other_bank_accounts || []).length + 1) * 75,
+            height: ((user?.clientInfo?.other_bank_accounts || []).length) * 55 + 80,
             props: {
                 styles: bankPdfStyles,
                 primary_bank: user?.clientInfo?.primary_bank,
@@ -237,60 +261,13 @@ const ProformaReadLayout = () => {
                         <ProformaMeta styles={metaStyles} currency_abv={currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv} currency_conversion_rate={proforma?.currency_conversion_rate} subject={proforma?.subject} />
                         <div className='read__proforma__items'>
                             {proforma?.line_items?.map((item, index) => (
-                                <div className='read__proforma__items--main' key={index}>
-                                    <div className='read__proforma__items--whole-item'>
-                                        <div className='read__proforma__items--itemName'>
-                                            {index === 0 ? <span style={{ marginBottom: '1rem', marginLeft: '3px' }}>Item Name</span> : <></>}
-                                            <p>{item?.item_name}</p>
-                                        </div>
-                                        <div className='read__proforma__items--unitSelect'>
-                                            {index === 0 ? <span style={{ marginBottom: '1rem' }}>Unit</span> : <></>}
-                                            <p>{item?.unit}</p>
-                                        </div>
-                                        <div className='read__proforma__items--number-item qty'>
-                                            {index === 0 ? <span style={{ marginBottom: '1rem', marginLeft: '3px' }}>Qty</span> : <></>}
-                                            <p>{new Intl.NumberFormat('en-US', {}).format(item?.qty)}</p>
-                                        </div>
-                                        <div className='read__proforma__items--number-item rate'>
-                                            {index === 0 ? <span style={{ marginBottom: '1rem', marginLeft: '3px' }}>Rate</span> : <></>}
-                                            <p>{new Intl.NumberFormat('en-US', {}).format(item?.rate)}</p>
-                                        </div>
-                                        <div className='read__proforma__items--discount'>
-                                            {index === 0 ? <span style={{ marginBottom: '1rem', marginLeft: '3px' }}>Discount</span> : <></>}
-                                            <p>
-                                                <span style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', paddingRight: "0.5rem" }}>
-                                                    {new Intl.NumberFormat('en-US', {}).format(item?.discount)}
-                                                </span>
-                                                <span className='discount__symbol'>
-                                                    {item?.is_percentage_discount ? '%' : '$'}
-                                                </span>
-                                            </p>
-                                        </div>
-                                        <div className='read__proforma__items--tax'>
-                                            {index === 0 ? <span style={{ marginBottom: '0.9rem' }}>Tax</span> : <></>}
-                                            <p className={item?.tax_id === 1 ? 'standard__tax-style' : 'non-standard__tax-style'}>
-                                                <span className='tax__amount'>{new Intl.NumberFormat('en-US', {}).format(itemTax && itemTax[index])}</span>
-                                                <span className='tax__rate__names'>
-                                                    {taxRates?.find((tax) => tax.tax_rate_id === item?.tax_id)?.tax_rate_name == 'Standard Rated (5%)' ?
-                                                        '(5%)' : taxRates?.find((tax) => tax.tax_rate_id === item?.tax_id)?.tax_rate_name}
-                                                </span>
-                                            </p>
-                                        </div>
-                                        <div className='read__proforma__items--amount'>
-                                            {index === 0 ? <span style={{ marginBottom: '1rem' }}>Amount</span> : <></>}
-                                            <p>{new Intl.NumberFormat('en-US', {}).format(itemTotal && itemTotal[index])}</p>
-                                        </div>
-                                    </div>
-                                    <div className='read__proforma__items--description'>
-                                        {item?.description ? (
-                                            <div className='read__proforma--desc__box'>
-                                                <span>Description</span>
-                                                <p>{item?.description}</p>
-                                            </div>
-                                        ) : <></>
-                                        }
-                                    </div>
-                                </div>
+                                <LineItem styles={lineItemStyles} key={index} index={index}
+                                    item_name={item?.item_name} unit={item?.unit} qty={item?.qty} rate={item?.rate}
+                                    discount={item?.discount} is_percentage_discount={item?.is_percentage_discount}
+                                    tax_id={item?.tax_id} taxRateName={taxRates?.find((tax) => tax.tax_rate_id === item?.tax_id)?.tax_rate_name}
+                                    taxAmount={itemTax && itemTax[index]} amount={itemTotal && itemTotal[index]}
+                                    description={item?.description}
+                                />
                             ))}
                         </div>
                         <ProformaBank styles={bankStyles} currency_abv={currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv}

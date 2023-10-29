@@ -9,8 +9,8 @@ const PdfDownload = ({ contents, heading }) => {
         {({ blob, url, loading, error }) => {
           if (loading) return 'Loading ...';
           if (error) return 'Error ...';
-          return <a href={url} style={{ color: "var(--white)" }} target="_blank" rel="noreferrer">Download</a>;
-          // return "Download";
+          {/* return <a href={url} style={{ color: "var(--white)" }} target="_blank" rel="noreferrer">Download</a>; */}
+          return <div style={{ color: "var(--white)" }} target="_blank" rel="noreferrer">Download</div>;
         }}
       </PDFDownloadLink>
     </div>

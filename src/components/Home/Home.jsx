@@ -19,6 +19,10 @@ const Home = () => {
     const navigate = useNavigate();
     const [key, setKey] = React.useState(window.location.pathname.split('/')[1]);
 
+    React.useEffect(() => {
+        setKey(window.location.pathname.split('/')[1]);
+    }, [window.location.pathname.split('/')[1]]);
+
     const { user } = useSelector(state => state.userReducer);
     
     const onClick = (e) => {
@@ -37,6 +41,7 @@ const Home = () => {
                         <Menu
                             onClick={onClick}
                             defaultSelectedKeys={[`/${key}`]}
+                            selectedKeys={[`/${key}`]}
                             mode='vertical'
                             items={MenuItems}
                         />

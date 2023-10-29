@@ -22,11 +22,20 @@ const Estimate = () => {
 
     const [searchText, setSearchText] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isConvertModalOpen, setIsConvertModalOpen] = useState(false);
+
     const showModal = () => {
         setIsModalOpen(true);
     };
     const handleCancel = () => {
         setIsModalOpen(false);
+    };
+
+    const showConvertModal = () => {
+        setIsConvertModalOpen(true);
+    };
+    const hideConvertModal = () => {
+        setIsConvertModalOpen(false);
     };
 
     const handleDelete = (id) => {
@@ -96,12 +105,7 @@ const Estimate = () => {
                             record?.status === "Converted to PI/TI" ? "" :
                                 <>
                                     <div className="action__button">
-                                        <Tooltip title="Convert to PI" color='green' placement="bottom" onClick={() => navigate(`/proforma/create?convert=true&reference=estimate&reference_id=${record.estimate_id}`)}>
-                                            <img src={convertIcon} alt="convertIcon" />
-                                        </Tooltip>
-                                    </div>
-                                    <div className="action__button">
-                                        <Tooltip title="Convert to TI" color='blue' placement="bottom" onClick={() => navigate(`/tax-invoice/create?convert=true&reference=estimate&reference_id=${record.estimate_id}`)}>
+                                        <Tooltip title="Convert to PI/TI" color='blue' placement="bottom" onClick={showConvertModal}>
                                             <img src={convertIcon} alt="convertIcon" />
                                         </Tooltip>
                                     </div>
@@ -118,6 +122,20 @@ const Estimate = () => {
                             </Tooltip>
                         </div>
                     </div>
+                    <Modal
+                        open={isConvertModalOpen}
+                        onCancel={hideConvertModal}
+                        footer={null}
+                        width={300}
+                        className='estimate__list--delete--modal'
+                    >
+                        <div className='estimate__convert--modal'>
+                            <div className="convert__modal__buttons">
+                                <button id='confirm' onClick={() => navigate(`/proforma/create?convert=true&reference=estimate&reference_id=${record.estimate_id}`)}>Convert to PI</button>
+                                <button id='confirm' onClick={() => navigate(`/tax-invoice/create?convert=true&reference=estimate&reference_id=${record.estimate_id}`)}>Convert to TI</button>
+                            </div>
+                        </div>
+                    </Modal>
                     <Modal
                         open={isModalOpen}
                         onCancel={handleCancel}

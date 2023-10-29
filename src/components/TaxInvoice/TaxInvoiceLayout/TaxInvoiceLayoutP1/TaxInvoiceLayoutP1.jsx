@@ -43,7 +43,15 @@ const TaxInvoiceFormP1 = ({
     useEffect(() => {
         dispatch(getCustomerInfiniteScroll(1, true));
         setCurrentCustomerPage(1);
+
     }, [dispatch]);
+
+    useEffect(() => {
+        if (customerId) {
+            dispatch(getCustomerDetails(customerId));
+            dispatch(getShippingAddressList(customerId));
+        }
+    }, [customerId]);
 
     const showModal = () => {
         setIsModalOpen(true);

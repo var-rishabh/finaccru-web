@@ -123,7 +123,7 @@ const EstimateReadLayout = () => {
     const contents = [
         {
             component: EstimateHead,
-            height: 100,
+            height: 90,
             props: {
                 styles: headPdfStyle,
                 address_line_1: user?.clientInfo?.company_data?.address_line_1,
@@ -141,7 +141,7 @@ const EstimateReadLayout = () => {
         },
         {
             component: EstimateFor,
-            height: 100,
+            height: 90,
             props: {
                 styles: forPdfStyles,
                 customer_name: estimate?.customer?.customer_name,
@@ -172,7 +172,7 @@ const EstimateReadLayout = () => {
             const taxItem = taxRates?.find((tax) => tax.tax_rate_id === item.tax_id);
             return {
                 component: LineItem,
-                height: item.description ? 60 : 40,
+                height: item.description ? 45 : 30,
                 props: {
                     styles: lineItemPdfStyles,
                     index: index,
@@ -192,7 +192,7 @@ const EstimateReadLayout = () => {
         }),
         {
             component: EstimateBank,
-            height: ((user?.clientInfo?.other_bank_accounts || []).length + 1) * 75,
+            height: ((user?.clientInfo?.other_bank_accounts || []).length) * 55 + 80,
             props: {
                 styles: bankPdfStyles,
                 primary_bank: user?.clientInfo?.primary_bank,
@@ -206,7 +206,7 @@ const EstimateReadLayout = () => {
         },
         {
             component: EstimateTax,
-            height: 150,
+            height: 120,
             props: {
                 styles: taxPdfStyles,
                 currency_abv: currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv,
