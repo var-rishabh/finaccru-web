@@ -13,6 +13,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import backButton from "../../../assets/Icons/back.svg"
 import logo from "../../../assets/Icons/cropped_logo.svg"
 import { getCustomerDetails } from '../../../Actions/Customer';
+import { getEstimateDetails } from '../../../Actions/Estimate';
 
 const ProformaLayout = () => {
     const navigate = useNavigate();
@@ -42,7 +43,11 @@ const ProformaLayout = () => {
     const { loading: proformaLoading, proforma, number } = useSelector(state => state.proformaReducer);
     const { currencies, currencyLoading } = useSelector(state => state.onboardingReducer);
     const { customer } = useSelector(state => state.customerReducer);
-
+    const { estimate } = useSelector(state => state.estimateReducer);
+    const searchParams = new URLSearchParams(window.location.search);
+    const convert = searchParams.get('convert');
+    const reference_id = searchParams.get('reference_id');
+    const referenceName = searchParams.get('reference');
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
             dispatch(getCurrency());
@@ -52,6 +57,11 @@ const ProformaLayout = () => {
         if (window.location.pathname.split('/')[2] === 'create') {
             dispatch(getCurrency());
             dispatch(getNewProformaNumber());
+            if (convert) {
+                if (referenceName == 'estimate') {
+                    dispatch(getEstimateDetails(reference_id));
+                }
+            }
         }
     }, [dispatch]);
 
@@ -90,8 +100,26 @@ const ProformaLayout = () => {
         if (window.location.pathname.split('/')[2] === 'create') {
             setProformaNumber(number);
             setTermsAndConditions(user?.clientInfo?.terms_and_conditions);
+            if (convert) {
+                if (referenceName == 'estimate') {
+                    setCurrencyConversionRate(estimate?.currency_conversion_rate);
+                    setCurrencyId(estimate?.currency_id);
+                    setCurrency(currencyId !== 1 ? currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv : 'AED');
+                    setItems(estimate?.line_items || [{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
+                    setReference(estimate?.estimate_number);
+                    setSubject(estimate?.subject);
+                    setTermsAndConditions(estimate?.terms_and_conditions);
+                    setCustomerId(estimate?.customer?.customer_id);
+                    setCustomerName(estimate?.customer?.customer_name);
+                    setShippingAddress1(estimate?.customer?.shipping_address_line_1);
+                    setShippingAddress2(estimate?.customer?.shipping_address_line_2);
+                    setShippingAddress3(estimate?.customer?.shipping_address_line_3);
+                    setShippingCountry(estimate?.customer?.shipping_country);
+                    setShippingState(estimate?.customer?.shipping_state);
+                }
+            }
         }
-    }, [currencies, proforma, number]);
+    }, [currencies, proforma, number, estimate]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -185,6 +213,7 @@ const ProformaLayout = () => {
                             shippingCountry={shippingCountry} setShippingCountry={setShippingCountry}
                             shippingState={shippingState} setShippingState={setShippingState}
                             termsAndConditions={termsAndConditions} setTermsAndConditions={setTermsAndConditions}
+                            convert={convert}
                         />
                         <ProformaLayoutP2 items={items} setItems={setItems} currency={currency}
                             termsAndConditions={termsAndConditions} setTermsAndConditions={setTermsAndConditions}

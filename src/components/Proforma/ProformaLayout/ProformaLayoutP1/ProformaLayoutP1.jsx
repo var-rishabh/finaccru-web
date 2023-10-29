@@ -13,7 +13,7 @@ import { CloseOutlined } from '@ant-design/icons';
 const ProformaFormP1 = ({
     proformaNumber, proformaDate, validTill, reference, subject, customerName, customerId, currency, currencyId, currencyConversionRate, shippingAddress1, shippingAddress2, shippingAddress3, shippingState, shippingCountry,
     setProformaNumber, setProformaDate, setValidTill, setReference, setSubject, setCustomerName, setCustomerId, setCurrency, setCurrencyId, setCurrencyConversionRate, setShippingAddress1, setShippingAddress2, setShippingAddress3, setShippingState, setShippingCountry,
-    termsAndConditions, setTermsAndConditions
+    termsAndConditions, setTermsAndConditions,convert
 }) => {
     const filterOption = (input, option) => {
         return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
@@ -180,7 +180,7 @@ const ProformaFormP1 = ({
                     </div>
                     <div className='proforma__form--head-info2-data'>
                         <span>Reference</span>
-                        <input type="text" name='reference' value={reference} onChange={(e) => setReference(e.target.value)} />
+                        <input type="text" name='reference' value={reference} onChange={(e) => setReference(e.target.value)} disabled={convert} />
                     </div>
                 </div>
             </div>

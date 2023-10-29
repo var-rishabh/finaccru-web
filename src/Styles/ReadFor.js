@@ -54,7 +54,7 @@ export const pdfStyle = {
         width: "100%",
         gap: "40px",
         padding: "8px 40px 10px",
-        height: '100px',
+        height: '90px',
     },
     mainLeft: { 
         display: 'flex', 
