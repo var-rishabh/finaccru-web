@@ -8,9 +8,9 @@ const TaxInvoiceTax = ({ styles, currency_abv, currency_conversion_rate, subTota
             <View style={styles.mainData}>
                 <View style={styles.mainTh}>
                     <Text style={styles.taxTextLeft}>Tax Details</Text>
-                    <Text style={styles.taxTextRight}>Taxable Amount ({currency_abv})</Text>
-                    <Text style={styles.taxTextRight}>Tax Amount ({currency_abv})</Text>
-                    <Text style={styles.taxTextRight}>Total Amount ({currency_abv})</Text>
+                    <Text style={styles.taxTextRight}>Taxable Amount (AED)</Text>
+                    <Text style={styles.taxTextRight}>Tax Amount (AED)</Text>
+                    <Text style={styles.taxTextRight}>Total Amount (AED)</Text>
                 </View>
                 <View style={styles.mainTable}>
                     {groupedItems?.map((item, idx) => item.totalTaxAmount !== 0 && (

@@ -32,7 +32,6 @@ export const createCustomer = (data, handleCustomerSubmit) => async (dispatch) =
         };
         const response = await axios.post(`${url}/private/client/customers/create`, data, config);
         dispatch({ type: "CreateCustomerSuccess", payload: response.data });
-        console.log(response.data);
         toast.success("Customer created successfully");
         if (handleCustomerSubmit) {
             handleCustomerSubmit(response.data);
@@ -123,8 +122,6 @@ export const updateCustomer = (data, id, handleCustomerSubmit) => async (dispatc
     }
 }
 
-
-
 export const getCustomerDetails = (id) => async (dispatch) => {
     try {
         dispatch({ type: "CustomerDetailsRequest" });
@@ -142,8 +139,6 @@ export const getCustomerDetails = (id) => async (dispatch) => {
         toast.error(error.response?.data || error.message);
     }
 }
-
-
 
 export const getCustomerInfiniteScroll = (page = 1, refresh = false, keyword="") => async (dispatch) => {
     try {
@@ -163,7 +158,6 @@ export const getCustomerInfiniteScroll = (page = 1, refresh = false, keyword="")
         toast.error(error.response?.data || error.message);
     }
 }
-
 
 export const createShippingAddress = (data, customer_id, handleShippingAddressSubmit) => async (dispatch) => {
     try {

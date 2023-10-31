@@ -175,5 +175,3 @@ export const getTaxRate = () => async (dispatch) => {
         dispatch({ type: "GetTaxRateFailure", payload: error.response?.data || error.message });
     }
 }
-
-

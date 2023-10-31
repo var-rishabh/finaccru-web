@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text } from '@react-pdf/renderer'
-const EstimateTax = ({ styles, currency_abv, currency_conversion_rate, subTotal, discount, tax, total, groupedItems, terms_and_conditions }) => {
+const CreditNoteTax = ({ styles, currency_abv, currency_conversion_rate, subTotal, discount, tax, total, groupedItems, terms_and_conditions }) => {
     return (
         <View style={styles.main}>
             <Text style={styles.mainHeading}>Tax Summary</Text>
@@ -66,4 +66,4 @@ const EstimateTax = ({ styles, currency_abv, currency_conversion_rate, subTotal,
     )
 }
 
-export default EstimateTax;
+export default CreditNoteTax;
