@@ -13,7 +13,6 @@ import { useEffect, useState } from 'react';
 const Customer = () => {
     const dispatch = useDispatch();
     const { error, loading, customers } = useSelector(state => state.customerReducer);
-    console.log("🚀 ~ customers:", customers);
 
     const navigate = useNavigate();
     useEffect(() => {
@@ -68,10 +67,12 @@ const Customer = () => {
             title: 'Amount Receivable',
             dataIndex: 'amount_receivable',
             key: 'amount_receivable',
+            align: 'right',
         },
         {
             title: 'Active',
             key: 'is_active',
+            width: 100,
             render: (text, record) => (
                 <>
                     {record.is_active ? <p style={{ color: "green" }}>Active</p> : <p style={{ color: "red" }}>Inactive</p>}
@@ -81,6 +82,8 @@ const Customer = () => {
         {
             title: 'Actions',
             key: 'actions',
+            align: 'right',
+            width: 120,
             render: (text, record) => (
                 <>
                     <div className="action__buttons">
@@ -123,7 +126,7 @@ const Customer = () => {
                     <Input placeholder='Search' onChange={(e) => setSearchText(e.target.value)} value={searchText} />
                 </div>
                 <div className='customer__header--right'>
-                    <a className='customer__header--btn1' onClick={() => dispatch(downloadCustomerList())}>Download</a>
+                    {/* <a className='customer__header--btn1' onClick={() => dispatch(downloadCustomerList())}>Download</a> */}
                     <a onClick={() => navigate("/customer/create")} className='customer__header--btn2'>Create Customer</a>
                 </div>
             </div>

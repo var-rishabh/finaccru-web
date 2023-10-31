@@ -103,15 +103,17 @@ const AddCustomerModal = ({ isModalOpen, handleCancel, handleCustomerSubmit }) =
     }
 
     const handleSubmit = () => {
-        if (isPhoneError) {
-            toast.error("Please Enter Valid Phone Number.");
-            return;
+        if (phone !== "") {
+            if (isPhoneError) {
+                toast.error("Please Enter Valid Phone Number.");
+                return;
+            }
+            if ((countryPhoneCode + phone).length > 13) {
+                toast.error("Phone Number can have atmost 13 digits including country code.");
+                return;
+            }
         }
-        if ((countryPhoneCode + phone).length > 13) {
-            toast.error("Phone Number can have atmost 13 digits including country code.");
-            return;
-        }
-        if (customerName === "" || phone == "" || email === 0 || displayName === "" || address1 === "" || billingAddress1 === "" || billingCountry == "" || billingState == "" || country === "" || state === "") {
+        if (customerName === "" || displayName === "" || address1 === "" || billingAddress1 === "" || billingCountry == "" || billingState == "" || country === "" || state === "") {
             toast.error("Please fill all the fields");
             return;
         }
@@ -119,17 +121,17 @@ const AddCustomerModal = ({ isModalOpen, handleCancel, handleCustomerSubmit }) =
             customer_name: customerName,
             contact_name: contactName === "" ? null : contactName,
             display_name: displayName,
-            email: email,
-            mobile_number: countryPhoneCode + phone,
+            email: email === "" ? null : email,
+            mobile_number: phone === "" ? null : countryPhoneCode + phone,
             billing_address_line_1: billingAddress1,
             billing_address_line_2: billingAddress2 === "" ? null : billingAddress2,
             billing_address_line_3: billingAddress3 === "" ? null : billingAddress3,
-            billing_state: billingState === "" ? null : billingState,
+            billing_state: billingState,
             billing_country: billingCountry,
             shipping_address_line_1: address1,
             shipping_address_line_2: address2 === "" ? null : address2,
             shipping_address_line_3: address3 === "" ? null : address3,
-            shipping_state: state === "" ? null : state,
+            shipping_state: state,
             shipping_country: country,
             trn: trnNumber === "" ? null : trnNumber,
             opening_balance: openingBalance === "" ? null : openingBalance,
@@ -204,11 +206,11 @@ const AddCustomerModal = ({ isModalOpen, handleCancel, handleCustomerSubmit }) =
                         <input type="text" name='customerName' value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
                     </div>
                     <div className='add__customer__modal--input'>
-                        <span className='required__field'>Email</span>
+                        <span>Email</span>
                         <input type="email" name='email' value={email} onChange={(e) => setEmail(e.target.value)} />
                     </div>
                     <div className='add__customer__modal--input'>
-                        <span className='required__field'>Phone</span>
+                        <span>Phone</span>
                         <Input type='text' name='phone' addonBefore={selectBefore} value={phone}
                             onChange={(e) => {
                                 const valid = e.target.value.match(/^\d{9,10}$/);

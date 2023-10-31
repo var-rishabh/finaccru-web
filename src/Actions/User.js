@@ -106,7 +106,6 @@ export const confirmEmail = (user) => async (dispatch) => {
     }
 };
 
-
 export const login = (user) => async (dispatch) => {
     const { email_id, mobile_number, password, remember_me } = user;
     try {
@@ -217,7 +216,6 @@ export const forgotPassword = (user) => async (dispatch) => {
         toast.error(error.response?.data || error.message);
     }
 };
-
 
 export const resetPassword = (user) => async (dispatch) => {
     try {
@@ -397,8 +395,6 @@ export const resendEmail = () => async (dispatch) => {
         toast.error(error.response?.data || error.message);
     }
 };
-
-
 
 export const logout = () => async (dispatch) => {
     dispatch({ type: "LogoutRequest" });

@@ -88,7 +88,6 @@
     font-size: 0.8rem !important;
     font-weight: 400 !important;
     letter-spacing: 0.0125rem;
-    text-align: center !important;
     color: #11142D !important;
 }
 
@@ -100,7 +99,8 @@
 
 .action__buttons {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: flex-end;
+    gap: 0.5rem;
 }
 
 .action__button {

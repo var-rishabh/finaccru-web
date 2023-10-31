@@ -91,7 +91,6 @@ td.ant-table-cell {
     font-size: 0.9rem !important;
     font-weight: 500 !important;
     letter-spacing: 0.0125rem;
-    text-align: center !important;
     color: #11142D !important;
 }
 
@@ -102,7 +101,8 @@ th.ant-table-cell {
 
 .credit-note.action__buttons {
     display: flex;
-    justify-content: space-between !important;
+    justify-content: flex-end !important;
+    gap: 0.5rem;
 }
 
 .credit-note.action__button>span>svg {

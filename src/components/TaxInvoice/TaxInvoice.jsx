@@ -74,11 +74,13 @@ const TaxInvoice = () => {
             title: 'TI Date',
             dataIndex: 'ti_date',
             key: 'ti_date',
+            width: 120
         },
         {
             title: 'TI Number',
             dataIndex: 'ti_number',
             key: 'ti_number',
+            width: 130
         },
         {
             title: 'Customer',
@@ -89,21 +91,25 @@ const TaxInvoice = () => {
             title: 'Amount (excl. VAT)',
             dataIndex: 'total_amount_excl_tax',
             key: 'total_amount_excl_tax',
+            align: 'right'
         },
         {
             title: 'Total',
             dataIndex: 'total',
             key: 'total',
+            align: 'right'
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
+            width: 120
         },
         {
             title: 'Actions',
             key: 'actions',
             width: 120,
+            align: 'right',
             render: (text, record) => (
                 <>
                     <div className="action__buttons tax-invoices">
@@ -114,23 +120,27 @@ const TaxInvoice = () => {
                         </div>
                         {
                             record?.status === "Approved" ? "" :
-                                <>
-                                    {/* <div className="action__button">
-                                        <Tooltip title="Convert to Invoice" color='green' placement="bottom">
-                                            <img src={convertIcon} alt="convertIcon" />
-                                        </Tooltip>
-                                    </div> */}
-                                    <div className="action__button" onClick={() => window.location.href = `/tax-invoice/edit/${record.ti_id}`} >
-                                        <Tooltip title="Edit" color='blue' placement="bottom">
-                                            <img src={editIcon} alt="editIcon" />
-                                        </Tooltip>
-                                    </div>
-                                    <div className="action__button" onClick={() => { showModal(record) }}>
-                                        <Tooltip title="Delete" color='red' placement="bottom">
-                                            <img src={deleteIcon} alt="deleteIcon" />
-                                        </Tooltip>
-                                    </div>
-                                </>
+                                record?.status === "Void" ?
+                                    <>
+                                        <div className="action__button" onClick={() => { showModal(record) }}>
+                                            <Tooltip title="Delete" color='red' placement="bottom">
+                                                <img src={deleteIcon} alt="deleteIcon" />
+                                            </Tooltip>
+                                        </div>
+                                    </>
+                                    :
+                                    <>
+                                        <div className="action__button" onClick={() => window.location.href = `/tax-invoice/edit/${record.ti_id}`} >
+                                            <Tooltip title="Edit" color='blue' placement="bottom">
+                                                <img src={editIcon} alt="editIcon" />
+                                            </Tooltip>
+                                        </div>
+                                        <div className="action__button" onClick={() => { showModal(record) }}>
+                                            <Tooltip title="Delete" color='red' placement="bottom">
+                                                <img src={deleteIcon} alt="deleteIcon" />
+                                            </Tooltip>
+                                        </div>
+                                    </>
                         }
                     </div>
                     <Modal

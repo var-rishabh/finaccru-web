@@ -5,13 +5,13 @@
 ```
 Step 1: Clone this repository
 
-$ git clone https://github.com/shubham1706/finaccru-frontend
+$ git clone https://github.com/var-rishabh/finaccru-web
 ```
 
 ```
 Step 2: Move to this folder
 
-$ cd finaccru-frontend
+$ cd finaccru-web
 ```
 
 ```

@@ -121,7 +121,6 @@ export const updateCreditNote = (id, data, navigate) => async (dispatch) => {
     }
 }
 
-
 export const markCreditNoteVoid = (id) => async (dispatch) => {
     try {
         dispatch({ type: "CreditNoteMarkVoidRequest" });
@@ -187,8 +186,6 @@ export const downloadCreditNoteList = () => async (dispatch) => {
     }
 }
 
-
-
 export const submitCreditNoteForApproval = (id) => async (dispatch) => {
     try {
         dispatch({ type: "SubmitCreditNoteForApprovalRequest" });
@@ -209,4 +206,3 @@ export const submitCreditNoteForApproval = (id) => async (dispatch) => {
         toast.error(error.response?.data || error.message);
     }
 }
-

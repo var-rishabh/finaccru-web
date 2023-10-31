@@ -120,6 +120,7 @@ const EstimateReadLayout = () => {
 
         setGroupedItems(groupedByTaxId);
     }, [itemTotal, itemTax, estimate, taxRates]);
+    
     const contents = [
         {
             component: EstimateHead,

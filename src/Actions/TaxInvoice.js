@@ -121,7 +121,6 @@ export const updateTaxInvoice = (id, data, navigate) => async (dispatch) => {
     }
 }
 
-
 export const markTaxInvoiceVoid = (id) => async (dispatch) => {
     try {
         dispatch({ type: "TaxInvoiceMarkVoidRequest" });

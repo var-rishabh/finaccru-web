@@ -50,11 +50,13 @@ const CreditNote = () => {
             title: 'CN Date',
             dataIndex: 'cn_date',
             key: 'cn_date',
+            width: 120
         },
         {
             title: 'CN Number',
             dataIndex: 'cn_number',
             key: 'cn_number',
+            width: 130
         },
         {
             title: 'Customer',
@@ -65,21 +67,25 @@ const CreditNote = () => {
             title: 'Amount (excl. VAT)',
             dataIndex: 'total_amount_excl_tax',
             key: 'total_amount_excl_tax',
+            align: 'right'
         },
         {
             title: 'Total',
             dataIndex: 'total',
             key: 'total',
+            align: 'right'
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
+            width: 120
         },
         {
             title: 'Actions',
             key: 'actions',
             width: 120,
+            align: 'right',
             render: (text, record) => (
                 <>
                     <div className="action__buttons credit-note">
@@ -90,23 +96,27 @@ const CreditNote = () => {
                         </div>
                         {
                             record?.status === "Approved" ? "" :
-                                <>
-                                    {/* <div className="action__button">
-                                        <Tooltip title="Convert to Invoice" color='green' placement="bottom">
-                                            <img src={convertIcon} alt="convertIcon" />
-                                        </Tooltip>
-                                    </div> */}
-                                    <div className="action__button" onClick={() => window.location.href = `/credit-note/edit/${record.cn_id}`} >
-                                        <Tooltip title="Edit" color='blue' placement="bottom">
-                                            <img src={editIcon} alt="editIcon" />
-                                        </Tooltip>
-                                    </div>
-                                    <div className="action__button" onClick={() => { showModal(record) }}>
-                                        <Tooltip title="Delete" color='red' placement="bottom">
-                                            <img src={deleteIcon} alt="deleteIcon" />
-                                        </Tooltip>
-                                    </div>
-                                </>
+                                record?.status === "Void" ?
+                                    <>
+                                        <div className="action__button" onClick={() => { showModal(record) }}>
+                                            <Tooltip title="Delete" color='red' placement="bottom">
+                                                <img src={deleteIcon} alt="deleteIcon" />
+                                            </Tooltip>
+                                        </div>
+                                    </>
+                                    :
+                                    <>
+                                        <div className="action__button" onClick={() => window.location.href = `/credit-note/edit/${record.cn_id}`} >
+                                            <Tooltip title="Edit" color='blue' placement="bottom">
+                                                <img src={editIcon} alt="editIcon" />
+                                            </Tooltip>
+                                        </div>
+                                        <div className="action__button" onClick={() => { showModal(record) }}>
+                                            <Tooltip title="Delete" color='red' placement="bottom">
+                                                <img src={deleteIcon} alt="deleteIcon" />
+                                            </Tooltip>
+                                        </div>
+                                    </>
                         }
                     </div>
 
