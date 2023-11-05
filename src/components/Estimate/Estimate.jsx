@@ -10,20 +10,33 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteEstimate, downloadEstimateList, getEstimateList } from '../../Actions/Estimate';
 import { useEffect, useState } from 'react';
+import estimateColumns from '../../Columns/Estimate';
+import TableCard from '../../Shared/TableCard/TableCard';
 
 const Estimate = () => {
     const dispatch = useDispatch();
-    const { error, loading, estimates } = useSelector(state => state.estimateReducer);
-
     const navigate = useNavigate();
-    useEffect(() => {
-        dispatch(getEstimateList());
-    }, [dispatch]);
-
+    
+    const { loading, estimates } = useSelector(state => state.estimateReducer);
+    
     const [searchText, setSearchText] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isConvertModalOpen, setIsConvertModalOpen] = useState(false);
     const [record, setRecord] = useState({});
+
+    useEffect(() => {
+        dispatch(getEstimateList());
+    }, [dispatch]);
+    
+
+    useEffect(() => {
+        if (searchText.length > 2) {
+            dispatch(getEstimateList(1, searchText));
+        }
+        if (searchText.length === 0) {
+            dispatch(getEstimateList());
+        }
+    }, [searchText]);
 
     const showModal = (record) => {
         setIsModalOpen(true);
@@ -47,104 +60,9 @@ const Estimate = () => {
         setIsModalOpen(false);
     }
 
-    useEffect(() => {
-        if (searchText.length > 2) {
-            dispatch(getEstimateList(1, searchText));
-        }
-        if (searchText.length === 0) {
-            dispatch(getEstimateList());
-        }
-    }, [searchText]);
+    // Table Columns
+    const columns = estimateColumns(showModal, showConvertModal, navigate);
 
-    const columns = [
-        {
-            title: 'Date',
-            dataIndex: 'estimate_date',
-            key: 'estimate_date',
-            width: 120,
-            // sorter: (a, b) => {
-            //     const dateA = new Date(a.estimate_date);
-            //     const dateB = new Date(b.estimate_date);
-
-            //     return dateA - dateB;
-            // },
-        },
-        {
-            title: 'Estimate No.',
-            dataIndex: 'estimate_number',
-            key: 'estimate_number',
-            width: 130,
-        },
-        {
-            title: 'Customer',
-            dataIndex: 'customer_name',
-            key: 'customer_name',
-        },
-        {
-            title: 'Amount (excl. VAT)',
-            dataIndex: 'total_amount_excl_tax',
-            key: 'total_amount_excl_tax',
-            align: 'right',
-        },
-        {
-            title: 'Total',
-            dataIndex: 'total',
-            key: 'total',
-            align: 'right',
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-        },
-        {
-            title: 'Actions',
-            key: 'actions',
-            width: 150,
-            align: 'right',
-            render: (text, record) => (
-                <>
-                    <div className="action__buttons estimate-invoice">
-                        <div className="action__button" onClick={() => navigate(`/estimate/view/${record.estimate_id}`)}>
-                            <Tooltip title="View" color='gray' placement="bottom">
-                                <EyeOutlined />
-                            </Tooltip>
-                        </div>
-                        {
-                            record?.status === "Converted to PI/TI" ? "" :
-                                record?.status === "Void" ?
-                                    <>
-                                        <div className="action__button" onClick={() => showModal(record)}>
-                                            <Tooltip title="Delete" color='red' placement="bottom">
-                                                <img src={deleteIcon} alt="deleteIcon" />
-                                            </Tooltip>
-                                        </div>
-                                    </>
-                                    :
-                                    <>
-                                        <div className="action__button">
-                                            <Tooltip title="Convert to PI/TI" color='blue' placement="bottom" onClick={() => { showConvertModal(record) }}>
-                                                <img src={convertIcon} alt="convertIcon" />
-                                            </Tooltip>
-                                        </div>
-                                        <div className="action__button" onClick={() => window.location.href = `/estimate/edit/${record.estimate_id}`} >
-                                            <Tooltip title="Edit" color='blue' placement="bottom">
-                                                <img src={editIcon} alt="editIcon" />
-                                            </Tooltip>
-                                        </div>
-                                        <div className="action__button" onClick={() => showModal(record)}>
-                                            <Tooltip title="Delete" color='red' placement="bottom">
-                                                <img src={deleteIcon} alt="deleteIcon" />
-                                            </Tooltip>
-                                        </div>
-                                    </>
-                        }
-                    </div>
-
-                </>
-            ),
-        }
-    ];
     return (
         <>
             <Modal
@@ -188,25 +106,8 @@ const Estimate = () => {
                     <a onClick={() => navigate("/estimate/create")} className='estimate__header--btn2'>Create Estimate</a>
                 </div>
             </div>
-            <div className="table">
-                <Table
-                    columns={columns}
-                    pagination={{
-                        position: ['bottomCenter'],
-                        pageSize: 20,
-                        total: estimates?.total_items,
-                        defaultCurrent: 1,
-                        showSizeChanger: false,
-                    }}
-                    sticky={true}
-                    // sortDirections={['descend', 'ascend']}
-                    scroll={{ y: 550 }}
-                    loading={loading}
-                    dataSource={estimates?.items}
-                    onChange={(pagination) => {
-                        searchText.length > 2 ? dispatch(getEstimateList(pagination.current, searchText)) : dispatch(getEstimateList(pagination.current));
-                    }}
-                />
+            <div className='table'>
+                <TableCard columns={columns} dispatch={dispatch} loading={loading} items={estimates} getList={getEstimateList} searchText={searchText} />
             </div>
         </>
     )

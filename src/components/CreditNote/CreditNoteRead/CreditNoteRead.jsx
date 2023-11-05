@@ -8,7 +8,7 @@ import Loader from '../../Loader/Loader';
 import './CreditNoteRead.css'
 import backButton from "../../../assets/Icons/back.svg"
 import logo from "../../../assets/Icons/cropped_logo.svg"
-import PdfDownload from '../../PdfDownload/PdfDownload';
+import PdfDownload from '../../../Shared/PdfDownload/PdfDownload';
 import CreditNoteHead from './Parts/CreditNoteHead';
 
 import { pdfStyle as headPdfStyle, styles as headStyles } from '../../../Styles/ReadHead';
@@ -16,7 +16,7 @@ import CreditNoteFor from './Parts/CreditNoteFor';
 import { styles as forStyles, pdfStyle as forPdfStyles } from '../../../Styles/ReadFor';
 import CreditNoteMeta from './Parts/CreditNoteMeta';
 import { styles as metaStyles, pdfStyle as metaPdfStyles } from '../../../Styles/ReadMeta';
-import LineItem from '../../LineItem/LineItem';
+import LineItem from '../../../Shared/LineItem/LineItem';
 import { styles as lineItemStyles, pdfStyle as lineItemPdfStyles } from '../../../Styles/LineItem';
 import CreditNoteBank from './Parts/CreditNoteBank';
 import { styles as bankStyles, pdfStyle as bankPdfStyles } from '../../../Styles/ReadBank';
@@ -252,7 +252,11 @@ const CreditNoteReadLayout = () => {
                                 >Mark as Void</a>
                             </> : ""
                     }
-                    <a className='read__creditNote__header--btn1' onClick={() => navigate(`/credit-note/edit/${creditNote?.cn_id}`)}>Edit</a>
+                    {
+                        creditNote?.cn_status === "Void" ? "" :
+                            creditNote?.cn_status === "Approved" ? "" :
+                                <a className='read__creditNote__header--btn1' onClick={() => navigate(`/credit-note/edit/${creditNote?.cn_id}`)}>Edit</a>
+                    }
                     <PdfDownload contents={contents} heading={"Credit Note"} />
                 </div>
             </div>

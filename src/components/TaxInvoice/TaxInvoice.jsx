@@ -1,19 +1,18 @@
-import { EyeOutlined, ArrowRightOutlined, InboxOutlined } from '@ant-design/icons';
-import { Modal, Input, Table, Tooltip, Divider } from 'antd';
-
-import editIcon from '../../assets/Icons/editIcon.svg';
-import deleteIcon from '../../assets/Icons/deleteIcon.svg';
+import { ArrowRightOutlined, InboxOutlined } from '@ant-design/icons';
+import { Modal, Input, Divider } from 'antd';
 import errorIcon from '../../assets/Icons/error.svg';
 import "./TaxInvoice.css"
 
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteTaxInvoice, downloadTaxInvoiceList, extractDataFromTaxInvoice, getTaxInvoiceList } from '../../Actions/TaxInvoice';
 import { useEffect, useState } from 'react';
+import taxInvoiceColumns from '../../Columns/TaxInvoice';
+import TableCard from '../../Shared/TableCard/TableCard';
 
 const TaxInvoice = () => {
     const dispatch = useDispatch();
-    const { error, loading, taxInvoices } = useSelector(state => state.taxInvoiceReducer);
+    const {loading, taxInvoices } = useSelector(state => state.taxInvoiceReducer);
     const navigate = useNavigate();
     useEffect(() => {
         dispatch(getTaxInvoiceList());
@@ -69,103 +68,26 @@ const TaxInvoice = () => {
         }
     }, [searchText]);
 
-    const columns = [
-        {
-            title: 'TI Date',
-            dataIndex: 'ti_date',
-            key: 'ti_date',
-            width: 120
-        },
-        {
-            title: 'TI Number',
-            dataIndex: 'ti_number',
-            key: 'ti_number',
-            width: 130
-        },
-        {
-            title: 'Customer',
-            dataIndex: 'customer_name',
-            key: 'customer_name',
-        },
-        {
-            title: 'Amount (excl. VAT)',
-            dataIndex: 'total_amount_excl_tax',
-            key: 'total_amount_excl_tax',
-            align: 'right'
-        },
-        {
-            title: 'Total',
-            dataIndex: 'total',
-            key: 'total',
-            align: 'right'
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            width: 120
-        },
-        {
-            title: 'Actions',
-            key: 'actions',
-            width: 120,
-            align: 'right',
-            render: (text, record) => (
-                <>
-                    <div className="action__buttons tax-invoices">
-                        <div className="action__button" onClick={() => navigate(`/tax-invoice/view/${record.ti_id}`)}>
-                            <Tooltip title="View" color='gray' placement="bottom">
-                                <EyeOutlined />
-                            </Tooltip>
-                        </div>
-                        {
-                            record?.status === "Approved" ? "" :
-                                record?.status === "Void" ?
-                                    <>
-                                        <div className="action__button" onClick={() => { showModal(record) }}>
-                                            <Tooltip title="Delete" color='red' placement="bottom">
-                                                <img src={deleteIcon} alt="deleteIcon" />
-                                            </Tooltip>
-                                        </div>
-                                    </>
-                                    :
-                                    <>
-                                        <div className="action__button" onClick={() => window.location.href = `/tax-invoice/edit/${record.ti_id}`} >
-                                            <Tooltip title="Edit" color='blue' placement="bottom">
-                                                <img src={editIcon} alt="editIcon" />
-                                            </Tooltip>
-                                        </div>
-                                        <div className="action__button" onClick={() => { showModal(record) }}>
-                                            <Tooltip title="Delete" color='red' placement="bottom">
-                                                <img src={deleteIcon} alt="deleteIcon" />
-                                            </Tooltip>
-                                        </div>
-                                    </>
-                        }
-                    </div>
-                    <Modal
-                        open={isModalOpen}
-                        onCancel={handleCancel}
-                        footer={null}
-                        width={400}
-                        className='taxInvoice__list--delete--modal'
-                    >
-                        <div className='taxInvoice__delete--modal'>
-                            <img src={errorIcon} alt="error" />
-                            <h1>Are you sure you?</h1>
-                            <p>This action cannot be undone.</p>
-                            <div className="delete__modal__buttons">
-                                <button id='cancel' onClick={handleCancel}>Cancel</button>
-                                <button id='confirm' onClick={() => handleDelete(record.ti_id)}>Delete</button>
-                            </div>
-                        </div>
-                    </Modal>
-                </>
-            ),
-        }
-    ];
+    const columns = taxInvoiceColumns(showModal, navigate);
     return (
         <>
+            <Modal
+                open={isModalOpen}
+                onCancel={handleCancel}
+                footer={null}
+                width={400}
+                className='taxInvoice__list--delete--modal'
+            >
+                <div className='taxInvoice__delete--modal'>
+                    <img src={errorIcon} alt="error" />
+                    <h1>Are you sure you?</h1>
+                    <p>This action cannot be undone.</p>
+                    <div className="delete__modal__buttons">
+                        <button id='cancel' onClick={handleCancel}>Cancel</button>
+                        <button id='confirm' onClick={() => handleDelete(record.ti_id)}>Delete</button>
+                    </div>
+                </div>
+            </Modal>
             <div className='taxInvoice__header'>
                 <div className='taxInvoice__header--left'>
                     <h1 className='taxInvoice__header--title'> Tax Invoices </h1>
@@ -214,24 +136,7 @@ const TaxInvoice = () => {
             </Modal>
 
             <div className="table">
-                <Table
-                    columns={columns}
-                    pagination={{
-                        position: ['bottomCenter'],
-                        pageSize: 20,
-                        total: taxInvoices?.total_items,
-                        defaultCurrent: 1,
-                        showSizeChanger: false,
-                    }}
-                    sticky={true}
-                    sortDirections={['descend', 'ascend']}
-                    scroll={{ y: 550 }}
-                    loading={loading}
-                    dataSource={taxInvoices?.items}
-                    onChange={(pagination) => {
-                        searchText.length > 2 ? dispatch(getTaxInvoiceList(pagination.current, searchText)) : dispatch(getTaxInvoiceList(pagination.current));
-                    }}
-                />
+                <TableCard columns={columns} dispatch={dispatch} loading={loading} items={taxInvoices} getList={getTaxInvoiceList} searchText={searchText} />
             </div>
         </>
     )

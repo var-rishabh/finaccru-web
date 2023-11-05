@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 
 const Customer = () => {
     const dispatch = useDispatch();
-    const { error, loading, customers } = useSelector(state => state.customerReducer);
+    const { loading, customers } = useSelector(state => state.customerReducer);
 
     const navigate = useNavigate();
     useEffect(() => {
@@ -21,8 +21,10 @@ const Customer = () => {
 
     const [searchText, setSearchText] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const showModal = () => {
+    const [record, setRecord] = useState({});
+    const showModal = (record) => {
         setIsModalOpen(true);
+        setRecord(record);
     };
     const handleCancel = () => {
         setIsModalOpen(false);
@@ -85,41 +87,39 @@ const Customer = () => {
             align: 'right',
             width: 120,
             render: (text, record) => (
-                <>
-                    <div className="action__buttons">
-                        <div className="action__button" onClick={() => navigate(`/customer/view/${record.customer_id}`)}>
-                            <EyeOutlined />
-                        </div>
-                        <div className="action__button" onClick={() => window.location.href = `/customer/edit/${record.customer_id}`} >
-                            <img src={editIcon} alt="editIcon" />
-                        </div>
-                        <div className="action__button" onClick={showModal}>
-                            <img src={deleteIcon} alt="deleteIcon" />
-                        </div>
+                <div className="action__buttons">
+                    <div className="action__button" onClick={() => navigate(`/customer/view/${record.customer_id}`)}>
+                        <EyeOutlined />
                     </div>
-                    <Modal
-                        open={isModalOpen}
-                        onCancel={handleCancel}
-                        footer={null}
-                        width={400}
-                        className='customer__list--delete--modal'
-                    >
-                        <div className='customer__delete--modal'>
-                            <img src={errorIcon} alt="error" />
-                            <h1>Are you sure you?</h1>
-                            <p>This action cannot be undone.</p>
-                            <div className="delete__modal__buttons">
-                                <button id='cancel' onClick={handleCancel}>Cancel</button>
-                                <button id='confirm' onClick={() => handleDelete(record.customer_id)}>Delete</button>
-                            </div>
-                        </div>
-                    </Modal>
-                </>
+                    <div className="action__button" onClick={() => window.location.href = `/customer/edit/${record.customer_id}`} >
+                        <img src={editIcon} alt="editIcon" />
+                    </div>
+                    <div className="action__button" onClick={() => showModal(record)}>
+                        <img src={deleteIcon} alt="deleteIcon" />
+                    </div>
+                </div>
             ),
         }
     ];
     return (
         <>
+            <Modal
+                open={isModalOpen}
+                onCancel={handleCancel}
+                footer={null}
+                width={400}
+                className='customer__list--delete--modal'
+            >
+                <div className='customer__delete--modal'>
+                    <img src={errorIcon} alt="error" />
+                    <h1>Are you sure you?</h1>
+                    <p>This action cannot be undone.</p>
+                    <div className="delete__modal__buttons">
+                        <button id='cancel' onClick={handleCancel}>Cancel</button>
+                        <button id='confirm' onClick={() => handleDelete(record.customer_id)}>Delete</button>
+                    </div>
+                </div>
+            </Modal>
             <div className='customer__header'>
                 <div className='customer__header--left'>
                     <h1 className='customer__header--title'> Customers </h1>

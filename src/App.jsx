@@ -1,24 +1,35 @@
+// Main Css
 import './App.css';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Auth from './components/Auth/Auth';
-import Login from './components/Login/Login';
-import ForgetPassword from './components/ForgetPassword/ForgetPassword';
-import ResetPassword from './components/ResetPassword/ResetPassword';
-import VerifyOTP from './components/VerifyOTP/VerifyOTP';
-import Register from './components/Register/Register';
-import Onboard from './components/Onboard/Onboard';
-import ConfirmEmail from './components/ConfirmEmail/ConfirmEmail';
-import Company from './components/Company/Company';
-import Bank from './components/Bank/Bank';
-import UploadFiles from './components/Upload/Upload';
+
+// Common Components
+import Home from './components/Home/Home';
 import Loader from './components/Loader/Loader';
 import NotFound from './components/NotFound/NotFound';
+
+// Auth Components
+import Auth from './components/Auth/Auth';
+import Login from './components/Auth/Login/Login';
+import ForgetPassword from './components/Auth/ForgetPassword/ForgetPassword';
+import ResetPassword from './components/Auth/ResetPassword/ResetPassword';
+import VerifyOTP from './components/Auth/VerifyOTP/VerifyOTP';
+import Register from './components/Auth/Register/Register';
+import ConfirmEmail from './components/Auth/ConfirmEmail/ConfirmEmail';
+import Redirect from './components/Auth/Redirect/Redirect';
+
+// Onboarding Components
+import Onboard from './components/Onboard/Onboard';
+import Company from './components/Onboard/Company/Company';
+import Bank from './components/Onboard/Bank/Bank';
+import UploadFiles from './components/Onboard/Upload/Upload';
+
+// Menu Items
+import menuItems from './MenuItems';
+
+// Redux and React Modules
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadUser } from './Actions/User';
-import Redirect from './components/Redirect/Redirect';
-import Home from './components/Home/Home';
-import menuItems from './MenuItems';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
   const dispatch = useDispatch();

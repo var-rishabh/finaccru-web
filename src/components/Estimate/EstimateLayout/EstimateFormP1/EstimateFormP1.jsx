@@ -18,19 +18,6 @@ const EstimateFormP1 = ({
     const filterOption = (input, option) => {
         return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
     }
-    // const filterOption2 = (input, option) => {
-    //     if (option?.key !== 'addShippingAddress') {
-    //         const searchStr = option?.children?.props?.children?.reduce((acc, cur) => {
-    //             if (typeof cur === 'string') {
-    //                 return acc + cur;
-    //             }
-    //         }, '');
-
-    //         return searchStr.toLowerCase().includes(input.toLowerCase());
-
-    //     }
-    //     return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
-    // }
     const { user } = useSelector(state => state.userReducer);
     const { loading: customerLoading, customersInf, totalCustomers, customer } = useSelector(state => state.customerReducer);
     const [currentCustomerPage, setCurrentCustomerPage] = useState(1);
@@ -68,7 +55,7 @@ const EstimateFormP1 = ({
         if (customerKeyword === null) return;
         dispatch(getCustomerInfiniteScroll(1, true, customerKeyword));
         setCurrentCustomerPage(1);
-    }, [customerKeyword]);
+    }, [customerKeyword, dispatch]);
 
     const onChangeCustomer = (value) => {
         if (value.customer_id === 'addCustomer') {

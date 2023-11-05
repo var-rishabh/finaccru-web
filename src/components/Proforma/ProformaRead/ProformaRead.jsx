@@ -8,14 +8,14 @@ import Loader from '../../Loader/Loader';
 import './ProformaRead.css'
 import backButton from "../../../assets/Icons/back.svg"
 import logo from "../../../assets/Icons/cropped_logo.svg"
-import PdfDownload from '../../PdfDownload/PdfDownload';
+import PdfDownload from '../../../Shared/PdfDownload/PdfDownload';
 import ProformaHead from './Parts/ProformaHead';
 
 import { pdfStyle as headPdfStyle, styles as headStyles } from '../../../Styles/ReadHead';
 import ProformaFor from './Parts/ProformaFor';
 import { styles as forStyles, pdfStyle as forPdfStyles } from '../../../Styles/ReadFor';
 import ProformaMeta from './Parts/ProformaMeta';
-import LineItem from '../../LineItem/LineItem';
+import LineItem from '../../../Shared/LineItem/LineItem';
 import { styles as lineItemStyles, pdfStyle as lineItemPdfStyles } from '../../../Styles/LineItem';
 import { styles as metaStyles, pdfStyle as metaPdfStyles } from '../../../Styles/ReadMeta';
 import ProformaBank from './Parts/ProformaBank';
@@ -245,7 +245,11 @@ const ProformaReadLayout = () => {
                             >Mark as Void</a>
                         </> : ""
                     }
-                    <a className='read__proforma__header--btn1' onClick={() => navigate(`/proforma/edit/${proforma?.pi_id}`)}>Edit</a>
+                    {
+                        proforma?.pi_status === "Converted to TI" ? "" :
+                            proforma?.pi_status === "Void" ? "" :
+                                <a className='read__proforma__header--btn1' onClick={() => navigate(`/proforma/edit/${proforma?.pi_id}`)}>Edit</a>
+                    }
                     <PdfDownload contents={contents} heading={"Proforma"} />
                 </div>
             </div>

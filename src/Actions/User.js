@@ -23,7 +23,6 @@ export const sendLink = (user) => async (dispatch) => {
             if (error.response.status === 404) {
                 createUserWithEmailAndPassword(auth, email_id, password).then(async (userCredential) => {
                     // send verification mail.
-                    // console.log(userCredential);
                     await sendEmailVerification(userCredential.user);
                     const token = await userCredential.user.getIdToken();
                     const urlObject2 = new URL(`${url}/private/client/onboarding/create`);
@@ -221,7 +220,6 @@ export const resetPassword = (user) => async (dispatch) => {
     try {
         dispatch({ type: "ResetPasswordRequest" });
         const { newPassword, oobCode } = user;
-        // console.log(newPassword, oobCode);
         await confirmPasswordReset(auth, oobCode, newPassword);
         dispatch({ type: "ResetPasswordSuccess" });
         toast.success("Password Reset Successfull");

@@ -112,7 +112,6 @@ const TaxInvoiceLayout = () => {
             setTaxInvoiceNumber(number);
             setTermsAndConditions(user?.clientInfo?.terms_and_conditions);
             if (file) {
-                console.log(location.state);
                 setCurrencyConversionRate(location.state?.currency_conversion_rate);
                 setCurrencyId(location.state?.currency_id);
                 setCurrency(currencyId !== 1 ? currencies?.find((currency) => currency.currency_id === location.state?.currency_id)?.currency_abv : 'AED');

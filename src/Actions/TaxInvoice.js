@@ -52,7 +52,7 @@ export const getTaxInvoiceDetails = (id) => async (dispatch) => {
     }
 }
 
-export const getTaxInvoiceList = (page = 1, keyword = "") => async (dispatch) => {
+export const getTaxInvoiceList = (page = 1, keyword = "", customer_id = 0) => async (dispatch) => {
     try {
         dispatch({ type: "TaxInvoiceListRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -61,7 +61,7 @@ export const getTaxInvoiceList = (page = 1, keyword = "") => async (dispatch) =>
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/tax-invoices/read-list/${page}?keyword=${keyword}`, config);
+        const response = await axios.get(`${url}/private/client/tax-invoices/read-list/${page}?keyword=${keyword}${customer_id !== 0 ? `&customer_id=${customer_id}` : ""}`, config);
         dispatch({ type: "TaxInvoiceListSuccess", payload: response.data });
     } catch (error) {
         console.log(error);
@@ -224,6 +224,25 @@ export const extractDataFromTaxInvoice = (file, navigate) => async (dispatch) =>
     } catch (error) {
         console.log(error);
         dispatch({ type: "ExtractDataFromTaxInvoiceFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+export const readOpenTaxInvoicesForCustomer = (id) => async (dispatch) => {
+    try {
+        dispatch({ type: "ReadOpenTaxInvoicesForCustomerRequest" });
+        const token = await auth.currentUser.getIdToken(true);
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+
+        const response = await axios.get(`${url}/private/client/tax-invoices/read-open-invoices-for-customer/${id}`, config);
+        dispatch({ type: "ReadOpenTaxInvoicesForCustomerSuccess", payload: response.data });
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ReadOpenTaxInvoicesForCustomerFailure", payload: error.response?.data || error.message });
         toast.error(error.response?.data || error.message);
     }
 }

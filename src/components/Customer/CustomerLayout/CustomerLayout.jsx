@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import { getCountries, getStates } from "country-state-picker";
-import { createCustomer } from "../../../Actions/Customer";
+import { createCustomer, getCustomerDetails, getShippingAddressList, updateCustomer } from "../../../Actions/Customer";
 import uaeStates from "../../../data/uaeStates";
 
 import { Select, Input } from "antd";
@@ -12,11 +12,21 @@ const { Option } = Select;
 import backButton from "../../../assets/Icons/back.svg";
 import MinusIcon from "../../../assets/Icons/minus.svg";
 import "./CustomerLayout.css";
+import { updateDoc } from "firebase/firestore";
 
 const CustomerLayout = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { loading } = useSelector((state) => state.customerReducer)
+    const isEdit = window.location.pathname.split('/')[2] === 'edit';
+    const { loading, customer, shippingAddresses: sA } = useSelector((state) => state.customerReducer);
+
+    useEffect(() => {
+        if (window.location.pathname.split('/')[2] === 'edit') {
+            dispatch(getCustomerDetails(window.location.pathname.split('/')[3]));
+            dispatch(getShippingAddressList(window.location.pathname.split('/')[3]));
+            // estimate?.customer?.customer_id
+        }
+    }, [dispatch]);
 
     const [customerName, setCustomerName] = useState("");
     const [contactName, setContactName] = useState("");
@@ -40,12 +50,44 @@ const CustomerLayout = () => {
     const [selectedBillingCountry, setSelectedBillingCountry] = useState("ae");
     const [isPhoneError, setIsPhoneError] = useState(false);
 
+
+    useEffect(() => {
+        if (window.location.pathname.split('/')[2] === 'edit') {
+            setCustomerName(customer?.customer_name ?? "");
+            setContactName(customer?.contact_name ?? "");
+            setDisplayName(customer?.display_name ?? "");
+            setEmail(customer?.email ?? "");
+            setPhone(customer?.mobile_number?.slice(0, 4) === "+971" ? customer?.mobile_number?.slice(4) : customer?.mobile_number?.slice(3) ?? "");
+            setCountryPhoneCode(customer?.mobile_number?.slice(0, 4) === "+971" ? "+971" : customer?.mobile_number?.slice(0, 3) ?? "+971");
+            setBillingAddress1(customer?.billing_address_line_1 ?? "");
+            setBillingAddress2(customer?.billing_address_line_2 ?? "");
+            setBillingAddress3(customer?.billing_address_line_3 ?? "");
+            setTrnNumber(customer?.trn ?? "");
+            setOpeningBalance(customer?.opening_balance ?? null);
+            setOpeningBalanceDate(customer?.opening_balance_date ?? "");
+            setShippingAddresses(sA?.map((address) => ({ ...address, countryCode: getCountries().find(country => country.name === country?.country)?.code ?? "ae" })) ?? []);
+            setBillingState(customer?.billing_state ?? null);
+            setBillingCountry(customer?.billing_country ?? "United Arab Emirates");
+            // find country code from country name
+            const selectedBillingCountry = getCountries().find(country => country.name === customer?.billing_country);
+            setSelectedBillingCountry(selectedBillingCountry ? selectedBillingCountry.code : "ae");
+            if (selectedBillingCountry?.code === "ae") {
+                setAllBillingStates(uaeStates);
+            } else if (selectedBillingCountry?.code) {
+                const countryStates = getStates(selectedBillingCountry.code);
+                setAllBillingStates(countryStates);
+            } else {
+                setAllBillingStates([]);
+            }
+        }
+    }, [customer, sA, dispatch]);
+
     const handleCountryPhoneCodeChange = (value) => {
         setCountryPhoneCode(value);
     }
 
     const selectBefore = (
-        <Select onChange={handleCountryPhoneCodeChange} defaultValue={countryPhoneCode}>
+        <Select onChange={handleCountryPhoneCodeChange} defaultValue={countryPhoneCode} value={countryPhoneCode}>
             {getCountries().map((country) => (
                 <Option key={country.code} value={country.dial_code}>
                     {country.dial_code}
@@ -92,7 +134,7 @@ const CustomerLayout = () => {
         updatedShippingAddress[index][key] = value;
         if (key === "countryCode") {
             const countryCode = value;
-            const selectedShippingCountry = getCountries().find(country => country.code === countryCode);
+            const selectedShippingCountry = getCountries()?.find(country => country.code === countryCode);
             updatedShippingAddress[index].country = selectedShippingCountry ? selectedShippingCountry.name : "";
             updatedShippingAddress[index].state = null;
         }
@@ -106,7 +148,7 @@ const CustomerLayout = () => {
 
     const handleRemoveShippingAddress = (index, event) => {
         event.preventDefault();
-        const updatedShippingAddress = shippingAddresses.filter((_, i) => i !== index);
+        const updatedShippingAddress = shippingAddresses?.filter((_, i) => i !== index);
         setShippingAddresses(updatedShippingAddress);
         if (index === 0) {
             setSameBillingAddress(false);
@@ -128,25 +170,25 @@ const CustomerLayout = () => {
             toast.error("Please fill all the fields");
             return;
         }
-        if (shippingAddresses.some(address => address.address_line_1 === "" || address.state === "" || address.country === "")) {
+        if (shippingAddresses?.some(address => address.address_line_1 === "" || address.state === "" || address.country === "")) {
             toast.error("Please fill compulsory fields of shipping address.");
             return;
         }
-        if (shippingAddresses.some(address => address.label === "")) {
-            shippingAddresses.forEach(address => {
+        if (shippingAddresses?.some(address => address.label === "")) {
+            shippingAddresses?.forEach(address => {
                 if (address.label === "") { address.label = null; }
             })
         }
-        if (shippingAddresses.some(address => address.address_line_2 === "")) {
-            shippingAddresses.forEach(address => {
+        if (shippingAddresses?.some(address => address.address_line_2 === "")) {
+            shippingAddresses?.forEach(address => {
                 if (address.address_line_2 === "") { address.address_line_2 = null; }
             })
-        } else if (shippingAddresses.some(address => address.address_line_3 === "")) {
-            shippingAddresses.forEach(address => {
+        } else if (shippingAddresses?.some(address => address.address_line_3 === "")) {
+            shippingAddresses?.forEach(address => {
                 if (address.address_line_3 === "") { address.address_line_3 = null; }
             })
         }
-        shippingAddresses.forEach(address => {
+        shippingAddresses?.forEach(address => {
             delete address.countryCode;
         })
         const customer = {
@@ -165,7 +207,11 @@ const CustomerLayout = () => {
             opening_balance: openingBalance === "" ? null : openingBalance,
             opening_balance_date: openingBalanceDate === "" ? null : openingBalanceDate,
         }
-        dispatch(createCustomer(customer));
+        if (isEdit) {
+            dispatch(updateCustomer(customer, window.location.pathname.split('/')[3], 0, navigate));
+        } else {
+            dispatch(createCustomer(customer, 0, navigate));
+        }
     }
 
     return (
@@ -177,7 +223,7 @@ const CustomerLayout = () => {
                 </div>
             </div>
             <div className="create__customer--main">
-                <span className="create__customer--header">Add New Customer</span>
+                <span className="create__customer--header">{isEdit ? "Edit Customer" : "Add New Customer"}</span>
                 <form className="create__customer--form">
                     <div className="create__customer--form-main">
                         <div className="create__customer--left">
@@ -279,7 +325,7 @@ const CustomerLayout = () => {
                                             filterSort={(optionA, optionB) =>
                                                 (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
                                             }
-                                            options={allBillingState.map((state) => ({ value: state, label: state }))}
+                                            options={allBillingState?.map((state) => ({ value: state, label: state }))}
                                             onChange={(value) => setBillingState(value)}
                                         />
                                     </>
@@ -301,7 +347,7 @@ const CustomerLayout = () => {
                                 shippingAddresses?.map((address, index) => (
                                     <>
                                         <div className="create__customer--shipping-address" key={index}>
-                                            {shippingAddresses.length > 1 && (
+                                            {shippingAddresses?.length > 1 && (
                                                 <div className='create__customer--shipping-address-minus'>
                                                     {index === 0 ? <span style={{ marginBottom: '1rem' }}>&nbsp;</span> : <></>}
                                                     <img src={MinusIcon} onClick={(e) => handleRemoveShippingAddress(index, e)} />
@@ -362,7 +408,7 @@ const CustomerLayout = () => {
                                                                     filterSort={(optionA, optionB) =>
                                                                         (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
                                                                     }
-                                                                    options={address.countryCode == "ae" ? uaeStates?.map((state) => ({ value: state, label: state })) : getStates(address.countryCode).map((state) => ({ value: state, label: state }))}
+                                                                    options={address.countryCode == "ae" ? uaeStates?.map((state) => ({ value: state, label: state })) : getStates(address.countryCode)?.map((state) => ({ value: state, label: state }))}
                                                                     onChange={(value) => handleShippingAddressChange(index, "state", value)}
                                                                 />
                                                             </>
@@ -371,17 +417,15 @@ const CustomerLayout = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        {index === shippingAddresses.length - 1 && (
-                                            <div className='add--item-btn'>
-                                                <button onClick={(e) => handleAddShippingAddress(e)}>
-                                                    <PlusOutlined />
-                                                </button>
-                                                <span>Add New Shipping Address</span>
-                                            </div>
-                                        )}
                                     </>
                                 ))
                             }
+                            <div className='add--item-btn'>
+                                <button onClick={(e) => handleAddShippingAddress(e)}>
+                                    <PlusOutlined />
+                                </button>
+                                <span>Add New Shipping Address</span>
+                            </div>
                         </div>
                     </div>
                     <div>

@@ -126,5 +126,29 @@ export const taxInvoiceReducer = createReducer(initialState, (builder) => {
         state.success = action.payload;
         state.error = null;
     })
+    .addCase("ReadOpenTaxInvoicesForCustomerRequest", (state) => {
+        state.loading = true;
+    })
+    .addCase("ReadOpenTaxInvoicesForCustomerFailure", (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+    })
+    .addCase("ReadOpenTaxInvoicesForCustomerSuccess", (state, action) => {
+        state.loading = false;
+        state.openTaxInvoices = action.payload;
+        state.error = null;
+    })
+    .addCase("AdjustCreditNoteAgainstInvoiceRequest", (state) => {
+        state.loading = true;
+    })
+    .addCase("AdjustCreditNoteAgainstInvoiceFailure", (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+    })
+    .addCase("AdjustCreditNoteAgainstInvoiceSuccess", (state, action) => {
+        state.loading = false;
+        state.success = action.payload;
+        state.error = null;
+    })
 })
 

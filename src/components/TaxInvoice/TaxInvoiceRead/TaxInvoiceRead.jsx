@@ -8,7 +8,7 @@ import Loader from '../../Loader/Loader';
 import './TaxInvoiceRead.css'
 import backButton from "../../../assets/Icons/back.svg"
 import logo from "../../../assets/Icons/cropped_logo.svg"
-import PdfDownload from '../../PdfDownload/PdfDownload';
+import PdfDownload from '../../../Shared/PdfDownload/PdfDownload';
 import TaxInvoiceHead from './Parts/TaxInvoiceHead';
 
 import { pdfStyle as headPdfStyle, styles as headStyles } from '../../../Styles/ReadHead';
@@ -16,7 +16,7 @@ import TaxInvoiceFor from './Parts/TaxInvoiceFor';
 import { styles as forStyles, pdfStyle as forPdfStyles } from '../../../Styles/ReadFor';
 import TaxInvoiceMeta from './Parts/TaxInvoiceMeta';
 import { styles as metaStyles, pdfStyle as metaPdfStyles } from '../../../Styles/ReadMeta';
-import LineItem from '../../LineItem/LineItem';
+import LineItem from '../../../Shared/LineItem/LineItem';
 import { styles as lineItemStyles, pdfStyle as lineItemPdfStyles } from '../../../Styles/LineItem';
 import TaxInvoiceBank from './Parts/TaxInvoiceBank';
 import { styles as bankStyles, pdfStyle as bankPdfStyles } from '../../../Styles/ReadBank';
@@ -252,7 +252,10 @@ const TaxInvoiceReadLayout = () => {
                                 >Mark as Void</a>
                             </> : ""
                     }
-                    <a className='read__taxInvoice__header--btn1' onClick={() => navigate(`/tax-invoice/edit/${taxInvoice?.ti_id}`)}>Edit</a>
+                    {
+                        taxInvoice?.ti_status === "Void" ? "" :
+                            <a className='read__taxInvoice__header--btn1' onClick={() => navigate(`/tax-invoice/edit/${taxInvoice?.ti_id}`)}>Edit</a>
+                    }
                     <PdfDownload contents={contents} heading={"Tax Invoice"} />
                 </div>
             </div>

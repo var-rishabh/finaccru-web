@@ -1,0 +1,130 @@
+export const styles = {
+    main: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: "100%",
+        padding: "3rem 4rem 1rem",
+    },
+    mainSummary: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: "100%",
+        paddingBottom: "0.5rem",
+        borderBottom: "2px solid #000",
+    },
+    summaryHeading: {
+        fontSize: "1.25rem",
+        fontWeight: "600",
+    },
+    summarySubHeading: {
+        fontSize: "0.9rem",
+        fontWeight: "400",
+    },
+    summaryInfo: {
+        width: "100%",
+        marginTop: "1rem",
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    summaryInfoBox: {
+        display: "flex",
+        flexDirection: "column",
+    },
+    summaryInfoHead: {
+        fontSize: "0.9rem",
+        fontWeight: "500",
+        borderBottom: "1px solid #000",
+        marginBottom: "0.4rem",
+    },
+    summaryInfoData: {
+        fontSize: "0.9rem",
+        fontWeight: "400",
+        width: "100%",
+        textAlign: "center",
+    },
+    summarySymbol: {
+        fontSize: "1rem",
+        fontWeight: "600",
+        border: "1px solid #000",
+        borderRadius: "50%",
+        width: "1.2rem",
+        height: "1.2rem",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        overflow: "hidden",
+    },
+}
+
+export const pdfStyle = {
+    main: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: "100%",
+        padding: "8px 40px 10px",
+        height: '120px',
+    },
+    mainSummary: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: "100%",
+        paddingBottom: "8px",
+        borderBottomWidth: "1.5px",
+        borderBottomColor: "#000",
+        borderBottomStyle: "solid",
+    },
+    summaryHeading: {
+        fontSize: "12px",
+        fontWeight: "bold",
+        paddingBottom: "4px",
+    },
+    summarySubHeading: {
+        fontSize: "8px",
+        fontWeight: "normal",
+    },
+    summaryInfo: {
+        width: "100%",
+        marginTop: "10px",
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    summaryInfoBox: {
+        display: "flex",
+        flexDirection: "column",
+    },
+    summaryInfoHead: {
+        fontSize: "8px",
+        fontWeight: "bold",
+        borderBottomWidth: "1px",
+        borderBottomColor: "#000",
+        borderBottomStyle: "solid",
+        marginBottom: "6px",
+    },
+    summaryInfoData: {
+        fontSize: "8px",
+        fontWeight: "normal",
+        textAlign: "center",
+    },
+    summarySymbol: {
+        borderWidth: "1px",
+        borderColor: "#000",
+        borderStyle: "solid",
+        borderRadius: "50%",
+        display: "flex",
+        width: "15px",
+        height: "15px",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "row",
+    },
+    symbolStyle: {
+        paddingLeft: "2px",
+        marginRight: "-4px",
+        fontSize: "10px",
+        fontWeight: "bold",
+    }
+}
