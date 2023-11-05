@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import PdfDownload from "../../../../PdfDownload/PdfDownload";
+import PdfDownload from "../../../../../Shared/PdfDownload/PdfDownload";
 
 import { ArrowRightOutlined } from '@ant-design/icons';
 import logo from "../../../../../assets/Icons/cropped_logo.svg"
