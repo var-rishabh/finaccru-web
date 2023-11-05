@@ -52,7 +52,7 @@ export const getProformaDetails = (id) => async (dispatch) => {
     }
 }
 
-export const getProformaList = (page = 1, keyword = "") => async (dispatch) => {
+export const getProformaList = (page = 1, keyword = "", customer_id = 0) => async (dispatch) => {
     try {
         dispatch({ type: "ProformaListRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -61,7 +61,7 @@ export const getProformaList = (page = 1, keyword = "") => async (dispatch) => {
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/proforma-invoices/read-list/${page}?keyword=${keyword}`, config);
+        const response = await axios.get(`${url}/private/client/proforma-invoices/read-list/${page}?keyword=${keyword}${customer_id !== 0 ? `&customer_id=${customer_id}` : ""}`, config);
         dispatch({ type: "ProformaListSuccess", payload: response.data });
     } catch (error) {
         console.log(error);

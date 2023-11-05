@@ -5,7 +5,7 @@ import { getCustomerDetails } from "../../../Actions/Customer";
 
 import CustomerDetails from "./Tabs/CustomerDetails";
 import CustomerTransactions from "./Tabs/CustomerTransactions";
-import CustomerStatement from "./Tabs/CustomerStatement";
+import CustomerStatement from "./Tabs/Statement/Statement";
 
 import { Tabs } from 'antd';
 import backButton from "../../../assets/Icons/back.svg";
@@ -30,12 +30,12 @@ const CustomerRead = () => {
         {
             key: '2',
             label: 'Transactions',
-            children: <CustomerTransactions />,
+            children: <CustomerTransactions customer_id={customer_id} />,
         },
         {
             key: '3',
             label: 'Statement',
-            children: <CustomerStatement />,
+            children: <CustomerStatement customer_id={customer_id} />,
         },
     ];
 
@@ -53,7 +53,7 @@ const CustomerRead = () => {
             <div className="read__customer--main">
                 <span className="read__customer--header">{customer?.customer_name}</span>
                 <div className="read__customer--tabs">
-                    <Tabs defaultActiveKey="2" items={items} />
+                    <Tabs defaultActiveKey="3" items={items} />
                 </div>
             </div>
         </>

@@ -1,6 +1,5 @@
 import { Modal, Input, Table, Tooltip } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
-// import convertIcon from '../../assets/Icons/convertIcon.svg';
 import editIcon from '../../assets/Icons/editIcon.svg';
 import deleteIcon from '../../assets/Icons/deleteIcon.svg';
 import errorIcon from '../../assets/Icons/error.svg';
@@ -10,6 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteCreditNote, downloadCreditNoteList, getCreditNoteList } from '../../Actions/CreditNote';
 import { useEffect, useState } from 'react';
+import creditNoteColumns from '../../Columns/CreditNote';
+import TableCard from '../../Shared/TableCard/TableCard';
 
 const CreditNote = () => {
     const dispatch = useDispatch();
@@ -45,85 +46,7 @@ const CreditNote = () => {
         }
     }, [searchText]);
 
-    const columns = [
-        {
-            title: 'CN Date',
-            dataIndex: 'cn_date',
-            key: 'cn_date',
-            width: 120
-        },
-        {
-            title: 'CN Number',
-            dataIndex: 'cn_number',
-            key: 'cn_number',
-            width: 130
-        },
-        {
-            title: 'Customer',
-            dataIndex: 'customer_name',
-            key: 'customer_name',
-        },
-        {
-            title: 'Amount (excl. VAT)',
-            dataIndex: 'total_amount_excl_tax',
-            key: 'total_amount_excl_tax',
-            align: 'right'
-        },
-        {
-            title: 'Total',
-            dataIndex: 'total',
-            key: 'total',
-            align: 'right'
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            width: 120
-        },
-        {
-            title: 'Actions',
-            key: 'actions',
-            width: 120,
-            align: 'right',
-            render: (text, record) => (
-                <>
-                    <div className="action__buttons credit-note">
-                        <div className="action__button" onClick={() => navigate(`/credit-note/view/${record.cn_id}`)}>
-                            <Tooltip title="View" color='gray' placement="bottom">
-                                <EyeOutlined />
-                            </Tooltip>
-                        </div>
-                        {
-                            record?.status === "Approved" ? "" :
-                                record?.status === "Void" ?
-                                    <>
-                                        <div className="action__button" onClick={() => { showModal(record) }}>
-                                            <Tooltip title="Delete" color='red' placement="bottom">
-                                                <img src={deleteIcon} alt="deleteIcon" />
-                                            </Tooltip>
-                                        </div>
-                                    </>
-                                    :
-                                    <>
-                                        <div className="action__button" onClick={() => window.location.href = `/credit-note/edit/${record.cn_id}`} >
-                                            <Tooltip title="Edit" color='blue' placement="bottom">
-                                                <img src={editIcon} alt="editIcon" />
-                                            </Tooltip>
-                                        </div>
-                                        <div className="action__button" onClick={() => { showModal(record) }}>
-                                            <Tooltip title="Delete" color='red' placement="bottom">
-                                                <img src={deleteIcon} alt="deleteIcon" />
-                                            </Tooltip>
-                                        </div>
-                                    </>
-                        }
-                    </div>
-
-                </>
-            ),
-        }
-    ];
+    const columns = creditNoteColumns(showModal, navigate);
     return (
         <>
             <Modal
@@ -154,24 +77,7 @@ const CreditNote = () => {
                 </div>
             </div>
             <div className="table">
-                <Table
-                    columns={columns}
-                    pagination={{
-                        position: ['bottomCenter'],
-                        pageSize: 20,
-                        total: creditNotes?.total_items,
-                        defaultCurrent: 1,
-                        showSizeChanger: false,
-                    }}
-                    sticky={true}
-                    sortDirections={['descend', 'ascend']}
-                    scroll={{ y: 550 }}
-                    loading={loading}
-                    dataSource={creditNotes?.items}
-                    onChange={(pagination) => {
-                        searchText.length > 2 ? dispatch(getCreditNoteList(pagination.current, searchText)) : dispatch(getCreditNoteList(pagination.current));
-                    }}
-                />
+                <TableCard columns={columns} dispatch={dispatch} loading={loading} items={creditNotes} getList={getCreditNoteList} searchText={searchText} />
             </div>
         </>
     )

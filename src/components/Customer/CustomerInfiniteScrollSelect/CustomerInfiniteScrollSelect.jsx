@@ -25,21 +25,14 @@ const CustomerInfiniteScrollSelect = ({ loadMoreOptions, onChange, customerKeywo
         const select = selectRef.current;
         if (select) {
             setScrollTop(select.scrollTop);
-            // console.log(select.scrollHeight);
-            // console.log(totalCustomers);
-            // Get the scroll height of a option
             const optionScrollHeight = select.scrollHeight / customersInf.length;
             const optionsPerPage = 20;
-            // console.log('optionScrollHeight', optionScrollHeight);
-            // console.log(Math.ceil(((select.scrollTop + 400) / optionScrollHeight)));
             const currentScrollPage = Math.ceil(((select.scrollTop + 500) / optionScrollHeight) / optionsPerPage);
-            // console.log('currentScrollPage', currentScrollPage);
             loadMoreOptions(currentScrollPage);
         }
     };
     useEffect(() => {
         const select = selectRef.current;
-        // console.log('select', select);
         if (select) {
             select.addEventListener('scroll', handleScroll);
             return () => select.removeEventListener('scroll', handleScroll);
@@ -51,7 +44,6 @@ const CustomerInfiniteScrollSelect = ({ loadMoreOptions, onChange, customerKeywo
     }, [customersInf, loading]);
 
     useEffect(() => {
-        // console.log('scrollTop', scrollTop);
         setVisibleOptions(customersInf);
     }, [customersInf, scrollTop]);
 

@@ -80,7 +80,6 @@ const CreditNoteFormP1 = ({
             return customer.customer_id === value.customer_id;
         });
         setCustomerName(customerSelected.customer_name);
-        // console.log("🚀 ~ customer?.terms_and_conditions:", customer?.terms_and_conditions);
         dispatch(getCustomerDetails(value.customer_id));
         dispatch(getShippingAddressList(value.customer_id));
         // setTermsAndConditions(customer?.terms_and_conditions ? customer?.terms_and_conditions : termsAndConditions);

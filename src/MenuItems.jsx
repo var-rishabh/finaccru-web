@@ -19,6 +19,9 @@ import TaxInvoiceRead from './components/TaxInvoice/TaxInvoiceRead/TaxInvoiceRea
 import CreditNote from './components/CreditNote/CreditNote';
 import CreditNoteLayout from './components/CreditNote/CreditNoteLayout/CreditNoteLayout';
 import CreditNoteRead from './components/CreditNote/CreditNoteRead/CreditNoteRead';
+import Payment from './components/Payment/Payment';
+import PaymentLayout from './components/Payment/PaymentLayout/PaymentLayout';
+import PaymentRead from './components/Payment/PaymentRead/PaymentRead';
 
 function getItem(label, icon, component, changecomponent, viewcomponent) {
     return {
@@ -38,7 +41,7 @@ const items = [
     getItem('Proforma', <img src={proforma} />, <Proforma />, <ProformaLayout />, <ProformaRead />),
     getItem('Tax Invoice', <img src={estimate} />, <TaxInvoice />, <TaxInvoiceLayout />, <TaxInvoiceRead />),
     getItem('Credit Note', <img src={estimate} />, <CreditNote />, <CreditNoteLayout />, <CreditNoteRead />),
-    getItem('Payments', <img src={estimate} />, <Dashboard />, <Dashboard />, <Dashboard />),
+    getItem('Payment', <img src={estimate} />, <Payment />, <PaymentLayout />, <PaymentRead />),
     getItem('Vendors', <img src={estimate} />, <Dashboard />, <Dashboard />, <Dashboard />),
     getItem('Expenses', <img src={estimate} />, <Dashboard />, <Dashboard />, <Dashboard />),
     getItem('Bills', <img src={estimate} />, <Dashboard />, <Dashboard />, <Dashboard />),

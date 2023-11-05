@@ -144,4 +144,17 @@ export const customerReducer = createReducer(initialState, (builder) => {
             state.success = action.payload;
             state.error = null;
         })
+        .addCase("ReadCustomerStatementRequest", (state) => {
+            state.loading = true;
+        })
+        .addCase("ReadCustomerStatementFailure", (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+        .addCase("ReadCustomerStatementSuccess", (state, action) => {
+            state.loading = false;
+            state.customerStatement = action.payload;
+            state.error = null;
+        })
+        
 })

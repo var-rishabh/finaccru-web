@@ -1,48 +1,53 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+
+// Actions
 import { getEstimateDetails, markEstimateSent, markEstimateVoid } from '../../../Actions/Estimate';
 import { getCurrency, getTaxRate } from '../../../Actions/Onboarding';
 import Loader from '../../Loader/Loader';
 
+// Styles
 import './EstimateRead.css'
 import backButton from "../../../assets/Icons/back.svg"
 import logo from "../../../assets/Icons/cropped_logo.svg"
-import PdfDownload from '../../PdfDownload/PdfDownload';
-import EstimateHead from './Parts/EstimateHead';
 
+// Pdf Download Button
+import PdfDownload from '../../../Shared/PdfDownload/PdfDownload';
+
+// Read Parts
+import ReadHead from '../../../Shared/ReadHead/ReadHead';
 import { pdfStyle as headPdfStyle, styles as headStyles } from '../../../Styles/ReadHead';
-import EstimateFor from './Parts/EstimateFor';
+import ReadFor from '../../../Shared/ReadFor/ReadFor';
 import { styles as forStyles, pdfStyle as forPdfStyles } from '../../../Styles/ReadFor';
-import EstimateMeta from './Parts/EstimateMeta';
+import ReadMeta from '../../../Shared/ReadMeta/ReadMeta';
 import { styles as metaStyles, pdfStyle as metaPdfStyles } from '../../../Styles/ReadMeta';
-import LineItem from '../../LineItem/LineItem';
+import LineItem from '../../../Shared/LineItem/LineItem';
 import { styles as lineItemStyles, pdfStyle as lineItemPdfStyles } from '../../../Styles/LineItem';
-import EstimateBank from './Parts/EstimateBank';
+import ReadBank from '../../../Shared/ReadBank/ReadBank';
 import { styles as bankStyles, pdfStyle as bankPdfStyles } from '../../../Styles/ReadBank';
-import EstimateTax from './Parts/EstimateTax';
+import ReadTax from '../../../Shared/ReadTax/ReadTax';
 import { styles as taxStyles, pdfStyle as taxPdfStyles } from '../../../Styles/ReadTax';
+import calculateTotalAmounts from '../../../utils/calculateTotalAmounts';
 
 const EstimateReadLayout = () => {
 
+    const estimate_id = window.location.pathname.split('/')[3];
+    
     const navigate = useNavigate();
     const { user } = useSelector(state => state.userReducer);
-    const estimate_id = window.location.pathname.split('/')[3];
     const { loading, estimate } = useSelector(state => state.estimateReducer);
     const { taxRates } = useSelector(state => state.onboardingReducer);
+    const { currencies } = useSelector(state => state.onboardingReducer);
     const dispatch = useDispatch();
 
     const [itemTotal, setItemTotal] = useState([]);
     const [itemTax, setItemTax] = useState([]);
-
     const [groupedItems, setGroupedItems] = useState([]);
-
     const [subTotal, setSubTotal] = useState(0);
     const [discount, setDiscount] = useState(0);
     const [tax, setTax] = useState(0);
     const [total, setTotal] = useState(0);
-
-    const { currencies } = useSelector(state => state.onboardingReducer);
 
     useEffect(() => {
         dispatch(getCurrency());
@@ -53,49 +58,10 @@ const EstimateReadLayout = () => {
         dispatch(getEstimateDetails(estimate_id));
     }, [dispatch]);
 
+
     useEffect(() => {
-        const calculateTotalAmounts = () => {
-            let subTotalAmount = 0;
-            let discountAmount = 0;
-            let taxAmount = 0;
-            const calculatedTax = [];
-
-            const calculateFinalAmount = estimate?.line_items?.map((item) => {
-                const { qty, rate, discount, is_percentage_discount, tax_id } = item;
-                let finalRate = 0;
-                let overAllRate = 0;
-                if (is_percentage_discount) {
-                    finalRate = rate - (rate * discount / 100);
-                    overAllRate = finalRate * qty;
-                    discountAmount += (rate - finalRate) * qty;
-                } else {
-                    discountAmount += ((+discount) * qty);
-                    overAllRate = (rate - discount) * qty;
-                }
-                subTotalAmount += rate * qty;
-                let tax = 0;
-                const taxItem = taxRates?.find((tr) => tr.tax_rate_id === tax_id);
-                if (taxItem?.tax_percentage !== 0) {
-                    tax = overAllRate * (taxItem?.tax_percentage / 100);
-                    taxAmount += tax;
-                }
-                calculatedTax.push(parseFloat(tax.toFixed(2)));
-
-                const finalAmount = parseFloat((overAllRate + tax).toFixed(2));
-                return finalAmount;
-            });
-
-            setSubTotal(parseFloat(subTotalAmount.toFixed(2)));
-            setDiscount(parseFloat(discountAmount.toFixed(2)));
-            setTax(parseFloat(taxAmount.toFixed(2)));
-            setTotal(parseFloat((subTotalAmount - discountAmount + taxAmount).toFixed(2)));
-            setItemTax(calculatedTax);
-
-            return calculateFinalAmount;
-        };
-
-        const calculateTotalAmount = calculateTotalAmounts();
-        setItemTotal(calculateTotalAmount);
+        const amount = calculateTotalAmounts(estimate?.line_items, setSubTotal, setDiscount, setTax, setTotal, setItemTax, taxRates);
+        setItemTotal(amount);
     }, [estimate, taxRates]);
 
     useEffect(() => {
@@ -120,12 +86,13 @@ const EstimateReadLayout = () => {
 
         setGroupedItems(groupedByTaxId);
     }, [itemTotal, itemTax, estimate, taxRates]);
-    
+
     const contents = [
         {
-            component: EstimateHead,
+            component: ReadHead,
             height: 90,
             props: {
+                title: "Estimate",
                 styles: headPdfStyle,
                 address_line_1: user?.clientInfo?.company_data?.address_line_1,
                 address_line_2: user?.clientInfo?.company_data?.address_line_2,
@@ -141,9 +108,10 @@ const EstimateReadLayout = () => {
             }
         },
         {
-            component: EstimateFor,
+            component: ReadFor,
             height: 90,
             props: {
+                title: "Estimate",
                 styles: forPdfStyles,
                 customer_name: estimate?.customer?.customer_name,
                 billing_address_line_1: estimate?.customer?.billing_address_line_1,
@@ -160,7 +128,7 @@ const EstimateReadLayout = () => {
             }
         },
         {
-            component: EstimateMeta,
+            component: ReadMeta,
             height: 70,
             props: {
                 styles: metaPdfStyles,
@@ -192,7 +160,7 @@ const EstimateReadLayout = () => {
             }
         }),
         {
-            component: EstimateBank,
+            component: ReadBank,
             height: ((user?.clientInfo?.other_bank_accounts || []).length) * 55 + 80,
             props: {
                 styles: bankPdfStyles,
@@ -206,7 +174,7 @@ const EstimateReadLayout = () => {
             }
         },
         {
-            component: EstimateTax,
+            component: ReadTax,
             height: 120,
             props: {
                 styles: taxPdfStyles,
@@ -245,7 +213,11 @@ const EstimateReadLayout = () => {
                             >Mark as Void</a>
                         </> : ""
                     }
-                    <a className='read__estimate__header--btn1' onClick={() => navigate(`/estimate/edit/${estimate?.estimate_id}`)}>Edit</a>
+                    {
+                        estimate?.estimate_status === "Converted to PI/TI" ? "" :
+                            estimate?.estimate_status === "Void" ? "" :
+                                <a className='read__estimate__header--btn1' onClick={() => navigate(`/estimate/edit/${estimate?.estimate_id}`)}>Edit</a>
+                    }
                     <PdfDownload contents={contents} heading={"Estimate"} />
                 </div>
             </div>
@@ -256,9 +228,9 @@ const EstimateReadLayout = () => {
                             <img style={{ width: "9rem" }} src={logo} alt="logo" />
                             <h1 className='read__estimate--head'>Estimate</h1>
                         </div>
-                        <EstimateHead styles={headStyles} address_line_1={user?.clientInfo?.company_data?.address_line_1} address_line_2={user?.clientInfo?.company_data?.address_line_2} address_line_3={user?.clientInfo?.company_data?.address_line_3} company_name={user?.clientInfo?.company_data?.company_name} country={user?.clientInfo?.company_data?.country} state={user?.clientInfo?.company_data?.state} trade_license_number={user?.clientInfo?.company_data?.trade_license_number} estimate_number={estimate?.estimate_number} estimate_date={estimate?.estimate_date} valid_till={estimate?.valid_till} reference={estimate?.reference} />
-                        <EstimateFor styles={forStyles} customer_name={estimate?.customer?.customer_name} billing_address_line_1={estimate?.customer?.billing_address_line_1} billing_address_line_2={estimate?.customer?.billing_address_line_2} billing_address_line_3={estimate?.customer?.billing_address_line_3} billing_state={estimate?.customer?.billing_state} billing_country={estimate?.customer?.billing_country} shipping_address_line_1={estimate?.customer?.shipping_address_line_1} shipping_address_line_2={estimate?.customer?.shipping_address_line_2} shipping_address_line_3={estimate?.customer?.shipping_address_line_3} shipping_state={estimate?.customer?.shipping_state} shipping_country={estimate?.customer?.shipping_country} trn={estimate?.customer?.trn} />
-                        <EstimateMeta styles={metaStyles} currency_abv={currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv} currency_conversion_rate={estimate?.currency_conversion_rate} subject={estimate?.subject} />
+                        <ReadHead  title={"Estimate"}  styles={headStyles} address_line_1={user?.clientInfo?.company_data?.address_line_1} address_line_2={user?.clientInfo?.company_data?.address_line_2} address_line_3={user?.clientInfo?.company_data?.address_line_3} company_name={user?.clientInfo?.company_data?.company_name} country={user?.clientInfo?.company_data?.country} state={user?.clientInfo?.company_data?.state} trade_license_number={user?.clientInfo?.company_data?.trade_license_number} estimate_number={estimate?.estimate_number} estimate_date={estimate?.estimate_date} valid_till={estimate?.valid_till} reference={estimate?.reference} />
+                        <ReadFor title={"Estimate"} styles={forStyles} customer_name={estimate?.customer?.customer_name} billing_address_line_1={estimate?.customer?.billing_address_line_1} billing_address_line_2={estimate?.customer?.billing_address_line_2} billing_address_line_3={estimate?.customer?.billing_address_line_3} billing_state={estimate?.customer?.billing_state} billing_country={estimate?.customer?.billing_country} shipping_address_line_1={estimate?.customer?.shipping_address_line_1} shipping_address_line_2={estimate?.customer?.shipping_address_line_2} shipping_address_line_3={estimate?.customer?.shipping_address_line_3} shipping_state={estimate?.customer?.shipping_state} shipping_country={estimate?.customer?.shipping_country} trn={estimate?.customer?.trn} />
+                        <ReadMeta styles={metaStyles} currency_abv={currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv} currency_conversion_rate={estimate?.currency_conversion_rate} subject={estimate?.subject} />
                         <div className='read__estimate__items'>
                             {estimate?.line_items?.map((item, index) => (
                                 <LineItem styles={lineItemStyles} key={index} index={index}
@@ -270,12 +242,12 @@ const EstimateReadLayout = () => {
                                 />
                             ))}
                         </div>
-                        <EstimateBank styles={bankStyles} currency_abv={currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv}
+                        <ReadBank styles={bankStyles} currency_abv={currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv}
                             primary_bank={user?.clientInfo?.primary_bank}
                             other_bank_accounts={user?.clientInfo?.other_bank_accounts}
                             subTotal={subTotal} discount={discount} tax={tax} total={total}
                         />
-                        <EstimateTax styles={taxStyles} currency_abv={currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv}
+                        <ReadTax styles={taxStyles} currency_abv={currencies?.find((currency) => currency.currency_id === estimate?.currency_id)?.currency_abv}
                             currency_conversion_rate={estimate?.currency_conversion_rate}
                             subTotal={subTotal} discount={discount} tax={tax} total={total}
                             groupedItems={groupedItems} terms_and_conditions={estimate?.terms_and_conditions}

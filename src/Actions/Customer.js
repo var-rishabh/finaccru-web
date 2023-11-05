@@ -21,7 +21,7 @@ export const getCustomerList = (page = 1, keyword = "") => async (dispatch) => {
     }
 }
 
-export const createCustomer = (data, handleCustomerSubmit) => async (dispatch) => {
+export const createCustomer = (data, handleCustomerSubmit, navigate) => async (dispatch) => {
     try {
         dispatch({ type: "CreateCustomerRequest" });
         const token = await auth.currentUser.getIdToken();
@@ -37,6 +37,7 @@ export const createCustomer = (data, handleCustomerSubmit) => async (dispatch) =
             handleCustomerSubmit(response.data);
         }
         dispatch(getCustomerList());
+        navigate("/customer");
     } catch (error) {
         console.log(error);
         if (error.response?.status === 422) {
@@ -66,7 +67,6 @@ export const createInSalesDocument = (data, handleCustomerSubmit) => async (disp
         };
         const response = await axios.post(`${url}/private/client/customers/create-in-sales-document`, data, config);
         dispatch({ type: "CreateInSalesDocumentSuccess", payload: response.data });
-        console.log(response.data);
         toast.success("InSales Document created successfully");
         if (handleCustomerSubmit) {
             handleCustomerSubmit(response.data);
@@ -89,7 +89,7 @@ export const createInSalesDocument = (data, handleCustomerSubmit) => async (disp
     }
 }
 
-export const updateCustomer = (data, id, handleCustomerSubmit) => async (dispatch) => {
+export const updateCustomer = (data, id, handleCustomerSubmit, navigate) => async (dispatch) => {
     try {
         dispatch({ type: "UpdateCustomerRequest" });
         const token = await auth.currentUser.getIdToken();
@@ -103,6 +103,8 @@ export const updateCustomer = (data, id, handleCustomerSubmit) => async (dispatc
         toast.success("Customer updated successfully");
         if (handleCustomerSubmit) {
             handleCustomerSubmit(data);
+        } else {
+            navigate("/customer/view/" + id);
         }
     }
     catch (error) {
@@ -170,7 +172,6 @@ export const createShippingAddress = (data, customer_id, handleShippingAddressSu
         };
         const response = await axios.post(`${url}/private/client/customers/${customer_id}/create-shipping-address`, data, config);
         dispatch({ type: "CreateShippingAddressSuccess", payload: response.data });
-        console.log(response.data);
         toast.success("Shipping Address created successfully");
         if (handleShippingAddressSubmit) {
             handleShippingAddressSubmit(response.data);
@@ -222,6 +223,7 @@ export const deleteCustomer = (id) => async (dispatch) => {
         };
         await axios.delete(`${url}/private/client/customers/delete/${id}`, config);
         dispatch({ type: "DeleteCustomerSuccess", payload: id });
+        dispatch(getCustomerList());
         toast.success("Customer deleted successfully");
     } catch (error) {
         console.log(error);
@@ -281,3 +283,23 @@ export const deleteShippingAddress = (id) => async (dispatch) => {
         toast.error(error.response?.data || error.message);
     }
 }
+
+export const readCustomerStatment = (id, data) => async (dispatch) => {
+    try {
+        dispatch({ type: "ReadCustomerStatementRequest" });
+        const token = await auth.currentUser.getIdToken();
+        const config = {
+            headers: {
+                token: token,
+                "Content-Type": "application/json",
+            },
+        };
+        const response = await axios.post(`${url}/private/client/customers/read-statement/${id}`, data, config);
+        dispatch({ type: "ReadCustomerStatementSuccess", payload: response.data });
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ReadCustomerStatementFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+

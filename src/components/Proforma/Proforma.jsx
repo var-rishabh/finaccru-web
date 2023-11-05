@@ -10,19 +10,32 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteProforma, downloadProformaList, getProformaList } from '../../Actions/Proforma';
 import { useEffect, useState } from 'react';
+import performaColumns from '../../Columns/Proforma';
 
 const Proforma = () => {
     const dispatch = useDispatch();
-    const { error, loading, proformas } = useSelector(state => state.proformaReducer);
-
     const navigate = useNavigate();
-    useEffect(() => {
-        dispatch(getProformaList());
-    }, [dispatch]);
+    
+    const { loading, proformas } = useSelector(state => state.proformaReducer);
 
     const [searchText, setSearchText] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [record, setRecord] = useState({});
+
+
+    useEffect(() => {
+        dispatch(getProformaList());
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (searchText.length > 2) {
+            dispatch(getProformaList(1, searchText));
+        }
+        if (searchText.length === 0) {
+            dispatch(getProformaList());
+        }
+    }, [searchText]);
+
     const showModal = (record) => {
         setIsModalOpen(true);
         setRecord(record);
@@ -36,98 +49,8 @@ const Proforma = () => {
         setIsModalOpen(false);
     }
 
-    useEffect(() => {
-        if (searchText.length > 2) {
-            dispatch(getProformaList(1, searchText));
-        }
-        if (searchText.length === 0) {
-            dispatch(getProformaList());
-        }
-    }, [searchText]);
 
-    const columns = [
-        {
-            title: 'PI Date',
-            dataIndex: 'pi_date',
-            key: 'pi_date',
-            width: 120
-        },
-        {
-            title: 'PI Number',
-            dataIndex: 'pi_number',
-            key: 'pi_number',
-            width: 130
-        },
-        {
-            title: 'Customer',
-            dataIndex: 'customer_name',
-            key: 'customer_name',
-        },
-        {
-            title: 'Amount (excl. VAT)',
-            dataIndex: 'total_amount_excl_tax',
-            key: 'total_amount_excl_tax',
-            align: 'right'
-        },
-        {
-            title: 'Total',
-            dataIndex: 'total',
-            key: 'total',
-            align: 'right'
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-        },
-        {
-            title: 'Actions',
-            key: 'actions',
-            width: 150,
-            align: 'right',
-            render: (text, record) => (
-                <>
-                    <div className="action__buttons proforma-invoices">
-                        <div className="action__button" onClick={() => navigate(`/proforma/view/${record.pi_id}`)}>
-                            <Tooltip title="View" color='gray' placement="bottom">
-                                <EyeOutlined />
-                            </Tooltip>
-                        </div>
-                        {
-                            record?.status === "Converted to TI" ? "" :
-                                record?.status === "Void" ?
-                                    <>
-                                        <div className="action__button" onClick={() => showModal(record)}>
-                                            <Tooltip title="Delete" color='red' placement="bottom">
-                                                <img src={deleteIcon} alt="deleteIcon" />
-                                            </Tooltip>
-                                        </div>
-                                    </>
-                                    :
-                                    <>
-                                        <div className="action__button">
-                                            <Tooltip title="Convert to TI" color='green' placement="bottom" onClick={() => navigate(`/tax-invoice/create?convert=true&reference=proforma&reference_id=${record.pi_id}`)}>
-                                                <img src={convertIcon} alt="convertIcon" />
-                                            </Tooltip>
-                                        </div>
-                                        <div className="action__button" onClick={() => window.location.href = `/proforma/edit/${record.pi_id}`} >
-                                            <Tooltip title="Edit" color='blue' placement="bottom">
-                                                <img src={editIcon} alt="editIcon" />
-                                            </Tooltip>
-                                        </div>
-                                        <div className="action__button" onClick={() => showModal(record)}>
-                                            <Tooltip title="Delete" color='red' placement="bottom">
-                                                <img src={deleteIcon} alt="deleteIcon" />
-                                            </Tooltip>
-                                        </div>
-                                    </>
-                        }
-                    </div>
-
-                </>
-            ),
-        }
-    ];
+    const columns = performaColumns(showModal, navigate)
     return (
         <>
             <Modal

@@ -52,7 +52,7 @@ export const getEstimateDetails = (id) => async (dispatch) => {
     }
 }
 
-export const getEstimateList = (page = 1, keyword = "") => async (dispatch) => {
+export const getEstimateList = (page = 1, keyword = "", customer_id = 0) => async (dispatch) => {
     try {
         dispatch({ type: "EstimateListRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -61,7 +61,7 @@ export const getEstimateList = (page = 1, keyword = "") => async (dispatch) => {
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/estimates/read-list/${page}?keyword=${keyword}`, config);
+        const response = await axios.get(`${url}/private/client/estimates/read-list/${page}?keyword=${keyword}${customer_id !== 0 ? `&customer_id=${customer_id}` : ""}`, config);
         dispatch({ type: "EstimateListSuccess", payload: response.data });
     } catch (error) {
         console.log(error);

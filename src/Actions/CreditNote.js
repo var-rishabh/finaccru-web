@@ -52,7 +52,7 @@ export const getCreditNoteDetails = (id) => async (dispatch) => {
     }
 }
 
-export const getCreditNoteList = (page = 1, keyword = "") => async (dispatch) => {
+export const getCreditNoteList = (page = 1, keyword = "", customer_id = 0) => async (dispatch) => {
     try {
         dispatch({ type: "CreditNoteListRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -61,7 +61,7 @@ export const getCreditNoteList = (page = 1, keyword = "") => async (dispatch) =>
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/credit-notes/read-list/${page}?keyword=${keyword}`, config);
+        const response = await axios.get(`${url}/private/client/credit-notes/read-list/${page}?keyword=${keyword}${customer_id !== 0 ? `&customer_id=${customer_id}` : ""}`, config);
         dispatch({ type: "CreditNoteListSuccess", payload: response.data });
     } catch (error) {
         console.log(error);
@@ -206,3 +206,44 @@ export const submitCreditNoteForApproval = (id) => async (dispatch) => {
         toast.error(error.response?.data || error.message);
     }
 }
+
+export const readOpenCreditNotesForCustomer = (id) => async (dispatch) => {
+    try {
+        dispatch({ type: "ReadOpenCreditNotesForCustomerRequest" });
+        const token = await auth.currentUser.getIdToken(true);
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+
+        const response = await axios.get(`${url}/private/client/credit-notes/read-open-credit-notes-for-customer/${id}`, config);
+        dispatch({ type: "ReadOpenCreditNotesForCustomerSuccess", payload: response.data });
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ReadOpenCreditNotesForCustomerFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+export const adjustCreditNoteAgainstInvoice = (id, data) => async (dispatch) => {
+    try {
+        dispatch({ type: "AdjustCreditNoteAgainstInvoiceRequest" });
+        const token = await auth.currentUser.getIdToken(true);
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+
+        const response = await axios.post(`${url}/private/client/credit-notes/adjust-against-invoice/${id}`, data, config);
+        dispatch({ type: "AdjustCreditNoteAgainstInvoiceSuccess", payload: response.data });
+        toast.success("Credit Note adjusted against invoice successfully");
+        dispatch(getCreditNoteDetails(id));
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "AdjustCreditNoteAgainstInvoiceFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
