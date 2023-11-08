@@ -1,4 +1,5 @@
 import { View, Text } from '@react-pdf/renderer'
+
 const PaymentMeta = ({ styles, currency_abv, currency_conversion_rate, subject, bank_id }) => {
     return (
         <View style={styles.main}>

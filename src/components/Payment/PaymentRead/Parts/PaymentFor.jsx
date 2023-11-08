@@ -20,18 +20,20 @@ const PaymentFor = ({ styles, currency_abv, customer_name, billing_address_line_
             </View>
             <View style={styles.mainMiddle}>
                 <View style={styles.mainMiddleHeading}>
-                    <Text>Invoices</Text>
+                    <Text style={styles.textLeftAlign}>Invoices</Text>
                 </View>
                 <View style={styles.mainMiddleData}>
                     <View style={styles.mainMiddleDataHeading}>
-                        <Text style={styles.mainMiddleDataHeadingText}>Invoice</Text>
-                        <Text style={styles.mainMiddleDataHeadingText}>Amount Received</Text>
+                        <Text style={styles.mainMiddleDataHeadingtext}>Invoice</Text>
+                        <Text style={styles.mainMiddleDataHeadingtext}>Amount Received</Text>
                     </View>
                     <View style={styles.mainMiddleDataValue}>
                         {invoice_mappings?.map((item, index) => (
                             <View key={index} style={styles.mainMiddleDataValueItem}>
-                                <Text style={styles.mainMiddleDataValueItemText}>{item.invoice_number}</Text>
-                                <Text style={styles.mainMiddleDataValueItemText}>{currency_abv} {item.amount}</Text>
+                                <Text style={styles.mainMiddleDataValueItemtext}>{item.invoice_number}</Text>
+                                <Text style={styles.mainMiddleDataValueItemtext}>
+                                    {currency_abv} {new Intl.NumberFormat('en-US', {}).format(parseFloat(item.amount || 0.00).toFixed(2))}
+                                </Text>
                             </View>
                         ))}
                     </View>
@@ -42,7 +44,7 @@ const PaymentFor = ({ styles, currency_abv, customer_name, billing_address_line_
                     <Text>Amount Received</Text>
                 </View>
                 <View style={styles.mainRightValue1}>
-                    <Text>{total_amount}</Text>
+                    <Text>{new Intl.NumberFormat('en-US', {}).format(parseFloat(total_amount || 0.00).toFixed(2))}</Text>
                 </View>
                 <View style={styles.mainRightHeading2}>
                     <Text>Amount Received (In Words)</Text>

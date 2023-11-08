@@ -1,4 +1,3 @@
-import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Image, Font } from '@react-pdf/renderer';
 import menuIcon from '../../assets/croppedIcon.png';
 import WorkSans from '../../assets/fonts/WorkSans.ttf';

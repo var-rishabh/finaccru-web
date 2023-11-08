@@ -5,8 +5,8 @@ import { createCreditNote, getCreditNoteDetails, getNewCreditNoteNumber, updateC
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { getCurrency } from '../../../Actions/Onboarding';
-import { getDate } from '../../../utils/date';
 import { toast } from 'react-toastify';
+import moment from 'moment';
 
 import "./CreditNoteLayout.css"
 import { LoadingOutlined } from '@ant-design/icons';
@@ -18,8 +18,8 @@ const CreditNoteLayout = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [creditNoteNumber, setCreditNoteNumber] = useState('');
-    const [creditNoteDate, setCreditNoteDate] = useState(getDate());
-    const [validTill, setValidTill] = useState(getDate());
+    const [creditNoteDate, setCreditNoteDate] = useState(moment().format('YYYY-MM-DD'));
+    const [validTill, setValidTill] = useState(moment().format('YYYY-MM-DD'));
     const [reference, setReference] = useState(null);
     const [customerName, setCustomerName] = useState('');
     const [customerId, setCustomerId] = useState(null);
@@ -69,8 +69,8 @@ const CreditNoteLayout = () => {
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
             setCreditNoteNumber(creditNote?.cn_number);
-            setCreditNoteDate(creditNote?.cn_date);
-            setValidTill(creditNote?.due_date);
+            setCreditNoteDate(moment(creditNote?.cn_date).format('YYYY-MM-DD'));
+            setValidTill(moment(creditNote?.due_date).format('YYYY-MM-DD'));
             setReference(creditNote?.reference);
             setCustomerName(creditNote?.customer?.customer_name);
             setCustomerId(creditNote?.customer?.customer_id);

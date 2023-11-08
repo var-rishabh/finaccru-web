@@ -53,7 +53,7 @@ const CustomerRead = () => {
             <div className="read__customer--main">
                 <span className="read__customer--header">{customer?.customer_name}</span>
                 <div className="read__customer--tabs">
-                    <Tabs defaultActiveKey="3" items={items} />
+                    <Tabs defaultActiveKey="1" items={items} />
                 </div>
             </div>
         </>

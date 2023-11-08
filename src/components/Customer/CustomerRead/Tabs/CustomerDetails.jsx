@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { getCustomerDetails, getShippingAddressList } from "../../../../Actions/Customer";
+import moment from "moment";
 
 
 const CustomerDetails = ({ customerId }) => {
@@ -43,11 +44,11 @@ const CustomerDetails = ({ customerId }) => {
                     </div>
                     <div className="read__customer--input">
                         <span>Opening Balance</span>
-                        <input value={customer?.opening_balance} disabled />
+                        <input value={new Intl.NumberFormat('en-US', {}).format(parseFloat(customer?.opening_balance || 0.00).toFixed(2))} disabled />
                     </div>
                     <div className="read__customer--input">
                         <span>Opening Balance Date</span>
-                        <input value={customer?.opening_balance_date} disabled />
+                        <input value={moment(customer?.opening_balance_date).format('LL')} disabled />
                     </div>
                 </div>
                 <div className="read__customer--right">

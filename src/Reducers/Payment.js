@@ -114,14 +114,14 @@ export const paymentReducer = createReducer(initialState, (builder) => {
         state.success = action.payload;
         state.error = null;
     })
-    .addCase("ReadOpenPaymentForCustomerRequest", (state) => {
+    .addCase("ReadOpenPaymentsForCustomerRequest", (state) => {
         state.loading = true;
     })
-    .addCase("ReadOpenPaymentForCustomerFailure", (state, action) => {
+    .addCase("ReadOpenPaymentsForCustomerFailure", (state, action) => {
         state.loading = false;
         state.error = action.payload;
     })
-    .addCase("ReadOpenPaymentForCustomerSuccess", (state, action) => {
+    .addCase("ReadOpenPaymentsForCustomerSuccess", (state, action) => {
         state.loading = false;
         state.openPayments = action.payload;
         state.error = null;

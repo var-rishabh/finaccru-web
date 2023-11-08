@@ -1,4 +1,3 @@
-import React from 'react'
 import { View, Text, Tspan } from '@react-pdf/renderer'
 
 const ReadBank = ({ styles, currency_abv, primary_bank, other_bank_accounts, subTotal, discount, tax, total }) => {

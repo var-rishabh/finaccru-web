@@ -228,7 +228,7 @@ export const extractDataFromTaxInvoice = (file, navigate) => async (dispatch) =>
     }
 }
 
-export const readOpenTaxInvoicesForCustomer = (id) => async (dispatch) => {
+export const readOpenTaxInvoicesForCustomer = (id, currency_id = 1) => async (dispatch) => {
     try {
         dispatch({ type: "ReadOpenTaxInvoicesForCustomerRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -238,7 +238,7 @@ export const readOpenTaxInvoicesForCustomer = (id) => async (dispatch) => {
             },
         };
 
-        const response = await axios.get(`${url}/private/client/tax-invoices/read-open-invoices-for-customer/${id}`, config);
+        const response = await axios.get(`${url}/private/client/tax-invoices/read-open-invoices-for-customer/${id}?currency_id=${currency_id}`, config);
         dispatch({ type: "ReadOpenTaxInvoicesForCustomerSuccess", payload: response.data });
     } catch (error) {
         console.log(error);

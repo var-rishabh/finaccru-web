@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import PdfDownload from "../../../../../Shared/PdfDownload/PdfDownload";
+import moment from 'moment';
 
 import { ArrowRightOutlined } from '@ant-design/icons';
 import logo from "../../../../../assets/Icons/cropped_logo.svg"
@@ -15,11 +16,12 @@ import { pdfStyle as tablePdfStyle, styles as tableStyles } from '../../../../..
 
 const CustomerStatement = ({ customer_id }) => {
     const dispatch = useDispatch();
+
     const { customerStatement, loading, error } = useSelector(state => state.customerReducer);
     const { user } = useSelector(state => state.userReducer);
     const { customer } = useSelector(state => state.customerReducer);
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
+    const [startDate, setStartDate] = useState(moment().startOf('month').format('YYYY-MM-DD'));
+    const [endDate, setEndDate] = useState( moment().endOf('month').format("YYYY-MM-DD"));
 
     useEffect(() => {
         dispatch(getCustomerDetails(customer_id));
@@ -73,20 +75,18 @@ const CustomerStatement = ({ customer_id }) => {
         <div className="read__customer--statements">
             <div className='read__customer--statements-header'>
                 <div className='read__customer--statements--header-dates'>
-                    <input type="text"
+                    <input type="date"
                         name='startDate'
                         placeholder='Start Date'
+                        defaultValue={startDate}
                         onChange={(e) => setStartDate(e.target.value)}
-                        onFocus={(e) => (e.target.type = "date")}
-                        onBlur={(e) => (e.target.type = "text")}
                     />
                     <ArrowRightOutlined />
-                    <input type="text"
+                    <input type="date"
                         name='endDate'
                         placeholder='End Date'
+                        defaultValue={endDate}
                         onChange={(e) => setEndDate(e.target.value)}
-                        onFocus={(e) => (e.target.type = "date")}
-                        onBlur={(e) => (e.target.type = "text")}
                     />
                 </div>
                 <div className='read__customer--statements-header-download-btn'>
@@ -109,7 +109,7 @@ const CustomerStatement = ({ customer_id }) => {
                                     opening_balance={customerStatement?.opening_balance}
                                     invoiced_amount={customerStatement?.invoiced_amount}
                                     amount_received={customerStatement?.amount_received}
-                                    exchange_gain={customerStatement?.exchange_gain}
+                                    credit_notes={customerStatement?.credit_notes}
                                     balance_due={customerStatement?.balance_due}
                                 />
                                 <StatementTable styles={tableStyles} transactions={customerStatement?.transactions} />

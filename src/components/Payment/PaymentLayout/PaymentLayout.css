@@ -411,6 +411,7 @@
 .payment__form--part4-head .ant-select-selector {
     width: 16rem !important;
     max-width: 16rem !important;
+    overflow: hidden;
 }
 
 

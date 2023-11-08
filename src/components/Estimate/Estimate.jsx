@@ -1,8 +1,4 @@
-import { Modal, Input, Table, Tooltip } from 'antd';
-import { EyeOutlined } from '@ant-design/icons';
-import convertIcon from '../../assets/Icons/convertIcon.svg';
-import editIcon from '../../assets/Icons/editIcon.svg';
-import deleteIcon from '../../assets/Icons/deleteIcon.svg';
+import { Modal, Input } from 'antd';
 import errorIcon from '../../assets/Icons/error.svg';
 import "./Estimate.css"
 

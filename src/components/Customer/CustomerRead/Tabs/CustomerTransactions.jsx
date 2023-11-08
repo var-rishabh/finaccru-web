@@ -1,4 +1,4 @@
-import { Collapse } from 'antd';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getEstimateList } from '../../../../Actions/Estimate';
 import { getProformaList } from '../../../../Actions/Proforma';
@@ -6,17 +6,13 @@ import { getTaxInvoiceList } from '../../../../Actions/TaxInvoice';
 import { getPaymentsList } from '../../../../Actions/Payment';
 import { getCreditNoteList } from '../../../../Actions/CreditNote';
 import TableCard from '../../../../Shared/TableCard/TableCard';
-import estimateColumns from '../../../../Columns/Estimate';
-import { useEffect } from 'react';
-import performaColumns from '../../../../Columns/Proforma';
-import taxInvoiceColumns from '../../../../Columns/TaxInvoice';
 import creditNoteColumns from '../../../../Columns/CreditNote';
+import estimateColumns from '../../../../Columns/Estimate';
+import performaColumns from '../../../../Columns/Proforma';
 import paymentColumns from '../../../../Columns/Payment';
+import taxInvoiceColumns from '../../../../Columns/TaxInvoice';
 
-
-
-
-
+import { Collapse } from 'antd';
 
 const CustomerTransactions = ({ customer_id }) => {
     const dispatch = useDispatch();

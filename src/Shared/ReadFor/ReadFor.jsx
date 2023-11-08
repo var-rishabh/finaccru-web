@@ -1,4 +1,3 @@
-import React from 'react'
 import { View, Text } from '@react-pdf/renderer'
 
 const ReadFor = ({title, styles, customer_name, billing_address_line_1, billing_address_line_2, billing_address_line_3, billing_state, billing_country, shipping_address_line_1, shipping_address_line_2, shipping_address_line_3, shipping_state, shipping_country, trn }) => {

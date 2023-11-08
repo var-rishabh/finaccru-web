@@ -9,6 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteCustomer, getCustomerList } from '../../Actions/Customer';
 import { useEffect, useState } from 'react';
+import TableCard from '../../Shared/TableCard/TableCard';
+import customerColumns from '../../Columns/Customer';
 
 const Customer = () => {
     const dispatch = useDispatch();
@@ -44,63 +46,7 @@ const Customer = () => {
         }
     }, [searchText]);
 
-    const columns = [
-        {
-            title: 'Customer Name',
-            dataIndex: 'customer_name',
-            key: 'customer_name',
-        },
-        {
-            title: 'Display Name',
-            dataIndex: 'display_name',
-            key: 'display_name',
-        },
-        {
-            title: 'Contact Name',
-            dataIndex: 'contact_name',
-            key: 'contact_name',
-        },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
-        },
-        {
-            title: 'Amount Receivable',
-            dataIndex: 'amount_receivable',
-            key: 'amount_receivable',
-            align: 'right',
-        },
-        {
-            title: 'Active',
-            key: 'is_active',
-            width: 100,
-            render: (text, record) => (
-                <>
-                    {record.is_active ? <p style={{ color: "green" }}>Active</p> : <p style={{ color: "red" }}>Inactive</p>}
-                </>
-            ),
-        },
-        {
-            title: 'Actions',
-            key: 'actions',
-            align: 'right',
-            width: 120,
-            render: (text, record) => (
-                <div className="action__buttons">
-                    <div className="action__button" onClick={() => navigate(`/customer/view/${record.customer_id}`)}>
-                        <EyeOutlined />
-                    </div>
-                    <div className="action__button" onClick={() => window.location.href = `/customer/edit/${record.customer_id}`} >
-                        <img src={editIcon} alt="editIcon" />
-                    </div>
-                    <div className="action__button" onClick={() => showModal(record)}>
-                        <img src={deleteIcon} alt="deleteIcon" />
-                    </div>
-                </div>
-            ),
-        }
-    ];
+    const columns = customerColumns(showModal, navigate);
     return (
         <>
             <Modal
@@ -131,24 +77,7 @@ const Customer = () => {
                 </div>
             </div>
             <div className="table">
-                <Table
-                    columns={columns}
-                    pagination={{
-                        position: ['bottomCenter'],
-                        pageSize: 20,
-                        total: customers?.total_items,
-                        defaultCurrent: 1,
-                        showSizeChanger: false,
-                    }}
-                    sticky={true}
-                    sortDirections={['descend', 'ascend']}
-                    scroll={{ y: 550 }}
-                    loading={loading}
-                    dataSource={customers?.items}
-                    onChange={(pagination) => {
-                        searchText.length > 2 ? dispatch(getCustomerList(pagination.current, searchText)) : dispatch(getCustomerList(pagination.current));
-                    }}
-                />
+                <TableCard columns={columns} dispatch={dispatch} loading={loading} items={customers} getList={getCustomerList} searchText={searchText} />
             </div>
         </>
     )
