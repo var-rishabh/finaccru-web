@@ -1,5 +1,5 @@
-import React from 'react'
 import { View, Text } from '@react-pdf/renderer'
+
 const ReadTax = ({ styles, currency_abv, currency_conversion_rate, subTotal, discount, tax, total, groupedItems, terms_and_conditions }) => {
     return (
         <View style={styles.main}>

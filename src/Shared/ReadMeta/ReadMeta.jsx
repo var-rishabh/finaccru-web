@@ -1,5 +1,5 @@
-import React from 'react'
 import { View, Text } from '@react-pdf/renderer'
+
 const ReadMeta = ({ styles, currency_abv, currency_conversion_rate, subject }) => {
     return (
         <View style={styles.main}>
@@ -32,4 +32,4 @@ const ReadMeta = ({ styles, currency_abv, currency_conversion_rate, subject }) =
     )
 }
 
-export default ReadMeta
+export default ReadMeta;

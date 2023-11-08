@@ -1,10 +1,11 @@
 import React from 'react';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import PdfContent from './PdfContent';
+import './PdfDownload.css';
 
 const PdfDownload = ({ contents, heading }) => {
   return (
-    <div className='read__estimate__header--btn2'>
+    <div className='pdf__download--button'>
       <PDFDownloadLink document={<PdfContent contents={contents} heading={heading} />} fileName={`${heading}.pdf`}>
         {({ blob, url, loading, error }) => {
           if (loading) return 'Loading ...';

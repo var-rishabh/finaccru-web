@@ -9,11 +9,11 @@ import { readOpenTaxInvoicesForCustomer } from '../../../Actions/TaxInvoice';
 import CustomerInfiniteScrollSelect from '../../Customer/CustomerInfiniteScrollSelect/CustomerInfiniteScrollSelect';
 import AddCustomerModal from '../../Customer/AddCustomerModal/AddCustomerModal';
 import { ToWords } from 'to-words';
+import moment from 'moment';
 
 import "./PaymentLayout.css";
 import { Select, Input } from 'antd';
 const { TextArea } = Input;
-const { Option } = Select;
 import { LoadingOutlined, CloseOutlined } from '@ant-design/icons';
 import backButton from "../../../assets/Icons/back.svg"
 import logo from "../../../assets/Icons/cropped_logo.svg"
@@ -23,7 +23,7 @@ const PaymentLayout = () => {
     const dispatch = useDispatch();
 
     const [receiptNumber, setReceiptNumber] = useState('');
-    const [receiptDate, setReceiptDate] = useState(null);
+    const [receiptDate, setReceiptDate] = useState(moment().format('YYYY-MM-DD'));
     const [customerId, setCustomerId] = useState(null);
     const [customerName, setCustomerName] = useState('');
     const [currencyId, setCurrencyId] = useState(1);
@@ -38,15 +38,12 @@ const PaymentLayout = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [customerKeyword, setCustomerKeyword] = useState(null);
 
-    
     const isAdd = window.location.pathname.split('/')[2] === 'create';
     const { user } = useSelector(state => state.userReducer);
     const { loading: paymentLoading, payment, number } = useSelector(state => state.paymentReducer);
     const { currencies, currencyLoading } = useSelector(state => state.onboardingReducer);
     const { loading: customerLoading, customersInf, totalCustomers, customer } = useSelector(state => state.customerReducer);
     const { loading: taxLoading, openTaxInvoices } = useSelector(state => state.taxInvoiceReducer);
-    
-    let [filteredTaxInvoices, setFilteredTaxInvoices] = useState([]);
 
     const [currentCustomerPage, setCurrentCustomerPage] = useState(1);
     const [currency, setCurrency] = useState('AED');
@@ -65,21 +62,20 @@ const PaymentLayout = () => {
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
             dispatch(getCustomerDetails(payment?.customer?.customer_id));
-            dispatch(readOpenTaxInvoicesForCustomer(payment?.customer?.customer_id));
+            dispatch(readOpenTaxInvoicesForCustomer(payment?.customer?.customer_id, payment?.currency_id));
         }
-    }, [dispatch, payment?.customer?.customer_id]);
+    }, [dispatch, payment]);
 
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
             setReceiptNumber(payment?.receipt_number);
-            setReceiptDate(payment?.receipt_date);
+            setReceiptDate(moment(payment?.receipt_date).format('YYYY-MM-DD'));
             setCustomerId(payment?.customer?.customer_id);
             setCustomerName(payment?.customer?.customer_name);
-            setCurrencyId(payment?.currency?.currency_id);
+            setCurrencyId(payment?.currency_id);
             setCurrency(currencyId !== 1 ? currencies?.find((currency) => currency.currency_id === payment?.currency_id)?.currency_abv : 'AED');
-            setFilteredTaxInvoices(openTaxInvoices?.filter((invoice) => invoice?.currency_id === payment?.currency_id));
             setCurrencyConversionRate(payment?.currency_conversion_rate);
-            setBankId(payment?.bank?.bank_id);
+            setBankId(payment?.bank_id);
             setTotalAmount(payment?.total_amount);
             setTotalAmountInWords(toWords.convert(payment?.total_amount ?? 0));
             setReference(payment?.reference);
@@ -104,7 +100,7 @@ const PaymentLayout = () => {
         setCurrencyId(value);
         const currency = currencies.find((currency) => currency.currency_id === value);
         setCurrency(currency.currency_abv);
-        setFilteredTaxInvoices(openTaxInvoices?.filter((invoice) => invoice?.currency_id === value));
+        dispatch(readOpenTaxInvoicesForCustomer(customerId, value));
     }
 
     const filterOption = (input, option) => {
@@ -124,7 +120,7 @@ const PaymentLayout = () => {
         if (paymentLoading) {
             return;
         }
-        if (receiptNumber == "" || receiptDate == null || invoiceList.length == 0 || customerId == null || currencyConversionRate <= 0 || totalAmount < 0 || bankId == null) {
+        if (receiptNumber == "" || receiptDate == null || customerId == null || currencyConversionRate <= 0 || totalAmount < 0 || bankId == null) {
             toast.error("Please fill and check all fields.");
             return;
         }
@@ -132,7 +128,7 @@ const PaymentLayout = () => {
             customer_id: customerId,
             receipt_number: receiptNumber,
             receipt_date: receiptDate,
-            invoice_list: invoiceList,
+            invoice_list: invoiceList.length > 0 ? invoiceList : null,
             currency_id: currencyId,
             currency_conversion_rate: currencyConversionRate,
             bank_id: bankId,
@@ -156,6 +152,7 @@ const PaymentLayout = () => {
         dispatch(getCustomerDetails(data.customer_id));
         setCustomerId(data.customer_id);
         setCustomerName(data.customer_name);
+        dispatch(readOpenTaxInvoicesForCustomer(data.customer_id, currencyId));
     }
 
     useEffect(() => {
@@ -181,8 +178,7 @@ const PaymentLayout = () => {
         setCustomerName(customerSelected.customer_name);
         dispatch(getCustomerDetails(value.customer_id));
         dispatch(getShippingAddressList(value.customer_id));
-        dispatch(readOpenTaxInvoicesForCustomer(value.customer_id));
-        setFilteredTaxInvoices(openTaxInvoices?.filter((invoice) => invoice?.currency_id === currencyId));
+        dispatch(readOpenTaxInvoicesForCustomer(value.customer_id, currencyId));
     }
 
     const addPage = (current) => {
@@ -237,6 +233,7 @@ const PaymentLayout = () => {
                                         <input type="date"
                                             name='receiptDate'
                                             value={receiptDate}
+                                            defaultValue={receiptDate}
                                             onChange={(e) => setReceiptDate(e.target.value)}
                                         />
                                     </div>
@@ -262,9 +259,8 @@ const PaymentLayout = () => {
                                                     }}
                                                 />
                                             </div>
-                                            : <>
-                                                <CustomerInfiniteScrollSelect loadMoreOptions={addPage} onChange={onChangeCustomer} customerKeyword={customerKeyword} setCustomerKeyword={setCustomerKeyword} />
-                                            </>
+                                            :
+                                            <CustomerInfiniteScrollSelect loadMoreOptions={addPage} onChange={onChangeCustomer} customerKeyword={customerKeyword} setCustomerKeyword={setCustomerKeyword} />
                                     }
                                     <AddCustomerModal openingModal={true} isModalOpen={isModalOpen} handleCustomerSubmit={handleCustomerSubmit} handleCancel={handleCancel} />
                                 </div>
@@ -295,30 +291,32 @@ const PaymentLayout = () => {
                                                     </div>
                                                     <div className='payment__table--customer-data-inof-head'>
                                                         {
-                                                            filteredTaxInvoices?.length > 0 ? filteredTaxInvoices?.map((invoice) => (
-                                                                <div className='payment__table--customer-data-info' key={invoice?.invoice_id}>
-                                                                    <div>
-                                                                        <input
-                                                                            className='margin-right-07'
-                                                                            type="checkbox"
-                                                                            checked={invoiceList?.find((invoiceId) => invoiceId === invoice?.invoice_id) ? true : false}
-                                                                            onChange={(e) => {
-                                                                                if (e.target.checked) {
-                                                                                    setInvoiceList((prev) => prev?.concat(invoice?.invoice_id));
-                                                                                }
-                                                                                else {
-                                                                                    setInvoiceList((prev) => prev.filter((invoiceId) => invoiceId !== invoice?.invoice_id));
-                                                                                }
-                                                                            }}
-                                                                        />
-                                                                        <span>{invoice?.invoice_number}</span>
-                                                                    </div>
-                                                                    <span>
-                                                                        {currencies?.find((currency) => currency.currency_id === invoice?.currency_id)?.currency_abv} &nbsp;
-                                                                        {invoice?.balance_due}
-                                                                    </span>
-                                                                </div>
-                                                            )) :
+                                                            openTaxInvoices?.length > 0 ?
+                                                                taxLoading ? <LoadingOutlined /> :
+                                                                    openTaxInvoices?.map((invoice) => (
+                                                                        <div className='payment__table--customer-data-info' key={invoice?.invoice_id}>
+                                                                            <div>
+                                                                                <input
+                                                                                    className='margin-right-07'
+                                                                                    type="checkbox"
+                                                                                    checked={invoiceList?.find((invoiceId) => invoiceId === invoice?.invoice_id) ? true : false}
+                                                                                    onChange={(e) => {
+                                                                                        if (e.target.checked) {
+                                                                                            setInvoiceList((prev) => prev?.concat(invoice?.invoice_id));
+                                                                                        }
+                                                                                        else {
+                                                                                            setInvoiceList((prev) => prev.filter((invoiceId) => invoiceId !== invoice?.invoice_id));
+                                                                                        }
+                                                                                    }}
+                                                                                />
+                                                                                <span>{invoice?.invoice_number}</span>
+                                                                            </div>
+                                                                            <span>
+                                                                                {currencies?.find((currency) => currency.currency_id === invoice?.currency_id)?.currency_abv} &nbsp;
+                                                                                {invoice?.balance_due}
+                                                                            </span>
+                                                                        </div>
+                                                                    )) :
                                                                 <span className='no_data_present'>No open invoices</span>
                                                         }
                                                     </div>
@@ -389,23 +387,16 @@ const PaymentLayout = () => {
                             <div className='payment__form--part4-head'>
                                 <h3 className='bottom-padding-05 required__field'>Payment Method</h3>
                                 <Select
+                                    defaultValue={bankId}
+                                    value={bankId}
                                     placeholder='Select Payment Method'
                                     onChange={(e) => setBankId(e)}
-                                >
-                                    <Option defaultValue key="0" value="0">
-                                        Cash
-                                    </Option>
-                                    <Option key={user?.clientInfo?.primary_bank?.bank_id} value={user?.clientInfo?.primary_bank?.bank_id}>
-                                        {user?.clientInfo?.primary_bank?.bank_name}
-                                    </Option>
-                                    {
-                                        user?.clientInfo?.other_bank_accounts?.map((bank) => (
-                                            <Option key={bank.bank_id} value={bank.bank_id}>
-                                                {bank.bank_name}
-                                            </Option>
-                                        ))
-                                    }
-                                </Select>
+                                    options={[
+                                        { value: 0, label: 'Cash' },
+                                        { value: user?.clientInfo?.primary_bank?.bank_id, label: user?.clientInfo?.primary_bank?.bank_name },
+                                        ...user?.clientInfo?.other_bank_accounts?.map((bank) => ({ value: bank.bank_id, label: bank.bank_name }))
+                                    ]}
+                                />
                             </div>
                             <div className='payment__form--part4-head bottom-margin-3'>
                                 <h3>Subject</h3>

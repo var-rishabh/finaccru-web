@@ -591,7 +591,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 2rem 4rem 3rem 4rem;
+    padding: 2rem 4rem;
 }
 
 .taxInvoice--details--bank {
@@ -653,26 +653,6 @@
     line-height: 1.375rem;
 }
 
-.taxInvoice__details-payment {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-top: 2rem;
-    gap: 1rem;
-}
-
-.taxInvoice__details-payment-options {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    width: 100%;
-}
-
-.taxInvoice__details-payment-select .ant-select-selector {
-    width: 16rem !important;
-    max-width: 16rem !important;
-}
-
 .taxInvoice--details-right {
     margin: 1.8rem 0 0 3rem;
     display: flex;
@@ -712,6 +692,92 @@
     justify-content: flex-end;
     font-size: 1rem;
     font-weight: 500;
+}
+
+
+
+/* TaxInvoice Payments and Credit Notes */
+.taxInvoice__payment {
+    width: 100%;
+    display: flex;
+    padding: 0 4rem 3rem 4rem;
+    gap: 1rem;
+    flex-direction: column;
+}
+
+.taxInvoice__payment-options {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+.taxInvoice__payment-data {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    width: 100%;
+}
+
+.taxInvoice__payment-table {
+    width: 50%;
+    min-height: 5rem;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #C9EFD8;
+    border-radius: 0.5rem;
+    -webkit-border-radius: 0.5rem;
+    -moz-border-radius: 0.5rem;
+    -ms-border-radius: 0.5rem;
+    -o-border-radius: 0.5rem;
+}
+
+.taxInvoice__payments-table-head {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 4rem;
+    padding: 0.8rem 2rem;
+    border-bottom: 1px solid #C9EFD8;
+}
+
+.taxInvoice__payment-table--body {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0.5rem 2rem 0;
+}
+
+.taxInvoice__payment-table--data {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0 0;
+}
+
+.taxInvoice__payment-table--checkdata {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.taxInvoice__payment-select .ant-select-selector {
+    width: 16rem !important;
+    max-width: 16rem !important;
+}
+
+.taxInvoice__payment-table-noData {
+    padding: 1.5rem 0;
+    width: 100%;
+    font-size: 0.9rem;
+    font-weight: 300;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .taxInvoice__form--submit-btn {

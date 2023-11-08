@@ -5,8 +5,8 @@ import { createEstimate, getEstimateDetails, getNewEstimateNumber, updateEstimat
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { getCurrency } from '../../../Actions/Onboarding';
-import { getDate } from '../../../utils/date';
 import { toast } from 'react-toastify';
+import moment from 'moment';
 
 import "./EstimateLayout.css"
 import { LoadingOutlined } from '@ant-design/icons';
@@ -18,8 +18,8 @@ const EstimateLayout = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [estimateNumber, setEstimateNumber] = useState('');
-    const [estimateDate, setEstimateDate] = useState(getDate());
-    const [validTill, setValidTill] = useState(getDate());
+    const [estimateDate, setEstimateDate] = useState(moment().format('YYYY-MM-DD'));
+    const [validTill, setValidTill] = useState(moment().format('YYYY-MM-DD'));
     const [reference, setReference] = useState(null);
     const [customerName, setCustomerName] = useState('');
     const [customerId, setCustomerId] = useState(null);
@@ -68,8 +68,8 @@ const EstimateLayout = () => {
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
             setEstimateNumber(estimate?.estimate_number);
-            setEstimateDate(estimate?.estimate_date);
-            setValidTill(estimate?.valid_till);
+            setEstimateDate(moment(estimate?.estimate_date).format('YYYY-MM-DD'));
+            setValidTill(moment(estimate?.valid_till).format('YYYY-MM-DD'));
             setReference(estimate?.reference);
             setCustomerName(estimate?.customer?.customer_name);
             setCustomerId(estimate?.customer?.customer_id);

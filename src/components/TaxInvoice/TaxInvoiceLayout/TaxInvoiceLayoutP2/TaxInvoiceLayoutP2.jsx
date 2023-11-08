@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { getUnit } from '../../../../Actions/Unit';
 import { getTaxRate } from '../../../../Actions/Onboarding';
+import calculateTotalAmounts from '../../../../utils/calculateTotalAmounts';
 
 import { PlusOutlined } from '@ant-design/icons';
 import MinusIcon from '../../../../assets/Icons/minus.svg'
@@ -10,17 +11,17 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 const TaxInvoiceFormP2 = ({
-    items, setItems, currency, termsAndConditions, setTermsAndConditions, paymentReceived, setPaymentReceived,
-    isSetDefaultTncCustomer, setIsSetDefaultTncCustomer, isSetDefaultTncClient, setIsSetDefaultTncClient
+    items, setItems, currency, currencies, termsAndConditions, setTermsAndConditions, bankId, paymentList, creditNoteList, customerId, paymentReceivedValue,
+    isSetDefaultTncCustomer, setIsSetDefaultTncCustomer, isSetDefaultTncClient, setIsSetDefaultTncClient, setBankId, setPaymentList, setCreditNoteList, setPaymentReceivedValue
 }) => {
     const { units, loading: unitLoading } = useSelector(state => state.unitReducer);
     const { taxRates, taxRateLoading } = useSelector(state => state.onboardingReducer);
-    // const { customer } = useSelector(state => state.customerReducer);
+    const { openPayments } = useSelector(state => state.paymentReducer);
+    const { openCreditNotes } = useSelector(state => state.creditNoteReducer);
+
     const { user } = useSelector(state => state.userReducer);
 
     const [showDescription, setShowDescription] = useState([]);
-
-    const [paymentReceivedValue, setPaymentReceivedValue] = useState(2);
 
     const [itemTotal, setItemTotal] = useState([]);
     const [itemTax, setItemTax] = useState([]);
@@ -34,16 +35,16 @@ const TaxInvoiceFormP2 = ({
 
     const onChangePaymentReceived = (e) => {
         setPaymentReceivedValue(e.target.value);
-        if (e.target.value === 2) {
-            setPaymentReceived(null)
-        }
+        setBankId(null);
+        setPaymentList([]);
+        setCreditNoteList([]);
     };
 
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(getUnit());
         dispatch(getTaxRate());
-    }, [dispatch]);
+    }, [dispatch, customerId]);
 
     useEffect(() => {
         setAllUnits(units);
@@ -97,49 +98,9 @@ const TaxInvoiceFormP2 = ({
     };
 
     useEffect(() => {
-        const calculateTotalAmounts = () => {
-            let subTotalAmount = 0;
-            let discountAmount = 0;
-            let taxAmount = 0
-            const calculatedTax = [];
-
-            const calculateFinalAmount = items?.map((item) => {
-                const { qty, rate, discount, is_percentage_discount, tax_id } = item;
-                let finalRate = 0;
-                let overAllRate = 0;
-                if (is_percentage_discount) {
-                    finalRate = rate - (rate * discount / 100);
-                    overAllRate = finalRate * qty;
-                    discountAmount += (rate - finalRate) * qty;
-                } else {
-                    discountAmount += ((+discount) * qty);
-                    overAllRate = (rate - discount) * qty;
-                }
-                subTotalAmount += rate * qty;
-                let tax = 0;
-                const taxItem = taxRates?.find((tr) => tr.tax_rate_id === tax_id);
-                if (taxItem?.tax_percentage !== 0) {
-                    tax = overAllRate * (taxItem?.tax_percentage / 100);
-                    taxAmount += tax;
-                }
-                calculatedTax.push(parseFloat(tax.toFixed(2)));
-
-                const finalAmount = parseFloat((overAllRate + tax).toFixed(2));
-                return finalAmount;
-            });
-
-            setSubTotal(parseFloat(subTotalAmount.toFixed(2)));
-            setDiscount(parseFloat(discountAmount.toFixed(2)));
-            setTax(parseFloat(taxAmount.toFixed(2)));
-            setTotal(parseFloat((subTotalAmount - discountAmount + taxAmount).toFixed(2)));
-            setItemTax(calculatedTax);
-
-            return calculateFinalAmount;
-        };
-
-        const calculateTotalAmount = calculateTotalAmounts();
-        setItemTotal(calculateTotalAmount);
-    }, [items]);
+        const amount = calculateTotalAmounts(items, setSubTotal, setDiscount, setTax, setTotal, setItemTax, taxRates);
+        setItemTotal(amount);
+    }, [items, taxRates]);
 
 
 
@@ -377,40 +338,6 @@ const TaxInvoiceFormP2 = ({
                                     }}
                                 >Save for all customers</span>
                             </div>
-                            <div className='taxInvoice__details-payment'>
-                                <div className='taxInvoice__details-payment-options'>
-                                    <p>Payment Received?</p>
-                                    <Radio.Group onChange={onChangePaymentReceived} value={paymentReceivedValue}>
-                                        <Radio value={1}>Yes</Radio>
-                                        <Radio value={2}>No</Radio>
-                                    </Radio.Group>
-                                </div>
-                                {
-                                    paymentReceivedValue === 1 ?
-                                        <div className='taxInvoice__details-payment-select'>
-                                            <Select
-                                                placeholder='Select Payment Method'
-                                                value={paymentReceived}
-                                                onChange={(e) => setPaymentReceived(e)}
-                                            >
-                                                <Option key="0" value="0">
-                                                    Cash
-                                                </Option>
-                                                <Option key={user?.clientInfo?.primary_bank?.bank_id} value={user?.clientInfo?.primary_bank?.bank_id}>
-                                                    {user?.clientInfo?.primary_bank?.bank_name}
-                                                </Option>
-                                                {
-                                                    user?.clientInfo?.other_bank_accounts?.map((bank) => (
-                                                        <Option key={bank.bank_id} value={bank.bank_id}>
-                                                            {bank.bank_name}
-                                                        </Option>
-                                                    ))
-                                                }
-                                            </Select>
-                                        </div> : ""
-
-                                }
-                            </div>
                         </div>
                         <div className='taxInvoice--details-right'>
                             <div className='taxInvoice--details-right-head'>
@@ -444,6 +371,105 @@ const TaxInvoiceFormP2 = ({
                         </div>
                     </div>
                 </div>
+            </div>
+            <div className='taxInvoice__payment'>
+                <div className='taxInvoice__payment-options'>
+                    <p>Payment Received?</p>
+                    <Radio.Group onChange={onChangePaymentReceived} value={paymentReceivedValue}>
+                        <Radio value={1}>Yes</Radio>
+                        <Radio value={2}>No</Radio>
+                    </Radio.Group>
+                </div>
+                {
+                    paymentReceivedValue === 1 ?
+                        <>
+                            <div className='taxInvoice__payment-data'>
+                                <div className='taxInvoice__payment-table'>
+                                    <div className='taxInvoice__payments-table-head'>
+                                        <p>Receipt Number</p>
+                                        <p>Total Amount</p>
+                                    </div>
+                                    <div className='taxInvoice__payment-table--body'>
+                                        {
+                                            openPayments?.length > 0 && customerId !== null ? openPayments?.map((payment, index) => (
+                                                <div key={index} className='taxInvoice__payment-table--data'>
+                                                    <div className='taxInvoice__payment-table--checkdata'>
+                                                        <input
+                                                            className='margin-right-07'
+                                                            type="checkbox"
+                                                            checked={paymentList?.find((receiptId) => receiptId === payment?.receipt_id) ? true : false}
+                                                            onChange={(e) => {
+                                                                if (e.target.checked) {
+                                                                    setPaymentList((prev) => prev?.concat(payment?.receipt_id));
+                                                                }
+                                                                else {
+                                                                    setPaymentList((prev) => prev.filter((receipt_id) => receipt_id !== payment?.receipt_id));
+                                                                }
+                                                            }}
+                                                        />
+                                                        <p>{payment?.receipt_number}</p>
+                                                    </div>
+                                                    <p>{currencies?.find((currency) => currency.currency_id === payment?.currency_id)?.currency_abv} {payment?.total_amount}</p>
+                                                </div>
+                                            )) : <p className='taxInvoice__payment-table-noData'>No Payments</p>
+                                        }
+                                    </div>
+                                </div>
+                                <div className='taxInvoice__payment-table'>
+                                    <div className='taxInvoice__payments-table-head'>
+                                        <p>CN Number</p>
+                                        <p>Total Amount</p>
+                                    </div>
+                                    <div className='taxInvoice__payment-table--body'>
+                                        {
+                                            openCreditNotes?.length > 0 && customerId !== null ? openCreditNotes?.map((creditNote, index) => (
+                                                <div key={index} className='taxInvoice__payment-table--data'>
+                                                    <div className='taxInvoice__payment-table--checkdata'>
+                                                        <input
+                                                            className='margin-right-07'
+                                                            type="checkbox"
+                                                            checked={creditNoteList?.find((cnId) => cnId === creditNote?.cn_id) ? true : false}
+                                                            onChange={(e) => {
+                                                                if (e.target.checked) {
+                                                                    setCreditNoteList((prev) => prev?.concat(creditNote?.cn_id));
+                                                                }
+                                                                else {
+                                                                    setCreditNoteList((prev) => prev.filter((cn_id) => cn_id !== creditNote?.cn_id));
+                                                                }
+                                                            }}
+                                                        />
+                                                        <p>{creditNote?.cn_number}</p>
+                                                    </div>
+                                                    <p>{currencies?.find((currency) => currency.currency_id === creditNote?.currency_id)?.currency_abv} {creditNote?.total}</p>
+                                                </div>
+                                            )) : <p className='taxInvoice__payment-table-noData'>No Credit Notes</p>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='taxInvoice__payment-select'>
+                                <Select
+                                    placeholder='Select Payment Method'
+                                    value={bankId}
+                                    onChange={(e) => setBankId(e)}
+                                >
+                                    <Option key="0" value="0">
+                                        Cash
+                                    </Option>
+                                    <Option key={user?.clientInfo?.primary_bank?.bank_id} value={user?.clientInfo?.primary_bank?.bank_id}>
+                                        {user?.clientInfo?.primary_bank?.bank_name}
+                                    </Option>
+                                    {
+                                        user?.clientInfo?.other_bank_accounts?.map((bank) => (
+                                            <Option key={bank.bank_id} value={bank.bank_id}>
+                                                {bank.bank_name}
+                                            </Option>
+                                        ))
+                                    }
+                                </Select>
+                            </div>
+                        </> : ""
+                }
             </div>
         </>
     )

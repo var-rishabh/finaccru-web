@@ -1,26 +1,30 @@
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { createTaxInvoice, getTaxInvoiceDetails, getNewTaxInvoiceNumber, updateTaxInvoice } from '../../../Actions/TaxInvoice';
+import { getCurrency } from '../../../Actions/Onboarding';
+import { getCustomerDetails } from '../../../Actions/Customer';
+import { getEstimateDetails } from '../../../Actions/Estimate';
+import { getProformaDetails } from '../../../Actions/Proforma';
+import moment from 'moment';
+
 import TaxInvoiceLayoutP1 from './TaxInvoiceLayoutP1/TaxInvoiceLayoutP1';
 import TaxInvoiceLayoutP2 from './TaxInvoiceLayoutP2/TaxInvoiceLayoutP2';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { createTaxInvoice, getTaxInvoiceDetails, getNewTaxInvoiceNumber, updateTaxInvoice } from '../../../Actions/TaxInvoice';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
-import { getCurrency } from '../../../Actions/Onboarding';
-import { getDate } from '../../../utils/date';
-import { toast } from 'react-toastify';
+
 import "./TaxInvoiceLayout.css"
 import { LoadingOutlined } from '@ant-design/icons';
 import backButton from "../../../assets/Icons/back.svg"
 import logo from "../../../assets/Icons/cropped_logo.svg"
-import { getCustomerDetails } from '../../../Actions/Customer';
-import { getEstimateDetails } from '../../../Actions/Estimate';
-import { getProformaDetails } from '../../../Actions/Proforma';
+import { readOpenCreditNotesForCustomer } from '../../../Actions/CreditNote';
+import { readOpenPaymentsForCustomer } from '../../../Actions/Payment';
 
 const TaxInvoiceLayout = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [taxInvoiceNumber, setTaxInvoiceNumber] = useState('');
-    const [taxInvoiceDate, setTaxInvoiceDate] = useState(getDate());
-    const [validTill, setValidTill] = useState(getDate());
+    const [taxInvoiceDate, setTaxInvoiceDate] = useState(moment().format('YYYY-MM-DD'));
+    const [validTill, setValidTill] = useState(moment().format('YYYY-MM-DD'));
     const [reference, setReference] = useState(null);
     const [customerName, setCustomerName] = useState('');
     const [customerId, setCustomerId] = useState(null);
@@ -37,8 +41,18 @@ const TaxInvoiceLayout = () => {
     const [shippingCountry, setShippingCountry] = useState('');
     const [shippingState, setShippingState] = useState('');
     const [currency, setCurrency] = useState('AED');
-    const [paymentReceived, setPaymentReceived] = useState(null);
     const [attachmentUrl, setAttachmentUrl] = useState(null);
+    const [paymentReceivedValue, setPaymentReceivedValue] = useState(2);
+    const [bankId, setBankId] = useState(null);
+    const [paymentList, setPaymentList] = useState([]);
+    const [creditNoteList, setCreditNoteList] = useState([]);
+
+    const setPaymentOptionsNull = () => {
+        setPaymentReceivedValue(2);
+        setBankId(null);
+        setPaymentList([]);
+        setCreditNoteList([]);
+    }
 
     const isAdd = window.location.pathname.split('/')[2] === 'create';
     const { user } = useSelector(state => state.userReducer);
@@ -73,11 +87,14 @@ const TaxInvoiceLayout = () => {
                 }
             }
         }
-    }, [dispatch, file]);
+    }, [dispatch, file, convert, reference_id, referenceName]);
 
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
             dispatch(getCustomerDetails(taxInvoice?.customer?.customer_id));
+
+            dispatch(readOpenCreditNotesForCustomer(taxInvoice?.customer?.customer_id, taxInvoice?.currency_id));
+            dispatch(readOpenPaymentsForCustomer(taxInvoice?.customer?.customer_id, taxInvoice?.currency_id));
         }
     }, [dispatch, taxInvoice?.customer?.customer_id]);
 
@@ -86,10 +103,17 @@ const TaxInvoiceLayout = () => {
     }, [customer, termsAndConditions]);
 
     useEffect(() => {
+        if (customerId !== null && currencyId !== null) {
+            dispatch(readOpenCreditNotesForCustomer(customerId, currencyId));
+            dispatch(readOpenPaymentsForCustomer(customerId, currencyId));
+        }
+    }, [dispatch, customerId, currencyId]);
+
+    useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
             setTaxInvoiceNumber(taxInvoice?.ti_number);
-            setTaxInvoiceDate(taxInvoice?.ti_date);
-            setValidTill(taxInvoice?.due_date);
+            setTaxInvoiceDate(moment(taxInvoice?.ti_date).format('YYYY-MM-DD'));
+            setValidTill(moment(taxInvoice?.due_date).format('YYYY-MM-DD'));
             setReference(taxInvoice?.reference);
             setCustomerName(taxInvoice?.customer?.customer_name);
             setCustomerId(taxInvoice?.customer?.customer_id);
@@ -106,7 +130,10 @@ const TaxInvoiceLayout = () => {
             setTermsAndConditions(taxInvoice?.terms_and_conditions);
             setIsSetDefaultTncCustomer(taxInvoice?.is_set_default_tnc_customer);
             setIsSetDefaultTncClient(taxInvoice?.is_set_default_tnc_client);
-            // set payment received later
+            setPaymentReceivedValue(taxInvoice?.payment === null ? 2 : 1);
+            setBankId(taxInvoice?.payment !== null ? taxInvoice?.payment?.bank_id : null);
+            setPaymentList(taxInvoice?.payment !== null ? taxInvoice?.linked_recipts?.map((receipt) => (receipt.receipt_id)) : []);
+            setCreditNoteList(taxInvoice?.payment !== null ? taxInvoice?.linked_credit_notes?.map((creditNote) => (creditNote.cn_id)) : []);
         }
         if (window.location.pathname.split('/')[2] === 'create') {
             setTaxInvoiceNumber(number);
@@ -165,7 +192,7 @@ const TaxInvoiceLayout = () => {
                 }
             }
         }
-    }, [currencies, taxInvoice, number, estimate, proforma]);
+    }, [currencies, taxInvoice, number, estimate, proforma, convert, reference_id, referenceName, file, location.state, user?.clientInfo?.terms_and_conditions, currencyId]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -218,8 +245,14 @@ const TaxInvoiceLayout = () => {
             shipping_address_line_3: shippingAddress3 === "" ? null : shippingAddress3,
             shipping_state: shippingState,
             shipping_country: shippingCountry,
-            attachment_url: attachmentUrl === "" ? null : attachmentUrl
+            attachment_url: attachmentUrl === "" ? null : attachmentUrl,
+            payment: bankId === null ? null : {
+                bank_id: bankId,
+                payments_list: paymentList.length === 0 ? [] : paymentList,
+                credit_notes_list: creditNoteList.length === 0 ? [] : creditNoteList,
+            }
         }
+        console.log("🚀 ~ data:", data);
         if (isAdd) {
             dispatch(createTaxInvoice(data, navigate));
         }
@@ -260,13 +293,16 @@ const TaxInvoiceLayout = () => {
                             shippingCountry={shippingCountry} setShippingCountry={setShippingCountry}
                             shippingState={shippingState} setShippingState={setShippingState}
                             termsAndConditions={termsAndConditions} setTermsAndConditions={setTermsAndConditions}
-                            convert={convert}
+                            convert={convert} setPaymentOptionsNull={setPaymentOptionsNull}
                         />
-                        <TaxInvoiceLayoutP2 items={items} setItems={setItems} currency={currency}
+                        <TaxInvoiceLayoutP2 items={items} setItems={setItems} currency={currency} currencies={currencies}
                             termsAndConditions={termsAndConditions} setTermsAndConditions={setTermsAndConditions}
                             isSetDefaultTncCustomer={isSetDefaultTncCustomer} setIsSetDefaultTncCustomer={setIsSetDefaultTncCustomer}
                             isSetDefaultTncClient={isSetDefaultTncClient} setIsSetDefaultTncClient={setIsSetDefaultTncClient}
-                            paymentReceived={paymentReceived} setPaymentReceived={setPaymentReceived}
+                            bankId={bankId} setBankId={setBankId} paymentList={paymentList} setPaymentList={setPaymentList}
+                            creditNoteList={creditNoteList} setCreditNoteList={setCreditNoteList}
+                            customerId={customerId} paymentReceivedValue={paymentReceivedValue} setPaymentReceivedValue={setPaymentReceivedValue}
+                            setPaymentOptionsNull={setPaymentOptionsNull}
                         />
                         <div className='taxInvoice__form--submit-btn'>
                             <button type='submit' onClick={handleSubmit}>

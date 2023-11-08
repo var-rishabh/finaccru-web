@@ -13,7 +13,7 @@ import { CloseOutlined } from '@ant-design/icons';
 const TaxInvoiceFormP1 = ({
     taxInvoiceNumber, taxInvoiceDate, validTill, reference, subject, customerName, customerId, currency, currencyId, currencyConversionRate, shippingAddress1, shippingAddress2, shippingAddress3, shippingState, shippingCountry,
     setTaxInvoiceNumber, setTaxInvoiceDate, setValidTill, setReference, setSubject, setCustomerName, setCustomerId, setCurrency, setCurrencyId, setCurrencyConversionRate, setShippingAddress1, setShippingAddress2, setShippingAddress3, setShippingState, setShippingCountry,
-    termsAndConditions, setTermsAndConditions, convert
+    termsAndConditions, setTermsAndConditions, convert, setPaymentOptionsNull
 }) => {
     const filterOption = (input, option) => {
         return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
@@ -90,7 +90,8 @@ const TaxInvoiceFormP1 = ({
         setCustomerName(customerSelected.customer_name);
         dispatch(getCustomerDetails(value.customer_id));
         dispatch(getShippingAddressList(value.customer_id));
-        // setTermsAndConditions(customer?.terms_and_conditions ? customer?.terms_and_conditions : termsAndConditions);
+        setPaymentOptionsNull();
+        setTermsAndConditions(customer?.terms_and_conditions ? customer?.terms_and_conditions : termsAndConditions);
     }
 
     const onChangeShipping = (value) => {
@@ -209,6 +210,7 @@ const TaxInvoiceFormP1 = ({
                                     onClick={() => {
                                         setCustomerName(''); setCustomerId(null); setShippingId(null);
                                         setShippingAddress1(null);
+                                        setPaymentOptionsNull();
                                     }}
                                 />
                             </div>

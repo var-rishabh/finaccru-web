@@ -1,4 +1,3 @@
-import React from 'react'
 import { View, Text } from '@react-pdf/renderer'
 
 const LineItem = ({ styles, item_name, unit, qty, rate, discount, is_percentage_discount, tax_id, taxAmount, taxRateName, amount, description, index }) => {
@@ -119,4 +118,4 @@ const LineItem = ({ styles, item_name, unit, qty, rate, discount, is_percentage_
     )
 }
 
-export default LineItem
+export default LineItem;

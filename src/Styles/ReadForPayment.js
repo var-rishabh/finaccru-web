@@ -31,19 +31,21 @@ export const styles = {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-start',
+        alignItems: 'center',
         fontSize: '0.8rem',
         fontWeight: '300',
         lineHeight: '1.5',
         textAlign: 'left',
-        width: '40%',
+        width: '45%',
         gap: '0.4rem',
     },
     mainMiddleHeading: {
         fontSize: '1.125rem',
         fontWeight: '500',
+        width: '85%',
     },
     mainMiddleData: {
-        width: '90%',
+        width: '85%',
         display: 'flex',
         flexDirection: 'column',
         border: '1px solid',
@@ -79,7 +81,7 @@ export const styles = {
         flexDirection: 'column',
         justifyContent: 'flex-start',
         textAlign: 'left',
-        width: '35%',
+        width: '30%',
     },
     mainRightHeading1: {
         fontSize: '1rem',
@@ -102,6 +104,9 @@ export const styles = {
         padding: '0.3rem 0',
         fontSize: '1rem',
     },
+    textLeftAlign: {
+        textAlign: 'left',
+    },
 }
 
 export const pdfStyle = {
@@ -109,7 +114,7 @@ export const pdfStyle = {
         display: 'flex',
         flexDirection: 'row',
         width: '100%',
-        gap: '40px',
+        gap: '20px',
         padding: '8px 40px 10px',
     },
     mainLeft: {
@@ -137,6 +142,7 @@ export const pdfStyle = {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-start',
+        alignItems: 'center',
         fontSize: '8px',
         fontWeight: 'normal',
         lineHeight: '1.5',
@@ -147,9 +153,10 @@ export const pdfStyle = {
     mainMiddleHeading: {
         fontSize: '12px',
         fontWeight: 'bold',
+        width: '90%',
     },
     mainMiddleData: {
-        width: '100%',
+        width: '90%',
         display: 'flex',
         flexDirection: 'column',
         borderWidth: '1px',
@@ -210,5 +217,8 @@ export const pdfStyle = {
         fontWeight: 'bold',
         padding: '6px 0',
         fontSize: '10px',
+    },
+    textLeftAlign: {
+        textAlign: 'left',
     },
 }

@@ -105,30 +105,33 @@ const PaymentReadLayout = () => {
                 </div>
                 <div className='read__payment__header--right'>
                     {
-                        payment?.receipt_status === "Draft" ?
-                            <>
-                                <a className='read__payment__header--btn1'
-                                    onClick={() => {
-                                        dispatch(submitPaymentsForApproval(window.location.pathname.split('/')[3]))
-                                    }}
-                                >Submit for Approval</a>
-                                <a className='read__payment__header--btn1'
-                                    onClick={() => {
-                                        dispatch(markPaymentsVoid(window.location.pathname.split('/')[3]))
-                                    }}
-                                >Mark as Void</a>
-                            </>
-                            : payment?.receipt_status === "Pending Approval" ? <>
-                                <a className='read__payment__header--btn1'
-                                    onClick={() => {
-                                        dispatch(markPaymentsVoid(window.location.pathname.split('/')[3]))
-                                    }}
-                                >Mark as Void</a>
-                            </> : ""
-                    }
-                    {
-                        payment?.receipt_status === "Void" ? "" :
-                            <a className='read__payment__header--btn1' onClick={() => navigate(`/payment/edit/${payment?.ti_id}`)}>Edit</a>
+                        payment?.receipt_status === "Approved" || payment?.receipt_status === "Void" ? "" :
+                            payment?.receipt_status === "Pending Approval" ?
+                                <>
+                                    <a className='read__payment__header--btn1'
+                                        onClick={() => {
+                                            dispatch(markPaymentsVoid(window.location.pathname.split('/')[3]))
+                                        }}
+                                    >Mark as Void</a>
+                                    <a className='read__payment__header--btn1'
+                                        onClick={() => navigate(`/payment/edit/${payment?.receipt_id}`)}
+                                    >Edit</a>
+                                </> :
+                                <>
+                                    <a className='read__payment__header--btn1'
+                                        onClick={() => {
+                                            dispatch(submitPaymentsForApproval(window.location.pathname.split('/')[3]))
+                                        }}
+                                    >Submit for Approval</a>
+                                    <a className='read__payment__header--btn1'
+                                        onClick={() => {
+                                            dispatch(markPaymentsVoid(window.location.pathname.split('/')[3]))
+                                        }}
+                                    >Mark as Void</a>
+                                    <a className='read__payment__header--btn1'
+                                        onClick={() => navigate(`/payment/edit/${payment?.receipt_id}`)}
+                                    >Edit</a>
+                                </>
                     }
                     <PdfDownload contents={contents} heading={"Payment"} />
                 </div>

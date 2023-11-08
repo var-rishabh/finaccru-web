@@ -1,7 +1,6 @@
-import React from 'react'
 import { View, Text } from '@react-pdf/renderer'
 
-const ReadHead = ({ title, styles, address_line_1, address_line_2, address_line_3, company_name, country, state, trade_license_number, estimate_number, estimate_date, valid_till, reference }) => {
+const ReadHead = ({ title, styles, address_line_1, address_line_2, address_line_3, company_name, country, state, trade_license_number, number, date, valid_till, due_date, reference }) => {
     return (
         <View style={styles.main}>
             <View style={styles.mainLeft}>
@@ -21,18 +20,18 @@ const ReadHead = ({ title, styles, address_line_1, address_line_2, address_line_
                 <View style={styles.mainRightData}>
                     <Text>{title} Number</Text>
                     <Text>{title} Date</Text>
-                    <Text>Valid Till</Text>
+                    {due_date ? <Text>Due Date</Text> : <Text>Valid Till</Text>}
                     {reference ? <Text>Reference</Text> : ""}
                 </View>
                 <View style={styles.mainRightData2}>
-                    <Text>{estimate_number}</Text>
-                    <Text>{estimate_date}</Text>
-                    <Text>{valid_till}</Text>
+                    <Text>{number}</Text>
+                    <Text>{date}</Text>
+                    {due_date ? <Text>{due_date}</Text> : <Text>{valid_till}</Text>}
                     {reference ? <Text>{reference}</Text> : ""}
                 </View>
             </View>
-        </View>
+        </View >
     )
 }
 
-export default ReadHead
+export default ReadHead;

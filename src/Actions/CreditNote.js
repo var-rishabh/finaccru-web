@@ -207,7 +207,7 @@ export const submitCreditNoteForApproval = (id) => async (dispatch) => {
     }
 }
 
-export const readOpenCreditNotesForCustomer = (id) => async (dispatch) => {
+export const readOpenCreditNotesForCustomer = (id, currency_id=1) => async (dispatch) => {
     try {
         dispatch({ type: "ReadOpenCreditNotesForCustomerRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -217,7 +217,7 @@ export const readOpenCreditNotesForCustomer = (id) => async (dispatch) => {
             },
         };
 
-        const response = await axios.get(`${url}/private/client/credit-notes/read-open-credit-notes-for-customer/${id}`, config);
+        const response = await axios.get(`${url}/private/client/credit-notes/read-open-credit-notes-for-customer/${id}?currency_id=${currency_id}`, config);
         dispatch({ type: "ReadOpenCreditNotesForCustomerSuccess", payload: response.data });
     } catch (error) {
         console.log(error);

@@ -102,7 +102,7 @@ export const updatePayments = (id, data, navigate) => async (dispatch) => {
         const response = await axios.put(`${url}/private/client/payments/update/${id}`, data, config);
         dispatch({ type: "PaymentsUpdateSuccess", payload: response.data });
         toast.success("Payment updated successfully");
-        navigate("/payments/view/" + id);
+        navigate("/payment/view/" + id);
     }
     catch (err) {
         console.log(err);
@@ -207,21 +207,21 @@ export const submitPaymentsForApproval = (id) => async (dispatch) => {
     }
 }
 
-export const readOpenPaymentssForCustomer = (id) => async (dispatch) => {
+export const readOpenPaymentsForCustomer = (id, currency_id) => async (dispatch) => {
     try {
-        dispatch({ type: "ReadOpenPaymentssForCustomerRequest" });
+        dispatch({ type: "ReadOpenPaymentsForCustomerRequest" });
         const token = await auth.currentUser.getIdToken(true);
         const config = {
             headers: {
                 token: token,
             },
         };
-
-        const response = await axios.get(`${url}/private/client/payments/read-open-invoices-for-customers/${id}`, config);
-        dispatch({ type: "ReadOpenPaymentssForCustomerSuccess", payload: response.data });
+        
+        const response = await axios.get(`${url}/private/client/payments/read-open-payments-for-customer/${id}?currency_id=${currency_id}`, config);  
+        dispatch({ type: "ReadOpenPaymentsForCustomerSuccess", payload: response.data });
     } catch (error) {
         console.log(error);
-        dispatch({ type: "ReadOpenPaymentssForCustomerFailure", payload: error.response?.data || error.message });
+        dispatch({ type: "ReadOpenPaymentsForCustomerFailure", payload: error.response?.data || error.message });
         toast.error(error.response?.data || error.message);
     }
 }

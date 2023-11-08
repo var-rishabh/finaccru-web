@@ -1,4 +1,4 @@
-import { View, Text } from '@react-pdf/renderer'
+import { View, Text} from '@react-pdf/renderer'
 
 const StatementTable = ({ styles, transactions }) => {
     return (
@@ -14,12 +14,27 @@ const StatementTable = ({ styles, transactions }) => {
             <View style={styles.tableBody}>
                 {transactions?.map((transaction, index) => (
                     <View key={index} style={styles.tableRow}>
-                        <Text style={styles.tableRowCellLeft}>{transaction.date}</Text>
-                        <Text style={styles.tableRowCellLeft}>{transaction.type}</Text>
-                        <Text style={styles.tableRowCellLeft}>{transaction.details}</Text>
-                        <Text style={styles.tableRowCellRight}>{transaction.amount}</Text>
-                        <Text style={styles.tableRowCellRight}>{transaction.payments}</Text>
-                        <Text style={styles.tableRowCellRight}>{transaction.balance}</Text>
+                        <Text style={styles.tableRowCellLeft}>
+                            {transaction.date}
+                        </Text>
+                        <Text style={styles.tableRowCellLeft}>
+                            {transaction.type}
+                        </Text>
+                        <Text style={styles.tableRowCellLeft}>
+                            {transaction.details}
+                        </Text>
+                        <Text style={styles.tableRowCellRight}>
+                            {new Intl.NumberFormat('en-US', {
+                            }).format(parseFloat(transaction.amount || 0).toFixed(2))}
+                        </Text>
+                        <Text style={styles.tableRowCellRight}>
+                            {new Intl.NumberFormat('en-US', {
+                            }).format(parseFloat(transaction.payments || 0).toFixed(2))}
+                        </Text>
+                        <Text style={styles.tableRowCellRight}>
+                            {new Intl.NumberFormat('en-US', {
+                            }).format(parseFloat(transaction.balance || 0).toFixed(2))}
+                        </Text>
                     </View>
                 ))}
             </View>
