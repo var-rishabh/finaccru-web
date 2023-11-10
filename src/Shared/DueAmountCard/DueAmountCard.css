@@ -43,9 +43,24 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    gap: 4rem;
+    gap: 2rem;
     padding: 0.8rem 2rem;
     border-bottom: 1px solid #C9EFD8;
+}
+
+.dueAmount--table-head1 {
+    width: 30%;
+    text-align: left;
+}
+
+.dueAmount--table-head2 {
+    width: 40%;
+    text-align: left;
+}
+
+.dueAmount--table-head3 {
+    width: 30%;
+    text-align: right;
 }
 
 .dueAmount--table-body {
@@ -60,8 +75,9 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    text-align: center;
-    padding: 0.5rem 0 0;
+    width: 100%;
+    gap: 2rem;
+    padding: 0.8rem 0;
 }
 
 .dueAmount--table-noData {
