@@ -126,5 +126,17 @@ export const creditNoteReducer = createReducer(initialState, (builder) => {
         state.openCreditNotes = action.payload;
         state.error = null;
     })
+    .addCase("ApproveCreditNoteRequest", (state) => {
+        state.loading = true;
+    })
+    .addCase("ApproveCreditNoteFailure", (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+    })
+    .addCase("ApproveCreditNoteSuccess", (state, action) => {
+        state.loading = false;
+        state.success = action.payload;
+        state.error = null;
+    })
 })
 

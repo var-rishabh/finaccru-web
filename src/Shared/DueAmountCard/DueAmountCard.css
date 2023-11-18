@@ -10,6 +10,7 @@
     max-width: 60rem;
     background-color: var(--white);
     padding: 3rem 4rem;
+    border: 2px solid var(--bg-gray);
 }
 
 .dueAmount__main--head {

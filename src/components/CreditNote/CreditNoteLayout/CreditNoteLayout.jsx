@@ -13,6 +13,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import backButton from "../../../assets/Icons/back.svg"
 import logo from "../../../assets/Icons/cropped_logo.svg"
 import { getCustomerDetails } from '../../../Actions/Customer';
+import { readAccountantClient } from '../../../Actions/Accountant';
 
 const CreditNoteLayout = () => {
     const navigate = useNavigate();
@@ -38,36 +39,46 @@ const CreditNoteLayout = () => {
     const [currency, setCurrency] = useState('AED');
     const [attachmentUrl, setAttachmentUrl] = useState(null);
 
-    const isAdd = window.location.pathname.split('/')[2] === 'create';
     const { user } = useSelector(state => state.userReducer);
     const { loading: creditNoteLoading, creditNote, number } = useSelector(state => state.creditNoteReducer);
     const { currencies, currencyLoading } = useSelector(state => state.onboardingReducer);
     const { customer } = useSelector(state => state.customerReducer);
 
+
+    const type = user?.localInfo?.role ? window.location.pathname.split('/')[4] : window.location.pathname.split('/')[2];
+    const cn_id = user?.localInfo?.role ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[5];
+    const client_id = user?.localInfo?.role ? window.location.pathname.split('/')[2] : 0;
+    const isAdd = type === 'create';
     useEffect(() => {
-        if (window.location.pathname.split('/')[2] === 'edit') {
+        if (type === 'edit') {
             dispatch(getCurrency());
-            dispatch(getCreditNoteDetails(window.location.pathname.split('/')[3]));
-            // creditNote?.customer?.customer_id
+            dispatch(getCreditNoteDetails(cn_id, user?.localInfo?.role));
+            if (user?.localInfo?.role) {
+                dispatch(readAccountantClient(client_id));
+            }
         }
-        if (window.location.pathname.split('/')[2] === 'create') {
+        if (type === 'create') {
             dispatch(getCurrency());
             dispatch(getNewCreditNoteNumber());
         }
     }, [dispatch]);
 
     useEffect(() => {
-        if (window.location.pathname.split('/')[2] === 'edit') {
+        if (type === 'edit') {
+            if (user?.localInfo?.role) {
+                return;
+            }
             dispatch(getCustomerDetails(creditNote?.customer?.customer_id));
         }
     }, [dispatch, creditNote?.customer?.customer_id]);
 
     useEffect(() => {
+        if (customerId === null && !user?.clientInfo?.terms_and_conditions) { setTermsAndConditions(''); return; }
         setTermsAndConditions(customer?.terms_and_conditions ? customer?.terms_and_conditions : termsAndConditions);
-    }, [customer, termsAndConditions]);
+    }, [customer, customerId]);
 
     useEffect(() => {
-        if (window.location.pathname.split('/')[2] === 'edit') {
+        if (type === 'edit') {
             setCreditNoteNumber(creditNote?.cn_number);
             setCreditNoteDate(moment(creditNote?.cn_date).format('YYYY-MM-DD'));
             setValidTill(moment(creditNote?.due_date).format('YYYY-MM-DD'));
@@ -88,7 +99,7 @@ const CreditNoteLayout = () => {
             setIsSetDefaultTncCustomer(creditNote?.is_set_default_tnc_customer);
             setIsSetDefaultTncClient(creditNote?.is_set_default_tnc_client);
         }
-        if (window.location.pathname.split('/')[2] === 'create') {
+        if (type === 'create') {
             setCreditNoteNumber(number);
             setTermsAndConditions(user?.clientInfo?.terms_and_conditions);
         }
@@ -151,15 +162,17 @@ const CreditNoteLayout = () => {
             dispatch(createCreditNote(data, navigate));
         }
         else {
-            dispatch(updateCreditNote(window.location.pathname.split('/')[3], data, navigate));
+            dispatch(updateCreditNote(cn_id, data, navigate, user?.localInfo?.role));
         }
     }
     return (
         <>
             <div className='create__creditNote__header'>
                 <div className='create__creditNote__header--left'>
-                    <img src={backButton} alt='back' className='create__creditNote__header--back-btn' onClick={() => navigate("/credit-note")} />
-                    <h1 className='create__creditNote__header--title'> Credit Notes List </h1>
+                    <img src={backButton} alt='back' className='create__creditNote__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role ? `/clients/${client_id}` : "/credit-note"}`)} />
+                    <h1 className='create__creditNote__header--title'>
+                        {user?.localInfo?.role ? 'Go Back' : 'Credit Notes List'}
+                    </h1>
                 </div>
                 <div className='create__creditNote__header--right'>
                     <a className='create__creditNote__header--btn1'>Download</a>

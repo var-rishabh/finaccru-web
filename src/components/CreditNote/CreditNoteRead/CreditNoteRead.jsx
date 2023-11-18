@@ -19,17 +19,17 @@ import PdfDownload from '../../../Shared/PdfDownload/PdfDownload';
 
 // Read Parts
 import ReadHead from '../../../Shared/ReadHead/ReadHead';
-import { pdfStyle as headPdfStyle, styles as headStyles } from '../../../Styles/ReadHead';
+import { styles as headStyles } from '../../../Styles/ReadHead';
 import ReadFor from '../../../Shared/ReadFor/ReadFor';
-import { styles as forStyles, pdfStyle as forPdfStyles } from '../../../Styles/ReadFor';
+import { styles as forStyles } from '../../../Styles/ReadFor';
 import ReadMeta from '../../../Shared/ReadMeta/ReadMeta';
-import { styles as metaStyles, pdfStyle as metaPdfStyles } from '../../../Styles/ReadMeta';
+import { styles as metaStyles } from '../../../Styles/ReadMeta';
 import LineItem from '../../../Shared/LineItem/LineItem';
-import { styles as lineItemStyles, pdfStyle as lineItemPdfStyles } from '../../../Styles/LineItem';
+import { styles as lineItemStyles } from '../../../Styles/LineItem';
 import ReadBank from '../../../Shared/ReadBank/ReadBank';
-import { styles as bankStyles, pdfStyle as bankPdfStyles } from '../../../Styles/ReadBank';
+import { styles as bankStyles } from '../../../Styles/ReadBank';
 import ReadTax from '../../../Shared/ReadTax/ReadTax';
-import { styles as taxStyles, pdfStyle as taxPdfStyles } from '../../../Styles/ReadTax';
+import { styles as taxStyles } from '../../../Styles/ReadTax';
 import ViewHeader from '../../../Shared/ViewHeader/ViewHeader';
 import ViewFooter from '../../../Shared/ViewFooter/ViewFooter';
 
@@ -37,19 +37,21 @@ import ViewFooter from '../../../Shared/ViewFooter/ViewFooter';
 import calculateTotalAmounts from '../../../utils/calculateTotalAmounts';
 import ReadContent from '../../../utils/ReadContent';
 import DueAmountCard from '../../../Shared/DueAmountCard/DueAmountCard';
+import { readAccountantClient } from '../../../Actions/Accountant';
 
 
 const CreditNoteReadLayout = () => {
-
-    const cn_id = window.location.pathname.split('/')[3];
-
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
+    
     const { user } = useSelector(state => state.userReducer);
+    const { client } = useSelector(state => state.accountantReducer);
     const { loading, creditNote } = useSelector(state => state.creditNoteReducer);
     const { taxRates } = useSelector(state => state.onboardingReducer);
-
+    
+    const cn_id = user?.localInfo?.role ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
+    const client_id = user?.localInfo?.role ? window.location.pathname.split('/')[2] : 0;
+    
     const [itemTotal, setItemTotal] = useState([]);
     const [itemTax, setItemTax] = useState([]);
     const [groupedItems, setGroupedItems] = useState([]);
@@ -66,8 +68,11 @@ const CreditNoteReadLayout = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        dispatch(getCreditNoteDetails(cn_id));
-    }, [dispatch, cn_id]);
+        dispatch(getCreditNoteDetails(cn_id, user?.localInfo?.role));
+        if (user?.localInfo?.role) {
+            dispatch(readAccountantClient(client_id));
+        }
+    }, [dispatch, cn_id, client_id, user?.localInfo?.role]);
 
     useEffect(() => {
         const amount = calculateTotalAmounts(creditNote?.line_items, setSubTotal, setDiscount, setTax, setTotal, setItemTax, taxRates);
@@ -97,13 +102,21 @@ const CreditNoteReadLayout = () => {
         setGroupedItems(groupedByTaxId);
     }, [itemTotal, itemTax, creditNote, taxRates]);
 
-    const contents = ReadContent("Credit Note", creditNote, user, currencies, taxRates, itemTax, itemTotal, subTotal, discount, tax, total, groupedItems);
+    const [clientData, setClientData] = useState({});
+    useEffect(() => {
+        if (user?.localInfo?.role) {
+            setClientData({ clientInfo: client });
+        } else {
+            setClientData(user);
+        }
+    }, [user, client]);
+    const contents = ReadContent("Credit Note", creditNote, clientData, currencies, taxRates, itemTax, itemTotal, subTotal, discount, tax, total, groupedItems);
 
     return (
         <>
             <div className='read__header'>
                 <div className='read__header--left'>
-                    <img src={backButton} alt='back' className='read__header--back-btn' onClick={() => navigate("/credit-note")} />
+                    <img src={backButton} alt='back' className='read__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role ? `/clients/${client_id}` : "/credit-note"}`)} />
                     <h1 className='read__header--title'> Credit Notes List </h1>
                 </div>
                 <div className='read__header--right'>
@@ -112,14 +125,14 @@ const CreditNoteReadLayout = () => {
                             <>
                                 <a className='read__header--btn1'
                                     onClick={() => {
-                                        dispatch(submitCreditNoteForApproval(window.location.pathname.split('/')[3]))
+                                        dispatch(submitCreditNoteForApproval(cn_id))
                                     }}
                                 >
                                     Submit for Approval
                                 </a>
                                 <a className='read__header--btn1'
                                     onClick={() => {
-                                        dispatch(markCreditNoteVoid(window.location.pathname.split('/')[3]))
+                                        dispatch(markCreditNoteVoid(cn_id))
                                     }}
                                 >
                                     Mark as Void
@@ -128,7 +141,7 @@ const CreditNoteReadLayout = () => {
                             : creditNote?.cn_status === "Pending Approval" ?
                                 <a className='read__header--btn1'
                                     onClick={() => {
-                                        dispatch(markCreditNoteVoid(window.location.pathname.split('/')[3]))
+                                        dispatch(markCreditNoteVoid(cn_id))
                                     }}
                                 >
                                     Mark as Void
@@ -137,7 +150,7 @@ const CreditNoteReadLayout = () => {
                     {
                         creditNote?.cn_status === "Void" ? "" :
                             creditNote?.cn_status === "Approved" ? "" :
-                                <a className='read__header--btn1' onClick={() => navigate(`/credit-note/edit/${creditNote?.cn_id}`)}>Edit</a>
+                                <a className='read__header--btn1' onClick={() => navigate(`${user?.localInfo?.role ? `/clients/${client_id}` : ""}/credit-note/edit/${creditNote?.cn_id}`)}>Edit</a>
                     }
                     <PdfDownload contents={contents} heading={"Credit Note"} />
                 </div>
@@ -149,13 +162,13 @@ const CreditNoteReadLayout = () => {
                         <ReadHead
                             title={"Credit Note"}
                             styles={headStyles}
-                            address_line_1={user?.clientInfo?.company_data?.address_line_1}
-                            address_line_2={user?.clientInfo?.company_data?.address_line_2}
-                            address_line_3={user?.clientInfo?.company_data?.address_line_3}
-                            company_name={user?.clientInfo?.company_data?.company_name}
-                            country={user?.clientInfo?.company_data?.country}
-                            state={user?.clientInfo?.company_data?.state}
-                            trade_license_number={user?.clientInfo?.company_data?.trade_license_number}
+                            address_line_1={user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1}
+                            address_line_2={user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2}
+                            address_line_3={user?.localInfo?.role ? client?.company_data?.address_line_3 : user?.clientInfo?.company_data?.address_line_3}
+                            company_name={user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}
+                            country={user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}
+                            state={user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state}
+                            trade_license_number={user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}
                             number={creditNote?.cn_number}
                             date={creditNote?.cn_date}
                             due_date={creditNote?.due_date}

@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { getPaymentsDetails, submitPaymentsForApproval, markPaymentsVoid } from '../../../Actions/Payment';
 import { getCurrency, getTaxRate } from '../../../Actions/Onboarding';
+import { readAccountantClient } from '../../../Actions/Accountant';
 import Loader from '../../Loader/Loader';
 
 import './PaymentRead.css'
@@ -20,12 +22,15 @@ import PaymentMeta from './Parts/PaymentMeta';
 import { pdfStyle as metaPdfStyles, styles as metaStyles } from '../../../Styles/ReadMetaPayment';
 
 const PaymentReadLayout = () => {
+    const { user } = useSelector(state => state.userReducer);
+    const { client } = useSelector(state => state.accountantReducer);
+    const { loading, payment } = useSelector(state => state.paymentReducer);
+
+    const payment_id = user?.localInfo?.role ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
+    const client_id = user?.localInfo?.role ? window.location.pathname.split('/')[2] : 0;
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { user } = useSelector(state => state.userReducer);
-    const payment_id = window.location.pathname.split('/')[3];
-    const { loading, payment } = useSelector(state => state.paymentReducer);
 
     const { currencies } = useSelector(state => state.onboardingReducer);
 
@@ -35,8 +40,11 @@ const PaymentReadLayout = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        dispatch(getPaymentsDetails(payment_id));
-    }, [dispatch, payment_id]);
+        dispatch(getPaymentsDetails(payment_id, user?.localInfo?.role));
+        if (user?.localInfo?.role) {
+            dispatch(readAccountantClient(client_id));
+        }
+    }, [dispatch, payment_id, user?.localInfo?.role, client_id]);
 
     const toWords = new ToWords({
         localeCode: 'en-US',
@@ -52,13 +60,13 @@ const PaymentReadLayout = () => {
             height: 90,
             props: {
                 styles: headPdfStyle,
-                address_line_1: user?.clientInfo?.company_data?.address_line_1,
-                address_line_2: user?.clientInfo?.company_data?.address_line_2,
-                address_line_3: user?.clientInfo?.company_data?.address_line_3,
-                company_name: user?.clientInfo?.company_data?.company_name,
-                country: user?.clientInfo?.company_data?.country,
-                state: user?.clientInfo?.company_data?.state,
-                trade_license_number: user?.clientInfo?.company_data?.trade_license_number,
+                address_line_1: user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1,
+                address_line_2: user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2,
+                address_line_3: user?.localInfo?.role ? client?.company_data?.address_line_3 : user?.clientInfo?.company_data?.address_line_3,                
+                company_name: user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country,
+                country: user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name,
+                state: user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state,
+                trade_license_number: user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number,
                 payment_number: payment?.receipt_number,
                 payment_date: payment?.receipt_date,
             }
@@ -100,7 +108,7 @@ const PaymentReadLayout = () => {
         <>
             <div className='read__payment__header'>
                 <div className='read__payment__header--left'>
-                    <img src={backButton} alt='back' className='read__payment__header--back-btn' onClick={() => navigate("/payment")} />
+                    <img src={backButton} alt='back' className='read__payment__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role ? `/clients/${client_id}` : "/payment"}`)} />
                     <h1 className='read__payment__header--title'> Payments List </h1>
                 </div>
                 <div className='read__payment__header--right'>
@@ -110,7 +118,7 @@ const PaymentReadLayout = () => {
                                 <>
                                     <a className='read__payment__header--btn1'
                                         onClick={() => {
-                                            dispatch(markPaymentsVoid(window.location.pathname.split('/')[3]))
+                                            dispatch(markPaymentsVoid(payment_id))
                                         }}
                                     >Mark as Void</a>
                                     <a className='read__payment__header--btn1'
@@ -120,16 +128,16 @@ const PaymentReadLayout = () => {
                                 <>
                                     <a className='read__payment__header--btn1'
                                         onClick={() => {
-                                            dispatch(submitPaymentsForApproval(window.location.pathname.split('/')[3]))
+                                            dispatch(submitPaymentsForApproval(payment_id))
                                         }}
                                     >Submit for Approval</a>
                                     <a className='read__payment__header--btn1'
                                         onClick={() => {
-                                            dispatch(markPaymentsVoid(window.location.pathname.split('/')[3]))
+                                            dispatch(markPaymentsVoid(payment_id))
                                         }}
                                     >Mark as Void</a>
                                     <a className='read__payment__header--btn1'
-                                        onClick={() => navigate(`/payment/edit/${payment?.receipt_id}`)}
+                                        onClick={() => navigate(`${user?.localInfo?.role ? `/clients/${client_id}` : ""}/payment/edit/${payment?.receipt_id}`)}
                                     >Edit</a>
                                 </>
                     }

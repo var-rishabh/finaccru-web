@@ -330,7 +330,7 @@ export const loadUser = () => async (dispatch) => {
                         'token': token,
                     }
                 }).then(async (data) => {
-                    if (data.data.status === 0) {
+                    if (data.data.status === 0 && data.data.role === 0) {
                         const client = await axios.get(`${url}/private/client/read`, {
                             headers: {
                                 'accept': 'application/json',

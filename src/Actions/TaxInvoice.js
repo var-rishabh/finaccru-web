@@ -34,7 +34,7 @@ export const createTaxInvoice = (data, navigate) => async (dispatch) => {
     }
 }
 
-export const getTaxInvoiceDetails = (id) => async (dispatch) => {
+export const getTaxInvoiceDetails = (id, role = 0) => async (dispatch) => {
     try {
         dispatch({ type: "TaxInvoiceDetailsRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -43,8 +43,13 @@ export const getTaxInvoiceDetails = (id) => async (dispatch) => {
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/tax-invoices/read/${id}`, config);
-        dispatch({ type: "TaxInvoiceDetailsSuccess", payload: response.data });
+        if (role === 0) {
+            const response = await axios.get(`${url}/private/client/tax-invoices/read/${id}`, config);
+            dispatch({ type: "TaxInvoiceDetailsSuccess", payload: response.data });
+        } else {
+            const response = await axios.get(`${url}/private/accountant/read-tax-invoice/${id}`, config);
+            dispatch({ type: "TaxInvoiceDetailsSuccess", payload: response.data });
+        }
     } catch (error) {
         console.log(error);
         dispatch({ type: "TaxInvoiceDetailsFailure", payload: error.response?.data || error.message });
@@ -52,7 +57,7 @@ export const getTaxInvoiceDetails = (id) => async (dispatch) => {
     }
 }
 
-export const getTaxInvoiceList = (page = 1, keyword = "", customer_id = 0) => async (dispatch) => {
+export const getTaxInvoiceList = (page = 1, keyword = "", customer_id = 0, role = 0, client_id = 0, showAll = false) => async (dispatch) => {
     try {
         dispatch({ type: "TaxInvoiceListRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -61,8 +66,13 @@ export const getTaxInvoiceList = (page = 1, keyword = "", customer_id = 0) => as
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/tax-invoices/read-list/${page}?keyword=${keyword}${customer_id !== 0 ? `&customer_id=${customer_id}` : ""}`, config);
-        dispatch({ type: "TaxInvoiceListSuccess", payload: response.data });
+        if (role === 0) {
+            const response = await axios.get(`${url}/private/client/tax-invoices/read-list/${page}?keyword=${keyword}${customer_id !== 0 ? `&customer_id=${customer_id}` : ""}`, config);
+            dispatch({ type: "TaxInvoiceListSuccess", payload: response.data });
+        } else {
+            const response = await axios.get(`${url}/private/accountant/${role === 1 ? 'jr' : 'sr'}/read-tax-invoices/${client_id}/${page}?show_all=${showAll}`, config);
+            dispatch({ type: "TaxInvoiceListSuccess", payload: response.data });
+        }
     } catch (error) {
         console.log(error);
         dispatch({ type: "TaxInvoiceListFailure", payload: error.response?.data || error.message });
@@ -90,7 +100,7 @@ export const deleteTaxInvoice = (id) => async (dispatch) => {
     }
 }
 
-export const updateTaxInvoice = (id, data, navigate) => async (dispatch) => {
+export const updateTaxInvoice = (id, data, navigate, role = 0) => async (dispatch) => {
     try {
         dispatch({ type: "TaxInvoiceUpdateRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -99,9 +109,14 @@ export const updateTaxInvoice = (id, data, navigate) => async (dispatch) => {
                 token: token,
             },
         };
-        const response = await axios.put(`${url}/private/client/tax-invoices/update/${id}`, data, config);
-        dispatch({ type: "TaxInvoiceUpdateSuccess", payload: response.data });
-        navigate("/tax-invoice/view/" + id);
+        if (role === 0) {
+            const response = await axios.put(`${url}/private/client/tax-invoices/update/${id}`, data, config);
+            dispatch({ type: "TaxInvoiceUpdateSuccess", payload: response.data });
+        } else {
+            const response = await axios.put(`${url}/private/accountant/update-tax-invoice/${id}`, data, config);
+            dispatch({ type: "TaxInvoiceUpdateSuccess", payload: response.data });
+        }
+        if (role === 0) navigate("/tax-invoice/view/" + id);
         toast.success("TaxInvoice updated successfully");
     }
     catch (err) {
@@ -228,7 +243,7 @@ export const extractDataFromTaxInvoice = (file, navigate) => async (dispatch) =>
     }
 }
 
-export const readOpenTaxInvoicesForCustomer = (id, currency_id = 1) => async (dispatch) => {
+export const readOpenTaxInvoicesForCustomer = (id, currency_id = 1, role = 0) => async (dispatch) => {
     try {
         dispatch({ type: "ReadOpenTaxInvoicesForCustomerRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -237,12 +252,37 @@ export const readOpenTaxInvoicesForCustomer = (id, currency_id = 1) => async (di
                 token: token,
             },
         };
-
-        const response = await axios.get(`${url}/private/client/tax-invoices/read-open-invoices-for-customer/${id}?currency_id=${currency_id}`, config);
-        dispatch({ type: "ReadOpenTaxInvoicesForCustomerSuccess", payload: response.data });
+        if (role === 0) {
+            const response = await axios.get(`${url}/private/client/tax-invoices/read-open-invoices-for-customer/${id}?currency_id=${currency_id}`, config);
+            dispatch({ type: "ReadOpenTaxInvoicesForCustomerSuccess", payload: response.data });
+        } else {
+            const response = await axios.get(`${url}/private/accountant/read-open-tax-invoices-for-customer/${id}?currency_id=${currency_id}`, config);
+            dispatch({ type: "ReadOpenTaxInvoicesForCustomerSuccess", payload: response.data });
+        }
     } catch (error) {
         console.log(error);
         dispatch({ type: "ReadOpenTaxInvoicesForCustomerFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+export const approveTaxInvoice = (id, role = 1, client_id) => async (dispatch) => {
+    try {
+        dispatch({ type: "ApproveTaxInvoiceRequest" });
+        const token = await auth.currentUser.getIdToken(true);
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+
+        const response = await axios.put(`${url}/private/accountant/${role === 1 ? 'jr' : 'sr'}/approve-tax-invoice/${id}`, {}, config);
+        dispatch({ type: "ApproveTaxInvoiceSuccess", payload: response.data });
+        toast.success("Tax Invoice approved successfully");
+        dispatch(getTaxInvoiceList(1, "", 0, role, client_id));
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ApproveTaxInvoiceFailure", payload: error.response?.data || error.message });
         toast.error(error.response?.data || error.message);
     }
 }

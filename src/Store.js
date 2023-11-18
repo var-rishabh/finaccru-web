@@ -8,6 +8,7 @@ import { proformaReducer } from './Reducers/Proforma';
 import { taxInvoiceReducer } from './Reducers/TaxInvoice';
 import { creditNoteReducer } from './Reducers/CreditNote';
 import { paymentReducer } from './Reducers/Payment';
+import { accountantReducer } from './Reducers/Accountant';
 
 const store = configureStore({
     reducer: {
@@ -21,6 +22,7 @@ const store = configureStore({
         taxInvoiceReducer: taxInvoiceReducer,
         creditNoteReducer: creditNoteReducer,
         paymentReducer: paymentReducer,
+        accountantReducer: accountantReducer,
     },
 });
 

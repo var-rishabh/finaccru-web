@@ -5,27 +5,28 @@ import { getProformaDetails, markProformaSent, markProformaVoid } from '../../..
 import { getCurrency, getTaxRate } from '../../../Actions/Onboarding';
 import Loader from '../../Loader/Loader';
 
-import './ProformaRead.css'
+import '../../../Styles/Read.css';
 import backButton from "../../../assets/Icons/back.svg"
-import logo from "../../../assets/Icons/cropped_logo.svg"
 
 import PdfDownload from '../../../Shared/PdfDownload/PdfDownload';
 
 // Read Parts
 import ReadHead from '../../../Shared/ReadHead/ReadHead';
-import { pdfStyle as headPdfStyle, styles as headStyles } from '../../../Styles/ReadHead';
+import { styles as headStyles } from '../../../Styles/ReadHead';
 import ReadFor from '../../../Shared/ReadFor/ReadFor';
-import { styles as forStyles, pdfStyle as forPdfStyles } from '../../../Styles/ReadFor';
+import { styles as forStyles } from '../../../Styles/ReadFor';
 import ReadMeta from '../../../Shared/ReadMeta/ReadMeta';
-import { styles as metaStyles, pdfStyle as metaPdfStyles } from '../../../Styles/ReadMeta';
+import { styles as metaStyles } from '../../../Styles/ReadMeta';
 import LineItem from '../../../Shared/LineItem/LineItem';
-import { styles as lineItemStyles, pdfStyle as lineItemPdfStyles } from '../../../Styles/LineItem';
+import { styles as lineItemStyles } from '../../../Styles/LineItem';
 import ReadBank from '../../../Shared/ReadBank/ReadBank';
-import { styles as bankStyles, pdfStyle as bankPdfStyles } from '../../../Styles/ReadBank';
+import { styles as bankStyles } from '../../../Styles/ReadBank';
 import ReadTax from '../../../Shared/ReadTax/ReadTax';
-import { styles as taxStyles, pdfStyle as taxPdfStyles } from '../../../Styles/ReadTax';
+import { styles as taxStyles } from '../../../Styles/ReadTax';
 import calculateTotalAmounts from '../../../utils/calculateTotalAmounts';
 import ReadContent from '../../../utils/ReadContent';
+import ViewHeader from '../../../Shared/ViewHeader/ViewHeader';
+import ViewFooter from '../../../Shared/ViewFooter/ViewFooter';
 
 const ProformaReadLayout = () => {
     const navigate = useNavigate();
@@ -89,21 +90,21 @@ const ProformaReadLayout = () => {
 
     return (
         <>
-            <div className='read__proforma__header'>
-                <div className='read__proforma__header--left'>
-                    <img src={backButton} alt='back' className='read__proforma__header--back-btn' onClick={() => navigate("/proforma")} />
-                    <h1 className='read__proforma__header--title'> Proformas List </h1>
+            <div className='read__header'>
+                <div className='read__header--left'>
+                    <img src={backButton} alt='back' className='read__header--back-btn' onClick={() => navigate("/proforma")} />
+                    <h1 className='read__header--title'> Proformas List </h1>
                 </div>
-                <div className='read__proforma__header--right'>
+                <div className='read__header--right'>
                     {
                         proforma?.pi_status === "Draft" ? <>
-                            <a className='create__proforma__header--btn1'
+                            <a className='read__header--btn1'
                                 onClick={() => {
                                     dispatch(markProformaSent(window.location.pathname.split('/')[3]))
                                 }}
                             >Mark as Sent</a>
                         </> : proforma?.pi_status === "Sent" ? <>
-                            <a className='create__proforma__header--btn1'
+                            <a className='read__header--btn1'
                                 onClick={() => {
                                     dispatch(markProformaVoid(window.location.pathname.split('/')[3]))
                                 }}
@@ -113,18 +114,15 @@ const ProformaReadLayout = () => {
                     {
                         proforma?.pi_status === "Converted to TI" ? "" :
                             proforma?.pi_status === "Void" ? "" :
-                                <a className='read__proforma__header--btn1' onClick={() => navigate(`/proforma/edit/${proforma?.pi_id}`)}>Edit</a>
+                                <a className='read__header--btn1' onClick={() => navigate(`/proforma/edit/${proforma?.pi_id}`)}>Edit</a>
                     }
                     <PdfDownload contents={contents} heading={"Proforma"} />
                 </div>
             </div>
-            <div className="read__proforma__container">
+            <div className="read__container">
                 {loading ? <Loader /> :
-                    <div className="read__proforma--main" id="read__proforma--main">
-                        <div className="read__proforma--top">
-                            <img style={{ width: "9rem" }} src={logo} alt="logo" />
-                            <h1 className='read__proforma--head'>Proforma</h1>
-                        </div>
+                    <div className="read--main" id="read--main">
+                        <ViewHeader title={"Proforma"} />
                         <ReadHead
                             title={"Proforma"}
                             styles={headStyles}
@@ -137,7 +135,7 @@ const ProformaReadLayout = () => {
                             trade_license_number={user?.clientInfo?.company_data?.trade_license_number}
                             number={proforma?.pi_number}
                             date={proforma?.pi_date}
-                            due_date={proforma?.due_date}
+                            valid_till={proforma?.valid_till}
                             reference={proforma?.reference}
                         />
                         <ReadFor
@@ -162,7 +160,7 @@ const ProformaReadLayout = () => {
                             currency_conversion_rate={proforma?.currency_conversion_rate}
                             subject={proforma?.subject}
                         />
-                        <div className='read__proforma__items'>
+                        <div className='read__items'>
                             {proforma?.line_items?.map((item, index) => (
                                 <LineItem styles={lineItemStyles} key={index} index={index}
                                     item_name={item?.item_name} unit={item?.unit} qty={item?.qty} rate={item?.rate}
@@ -173,23 +171,21 @@ const ProformaReadLayout = () => {
                                 />
                             ))}
                         </div>
-                        <ReadBank styles={bankStyles} currency_abv={currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv}
+                        <ReadBank
+                            styles={bankStyles}
+                            currency_abv={currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv}
                             primary_bank={user?.clientInfo?.primary_bank}
                             other_bank_accounts={user?.clientInfo?.other_bank_accounts}
                             subTotal={subTotal} discount={discount} tax={tax} total={total}
                         />
-                        <ReadTax styles={taxStyles} currency_abv={currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv}
+                        <ReadTax
+                            styles={taxStyles}
+                            currency_abv={currencies?.find((currency) => currency.currency_id === proforma?.currency_id)?.currency_abv}
                             currency_conversion_rate={proforma?.currency_conversion_rate}
                             subTotal={subTotal} discount={discount} tax={tax} total={total}
                             groupedItems={groupedItems} terms_and_conditions={proforma?.terms_and_conditions}
                         />
-                        <div className="read__proforma__footer">
-                            <img style={{ width: "5rem" }} src={logo} alt="logo" />
-                            <div className='read__proforma__footer--text'>
-                                <p style={{ fontWeight: "400", fontSize: "0.8rem" }}> This is electronically generated document and does not require sign or stamp. </p>
-                                <span style={{ marginTop: "0.8rem", fontWeight: "700", fontSize: "0.8rem" }}> powered by Finaccru </span>
-                            </div>
-                        </div>
+                        <ViewFooter />
                     </div>
                 }
             </div>
