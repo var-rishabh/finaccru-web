@@ -30,6 +30,10 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loadUser } from './Actions/User';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import JuniorAccountant from './components/JuniorAccountant/JuniorAccountant';
+import SeniorAccountant from './components/SeniorAccountant/SeniorAccountant';
+import Client from './components/Client/Client';
+import JrAccountants from './components/SeniorAccountant/JrAccountants/JrAccountants';
 
 function App() {
   const dispatch = useDispatch();
@@ -48,40 +52,75 @@ function App() {
               <>
                 {user?.localInfo?.status !== 0 ? (
                   <>
-                      <>
-                        <Route path="/onboard" element={<Onboard />}>
-                          {user?.localInfo?.status === 3 && (
-                            <Route path="/onboard" element={<Company />} />
-                          )}
-                          {user?.localInfo?.status === 2 && (
-                            <Route path="/onboard/bank" element={<Bank />} />
-                          )}
-                          {user?.localInfo?.status === 1 && (
-                            <Route path="/onboard/upload" element={<UploadFiles />} />
-                          )}
-                        </Route>
-                        <Route path="*" element={<Loader />} />
-                      </>
+                    <Route path="/onboard" element={<Onboard />}>
+                      {user?.localInfo?.status === 3 && (
+                        <Route path="/onboard" element={<Company />} />
+                      )}
+                      {user?.localInfo?.status === 2 && (
+                        <Route path="/onboard/bank" element={<Bank />} />
+                      )}
+                      {user?.localInfo?.status === 1 && (
+                        <Route path="/onboard/upload" element={<UploadFiles />} />
+                      )}
+                    </Route>
+                    <Route path="*" element={<Loader />} />
                   </>
                 ) : (
-                  <>
-                    <Route path="/" element={<Home />}>
+                  user?.localInfo?.role === 0 ? (
+                    <>
+                      <Route path="/" element={<Home />}>
+                        {
+                          menuItems.map((item) => {
+                            return (
+                              <>
+                                <Route key={item.key} path={item.key} element={item.component} />
+                                <Route key={`${item.key}-create`} path={item.key + "/create"} element={item.changecomponent} />
+                                <Route key={`${item.key}-edit`} path={item.key + "/edit/:id"} element={item.changecomponent} />
+                                <Route key={`${item.key}-view`} path={item.key + "/view/:id"} element={item.viewcomponent} />
+                              </>
+                            )
+                          })
+                        }
+                      </Route>
+                      <Route path="*" element={<NotFound />} />
+
+                    </>
+                  ) : user?.localInfo?.role === 1 ? (
+                    <>
+                      <Route path="/" element={<JuniorAccountant />} />
+                      <Route path="/clients/:id" element={<Client />} />
+                      <Route path="*" element={<NotFound />} />
                       {
-                        menuItems.map((item) => {
+                        menuItems.slice(4, 8).map((item) => {
                           return (
                             <>
-                              <Route key={item.key} path={item.key} element={item.component} />
-                              <Route key={`${item.key}-create`} path={item.key + "/create"} element={item.changecomponent} />
-                              <Route key={`${item.key}-edit`} path={item.key + "/edit/:id"} element={item.changecomponent} />
-                              <Route key={`${item.key}-view`} path={item.key + "/view/:id"} element={item.viewcomponent} />
-                            </> 
+                              <Route key={`${item.key}-edit`} path={"/clients/:client_id" + item.key + "/edit/:id"} element={item.changecomponent} />
+                              <Route key={`${item.key}-view`} path={"/clients/:client_id" + item.key + "/view/:id"} element={item.viewcomponent} />
+                            </>
                           )
                         })
                       }
-                    </Route>
-                    <Route path="*" element={<NotFound />} />
-                  </>
+                    </>
+                  ) : user?.localInfo?.role === 2 ? (
+                    <>
+                      <Route path="/" element={<SeniorAccountant />} />
+                      <Route path="/jr/:id" element={<JrAccountants />} />
+                      <Route path="/clients/:id" element={<Client />} />
+                      <Route path="*" element={<NotFound />} />
+                      {
+                        menuItems.slice(4, 8).map((item) => {
+                          return (
+                            <>
+                              <Route key={`${item.key}-edit`} path={"/clients/:client_id" + item.key + "/edit/:id"} element={item.changecomponent} />
+                              <Route key={`${item.key}-view`} path={"/clients/:client_id" + item.key + "/view/:id"} element={item.viewcomponent} />
+                            </>
+                          )
+                        })
+                      }
+                    </>
+                  ) : <Route path="*" element={<NotFound />} />
                 )}
+
               </>
             ) : (<>
               {authLoading || isAuthenticated ? <Route path="*" element={<Loader />} /> :

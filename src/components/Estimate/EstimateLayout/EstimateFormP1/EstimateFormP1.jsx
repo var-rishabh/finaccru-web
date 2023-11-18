@@ -196,7 +196,7 @@ const EstimateFormP1 = ({
                             </>
 
                     }
-                    <AddCustomerModal openingModal={true} isModalOpen={isModalOpen} handleCustomerSubmit={handleCustomerSubmit} handleCancel={handleCancel} />
+                    <AddCustomerModal isModalOpen={isModalOpen} handleCustomerSubmit={handleCustomerSubmit} handleCancel={handleCancel} />
                 </div>
                 <div className='estimate__form--part2-head-customer second-select'>
                     {

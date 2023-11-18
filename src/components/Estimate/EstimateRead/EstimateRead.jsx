@@ -19,17 +19,17 @@ import PdfDownload from '../../../Shared/PdfDownload/PdfDownload';
 
 // Read Parts
 import ReadHead from '../../../Shared/ReadHead/ReadHead';
-import { pdfStyle as headPdfStyle, styles as headStyles } from '../../../Styles/ReadHead';
+import { styles as headStyles } from '../../../Styles/ReadHead';
 import ReadFor from '../../../Shared/ReadFor/ReadFor';
-import { styles as forStyles, pdfStyle as forPdfStyles } from '../../../Styles/ReadFor';
+import { styles as forStyles } from '../../../Styles/ReadFor';
 import ReadMeta from '../../../Shared/ReadMeta/ReadMeta';
-import { styles as metaStyles, pdfStyle as metaPdfStyles } from '../../../Styles/ReadMeta';
+import { styles as metaStyles } from '../../../Styles/ReadMeta';
 import LineItem from '../../../Shared/LineItem/LineItem';
-import { styles as lineItemStyles, pdfStyle as lineItemPdfStyles } from '../../../Styles/LineItem';
+import { styles as lineItemStyles } from '../../../Styles/LineItem';
 import ReadBank from '../../../Shared/ReadBank/ReadBank';
-import { styles as bankStyles, pdfStyle as bankPdfStyles } from '../../../Styles/ReadBank';
+import { styles as bankStyles } from '../../../Styles/ReadBank';
 import ReadTax from '../../../Shared/ReadTax/ReadTax';
-import { styles as taxStyles, pdfStyle as taxPdfStyles } from '../../../Styles/ReadTax';
+import { styles as taxStyles } from '../../../Styles/ReadTax';
 import ViewHeader from '../../../Shared/ViewHeader/ViewHeader';
 import ViewFooter from '../../../Shared/ViewFooter/ViewFooter';
 

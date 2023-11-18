@@ -126,4 +126,16 @@ export const paymentReducer = createReducer(initialState, (builder) => {
         state.openPayments = action.payload;
         state.error = null;
     })
+    .addCase("ApprovePaymentsRequest", (state) => {
+        state.loading = true;
+    })
+    .addCase("ApprovePaymentsFailure", (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+    })
+    .addCase("ApprovePaymentsSuccess", (state, action) => {
+        state.loading = false;
+        state.success = action.payload;
+        state.error = null;
+    })
 })

@@ -15,6 +15,8 @@ const CreditNoteFormP1 = ({
     setCreditNoteNumber, setCreditNoteDate, setValidTill, setReference, setSubject, setCustomerName, setCustomerId, setCurrency, setCurrencyId, setCurrencyConversionRate, setShippingAddress1, setShippingAddress2, setShippingAddress3, setShippingState, setShippingCountry,
     termsAndConditions, setTermsAndConditions
 }) => {
+    const { client } = useSelector(state => state.accountantReducer);
+
     const filterOption = (input, option) => {
         return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
     }
@@ -60,7 +62,7 @@ const CreditNoteFormP1 = ({
     };
 
     const { shippingAddresses } = useSelector(state => state.customerReducer);
-
+    const { creditNote } = useSelector(state => state.creditNoteReducer);
     const { currencies, currencyLoading } = useSelector(state => state.onboardingReducer);
     const [customerKeyword, setCustomerKeyword] = useState(null);
 
@@ -139,12 +141,12 @@ const CreditNoteFormP1 = ({
             <div className='creditNote__form--part1-head'>
                 <div className='creditNote__form--head-info1'>
                     <h3>Credit Note From</h3>
-                    <span style={{ fontWeight: 500 }}>{user?.clientInfo?.company_data?.company_name}</span>
-                    <span>{user?.clientInfo?.company_data?.address_line_1}</span>
-                    <span>{user?.clientInfo?.company_data?.address_line_2}</span>
-                    <span>{user?.clientInfo?.company_data?.address_line_3}</span>
-                    <span>{user?.clientInfo?.company_data?.state + ', ' + user?.clientInfo?.company_data?.country}</span>
-                    <span>TRN: {user?.clientInfo?.company_data?.trade_license_number}</span>
+                    <span style={{ fontWeight: 500 }}>{user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}</span>
+                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1}</span>
+                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2}</span>
+                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_3 : user?.clientInfo?.company_data?.address_line_3}</span>
+                    <span>{user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state + ', ' + user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}</span>
+                    <span>TRN: {user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}</span>
                 </div>
                 <div className='creditNote__form--head-info2'>
                     <div className='creditNote__form--head-info2-data'>
@@ -157,6 +159,7 @@ const CreditNoteFormP1 = ({
                                 const input = e.target.value
                                 setCreditNoteNumber("CN-" + input.substr("CN-".length))
                             }}
+                            {...user?.localInfo?.role && { disabled: true }}
                         />
                     </div>
                     <div className='creditNote__form--head-info2-data'>
@@ -191,18 +194,30 @@ const CreditNoteFormP1 = ({
                             <div className='creditNote__form--customer-data'>
                                 <div className='creditNote__form--customer-data-info'>
                                     <span style={{ fontWeight: 500 }}>{customerName}</span>
-                                    <span>{customer?.billing_address_line_1}</span>
-                                    {customer?.billing_address_line_2 && <span>{customer?.billing_address_line_2}</span>}
-                                    {customer?.billing_address_line_3 && <span>{customer?.billing_address_line_3}</span>}
-                                    <span>{customer?.billing_state + ', ' + customer?.billing_country}</span>
-                                    {customer?.trn && <span>TRN: {customer?.trn}</span>}
+                                    {user?.localInfo?.role ?
+                                        <>
+                                            <span>{creditNote?.customer?.billing_address_line_1}</span>
+                                            {creditNote?.customer?.billing_address_line_2 && <span>{creditNote?.customer?.billing_address_line_2}</span>}
+                                            {creditNote?.customer?.billing_address_line_3 && <span>{creditNote?.customer?.billing_address_line_3}</span>}
+                                            {creditNote?.customer?.billing_state && <span>{creditNote?.customer?.billing_state + ', ' + creditNote?.customer?.billing_country}</span>}
+                                            {creditNote?.customer?.trn && <span>TRN: {creditNote?.customer?.trn}</span>}
+                                        </>
+                                        :
+                                        <>
+                                            <span>{customer?.billing_address_line_1}</span>
+                                            {customer?.billing_address_line_2 && <span>{customer?.billing_address_line_2}</span>}
+                                            {customer?.billing_address_line_3 && <span>{customer?.billing_address_line_3}</span>}
+                                            {customer?.billing_state && <span>{customer?.billing_state + ', ' + customer?.billing_country}</span>}
+                                            {customer?.trn && <span>TRN: {customer?.trn}</span>}
+                                        </>
+                                    }
                                 </div>
-                                <CloseOutlined className='creditNote__for--anticon-close'
+                                {!user?.localInfo?.role && <CloseOutlined className='creditNote__for--anticon-close'
                                     onClick={() => {
                                         setCustomerName(''); setCustomerId(null); setShippingId(null);
                                         setShippingAddress1(null);
                                     }}
-                                />
+                                />}
                             </div>
                             : <>
                                 <CustomerInfiniteScrollSelect loadMoreOptions={addPage} onChange={onChangeCustomer} customerKeyword={customerKeyword} setCustomerKeyword={setCustomerKeyword} />
@@ -227,7 +242,7 @@ const CreditNoteFormP1 = ({
                                                 <span>{shippingState + ', ' + shippingCountry}</span>
 
                                             </div>
-                                            <CloseOutlined
+                                            {!user?.localInfo?.role && <CloseOutlined
                                                 className='creditNote__for--anticon-close'
                                                 onClick={() => {
                                                     setShippingId(null); setShippingAddress1(null);
@@ -236,7 +251,7 @@ const CreditNoteFormP1 = ({
                                                     setShippingLabel(null);
                                                     dispatch(getShippingAddressList(customerId))
                                                 }}
-                                            />
+                                            />}
                                         </div>
                                         : <>
                                             <Select

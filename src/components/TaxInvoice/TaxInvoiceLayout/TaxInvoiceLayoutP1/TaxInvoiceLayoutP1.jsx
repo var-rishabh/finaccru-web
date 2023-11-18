@@ -32,6 +32,8 @@ const TaxInvoiceFormP1 = ({
     //     return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
     // }
     const { user } = useSelector(state => state.userReducer);
+    const { client } = useSelector(state => state.accountantReducer);
+    const { taxInvoice } = useSelector(state => state.taxInvoiceReducer);
     const { loading: customerLoading, customersInf, totalCustomers, customer } = useSelector(state => state.customerReducer);
     const [currentCustomerPage, setCurrentCustomerPage] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -148,12 +150,12 @@ const TaxInvoiceFormP1 = ({
             <div className='taxInvoice__form--part1-head'>
                 <div className='taxInvoice__form--head-info1'>
                     <h3>Tax Invoice From</h3>
-                    <span style={{ fontWeight: 500 }}>{user?.clientInfo?.company_data?.company_name}</span>
-                    <span>{user?.clientInfo?.company_data?.address_line_1}</span>
-                    <span>{user?.clientInfo?.company_data?.address_line_2}</span>
-                    <span>{user?.clientInfo?.company_data?.address_line_3}</span>
-                    <span>{user?.clientInfo?.company_data?.state + ', ' + user?.clientInfo?.company_data?.country}</span>
-                    <span>TRN: {user?.clientInfo?.company_data?.trade_license_number}</span>
+                    <span style={{ fontWeight: 500 }}>{user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}</span>
+                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1}</span>
+                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2}</span>
+                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_3 : user?.clientInfo?.company_data?.address_line_3}</span>
+                    <span>{user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state + ', ' + user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}</span>
+                    <span>TRN: {user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}</span>
                 </div>
                 <div className='taxInvoice__form--head-info2'>
                     <div className='taxInvoice__form--head-info2-data'>
@@ -166,6 +168,7 @@ const TaxInvoiceFormP1 = ({
                                 const input = e.target.value
                                 setTaxInvoiceNumber("TI-" + input.substr("TI-".length))
                             }}
+                            {...user?.localInfo?.role && { disabled: true }}
                         />
                     </div>
                     <div className='taxInvoice__form--head-info2-data'>
@@ -200,19 +203,31 @@ const TaxInvoiceFormP1 = ({
                             <div className='taxInvoice__form--customer-data'>
                                 <div className='taxInvoice__form--customer-data-info'>
                                     <span style={{ fontWeight: 500 }}>{customerName}</span>
-                                    <span>{customer?.billing_address_line_1}</span>
-                                    {customer?.billing_address_line_2 && <span>{customer?.billing_address_line_2}</span>}
-                                    {customer?.billing_address_line_3 && <span>{customer?.billing_address_line_3}</span>}
-                                    <span>{customer?.billing_state + ', ' + customer?.billing_country}</span>
-                                    {customer?.trn && <span>TRN: {customer?.trn}</span>}
+                                    {user?.localInfo?.role ?
+                                        <>
+                                            <span>{taxInvoice?.customer?.billing_address_line_1}</span>
+                                            {taxInvoice?.customer?.billing_address_line_2 && <span>{taxInvoice?.customer?.billing_address_line_2}</span>}
+                                            {taxInvoice?.customer?.billing_address_line_3 && <span>{taxInvoice?.customer?.billing_address_line_3}</span>}
+                                            {taxInvoice?.customer?.billing_state && <span>{taxInvoice?.customer?.billing_state + ', ' + taxInvoice?.customer?.billing_country}</span>}
+                                            {taxInvoice?.customer?.trn && <span>TRN: {taxInvoice?.customer?.trn}</span>}
+                                        </>
+                                        :
+                                        <>
+                                            <span>{customer?.billing_address_line_1}</span>
+                                            {customer?.billing_address_line_2 && <span>{customer?.billing_address_line_2}</span>}
+                                            {customer?.billing_address_line_3 && <span>{customer?.billing_address_line_3}</span>}
+                                            {customer?.billing_state && <span>{customer?.billing_state + ', ' + customer?.billing_country}</span>}
+                                            {customer?.trn && <span>TRN: {customer?.trn}</span>}
+                                        </>
+                                    }
                                 </div>
-                                <CloseOutlined className='taxInvoice__for--anticon-close'
+                                {!user?.localInfo?.role && <CloseOutlined className='taxInvoice__for--anticon-close'
                                     onClick={() => {
                                         setCustomerName(''); setCustomerId(null); setShippingId(null);
                                         setShippingAddress1(null);
                                         setPaymentOptionsNull();
                                     }}
-                                />
+                                />}
                             </div>
                             : <>
                                 <CustomerInfiniteScrollSelect loadMoreOptions={addPage} onChange={onChangeCustomer} customerKeyword={customerKeyword} setCustomerKeyword={setCustomerKeyword} />
@@ -237,16 +252,17 @@ const TaxInvoiceFormP1 = ({
                                                 <span>{shippingState + ', ' + shippingCountry}</span>
 
                                             </div>
-                                            <CloseOutlined
-                                                className='taxInvoice__for--anticon-close'
-                                                onClick={() => {
-                                                    setShippingId(null); setShippingAddress1(null);
-                                                    setShippingAddress2(null); setShippingAddress3(null);
-                                                    setShippingState(null); setShippingCountry(null);
-                                                    setShippingLabel(null);
-                                                    dispatch(getShippingAddressList(customerId))
-                                                }}
-                                            />
+                                            {!user?.localInfo?.role &&
+                                                <CloseOutlined
+                                                    className='taxInvoice__for--anticon-close'
+                                                    onClick={() => {
+                                                        setShippingId(null); setShippingAddress1(null);
+                                                        setShippingAddress2(null); setShippingAddress3(null);
+                                                        setShippingState(null); setShippingCountry(null);
+                                                        setShippingLabel(null);
+                                                        dispatch(getShippingAddressList(customerId))
+                                                    }}
+                                                />}
                                         </div>
                                         : <>
                                             <Select

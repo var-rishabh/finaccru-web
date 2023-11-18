@@ -139,6 +139,7 @@ const TaxInvoiceFormP2 = ({
                                     onSearch={handleUnitSearch}
                                     onChange={(value) => handleInputChange(index, 'unit', value)}
                                     placeholder="Unit"
+                                    disabled={user?.localInfo?.role ? true : false}
                                 />
                             </div>
                             <div className='taxInvoice__items--number-item'>
@@ -314,12 +315,14 @@ const TaxInvoiceFormP2 = ({
                                     rows={5}
                                     value={termsAndConditions}
                                     onChange={(e) => setTermsAndConditions(e.target.value)}
+                                    disabled={user?.localInfo?.role ? true : false}
                                 />
                             </div>
                             <div style={{ marginTop: "1rem" }} className='taxInvoice--details__modal--checkbox'>
                                 <input type="checkbox" value={isSetDefaultTncCustomer}
                                     checked={isSetDefaultTncCustomer}
                                     onChange={(e) => setIsSetDefaultTncCustomer(e.target.checked)}
+                                    disabled={user?.localInfo?.role ? true : false}
                                 />
                                 <span
                                     style={{
@@ -331,6 +334,7 @@ const TaxInvoiceFormP2 = ({
                                 <input type="checkbox" value={isSetDefaultTncClient}
                                     checked={isSetDefaultTncClient}
                                     onChange={(e) => setIsSetDefaultTncClient(e.target.checked)}
+                                    disabled={user?.localInfo?.role ? true : false}
                                 />
                                 <span
                                     style={{
@@ -375,13 +379,13 @@ const TaxInvoiceFormP2 = ({
             <div className='taxInvoice__payment'>
                 <div className='taxInvoice__payment-options'>
                     <p>Payment Received?</p>
-                    <Radio.Group onChange={onChangePaymentReceived} value={paymentReceivedValue}>
+                    <Radio.Group onChange={onChangePaymentReceived} value={paymentReceivedValue} disabled={user?.localInfo?.role ? true : false}>
                         <Radio value={1}>Yes</Radio>
                         <Radio value={2}>No</Radio>
                     </Radio.Group>
                 </div>
                 {
-                    paymentReceivedValue === 1 ?
+                    !user?.localInfo?.role && paymentReceivedValue === 1 ?
                         <>
                             <div className='taxInvoice__payment-data'>
                                 <div className='taxInvoice__payment-table'>

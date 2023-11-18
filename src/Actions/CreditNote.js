@@ -34,7 +34,7 @@ export const createCreditNote = (data, navigate) => async (dispatch) => {
     }
 }
 
-export const getCreditNoteDetails = (id) => async (dispatch) => {
+export const getCreditNoteDetails = (id, role = 0) => async (dispatch) => {
     try {
         dispatch({ type: "CreditNoteDetailsRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -43,8 +43,13 @@ export const getCreditNoteDetails = (id) => async (dispatch) => {
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/credit-notes/read/${id}`, config);
-        dispatch({ type: "CreditNoteDetailsSuccess", payload: response.data });
+        if (role === 0) {
+            const response = await axios.get(`${url}/private/client/credit-notes/read/${id}`, config);
+            dispatch({ type: "CreditNoteDetailsSuccess", payload: response.data });
+        } else {
+            const response = await axios.get(`${url}/private/accountant/read-credit-note/${id}`, config);
+            dispatch({ type: "CreditNoteDetailsSuccess", payload: response.data });
+        }
     } catch (error) {
         console.log(error);
         dispatch({ type: "CreditNoteDetailsFailure", payload: error.response?.data || error.message });
@@ -52,7 +57,7 @@ export const getCreditNoteDetails = (id) => async (dispatch) => {
     }
 }
 
-export const getCreditNoteList = (page = 1, keyword = "", customer_id = 0) => async (dispatch) => {
+export const getCreditNoteList = (page = 1, keyword = "", customer_id = 0, role = 0, client_id = 0, showAll = false) => async (dispatch) => {
     try {
         dispatch({ type: "CreditNoteListRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -61,8 +66,13 @@ export const getCreditNoteList = (page = 1, keyword = "", customer_id = 0) => as
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/credit-notes/read-list/${page}?keyword=${keyword}${customer_id !== 0 ? `&customer_id=${customer_id}` : ""}`, config);
-        dispatch({ type: "CreditNoteListSuccess", payload: response.data });
+        if (role === 0) {
+            const response = await axios.get(`${url}/private/client/credit-notes/read-list/${page}?keyword=${keyword}${customer_id !== 0 ? `&customer_id=${customer_id}` : ""}`, config);
+            dispatch({ type: "CreditNoteListSuccess", payload: response.data });
+        } else {
+            const response = await axios.get(`${url}/private/accountant/${role === 1 ? 'jr' : 'sr'}/read-credit-notes/${client_id}/${page}?show_all=${showAll}`, config);
+            dispatch({ type: "CreditNoteListSuccess", payload: response.data });
+        }
     } catch (error) {
         console.log(error);
         dispatch({ type: "CreditNoteListFailure", payload: error.response?.data || error.message });
@@ -90,7 +100,7 @@ export const deleteCreditNote = (id) => async (dispatch) => {
     }
 }
 
-export const updateCreditNote = (id, data, navigate) => async (dispatch) => {
+export const updateCreditNote = (id, data, navigate, role = 0) => async (dispatch) => {
     try {
         dispatch({ type: "CreditNoteUpdateRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -99,9 +109,14 @@ export const updateCreditNote = (id, data, navigate) => async (dispatch) => {
                 token: token,
             },
         };
-        const response = await axios.put(`${url}/private/client/credit-notes/update/${id}`, data, config);
-        dispatch({ type: "CreditNoteUpdateSuccess", payload: response.data });
-        navigate("/credit-note/view/" + id);
+        if (role === 0) {
+            const response = await axios.put(`${url}/private/client/credit-notes/update/${id}`, data, config);
+            dispatch({ type: "CreditNoteUpdateSuccess", payload: response.data });
+        } else {
+            const response = await axios.put(`${url}/private/accountant/update-credit-note/${id}`, data, config);
+            dispatch({ type: "CreditNoteUpdateSuccess", payload: response.data });
+        }
+        if (role === 0) navigate("/credit-note/view/" + id);
         toast.success("CreditNote updated successfully");
     }
     catch (err) {
@@ -207,7 +222,7 @@ export const submitCreditNoteForApproval = (id) => async (dispatch) => {
     }
 }
 
-export const readOpenCreditNotesForCustomer = (id, currency_id=1) => async (dispatch) => {
+export const readOpenCreditNotesForCustomer = (id, currency_id = 1) => async (dispatch) => {
     try {
         dispatch({ type: "ReadOpenCreditNotesForCustomerRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -236,7 +251,7 @@ export const adjustCreditNoteAgainstInvoice = (id, data) => async (dispatch) => 
             },
         };
 
-        const response = await axios.post(`${url}/private/client/credit-notes/adjust-against-invoice/${id}`, data, config);
+        const response = await axios.post(`${url}/private/client/credit-notes/adjust-against-invoices/${id}`, data, config);
         dispatch({ type: "AdjustCreditNoteAgainstInvoiceSuccess", payload: response.data });
         toast.success("Credit Note adjusted against invoice successfully");
         dispatch(getCreditNoteDetails(id));
@@ -247,3 +262,23 @@ export const adjustCreditNoteAgainstInvoice = (id, data) => async (dispatch) => 
     }
 }
 
+export const approveCreditNote = (id, role = 1, client_id) => async (dispatch) => {
+    try {
+        dispatch({ type: "ApproveCreditNoteRequest" });
+        const token = await auth.currentUser.getIdToken(true);
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+
+        const response = await axios.put(`${url}/private/accountant/${role === 1 ? 'jr' : 'sr'}/approve-credit-note/${id}`, {}, config);
+        dispatch({ type: "ApproveCreditNoteSuccess", payload: response.data });
+        toast.success("Credit Note approved successfully");
+        dispatch(getCreditNoteList(1, "", 0, role, client_id));
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ApproveCreditNoteFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}

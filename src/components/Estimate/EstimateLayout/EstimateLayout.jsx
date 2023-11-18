@@ -62,8 +62,9 @@ const EstimateLayout = () => {
     }, [dispatch, estimate?.customer?.customer_id]);
 
     useEffect(() => {
+        if (customerId === null && !user?.clientInfo?.terms_and_conditions) { setTermsAndConditions(''); return; }
         setTermsAndConditions(customer?.terms_and_conditions ? customer?.terms_and_conditions : termsAndConditions);
-    }, [customer, termsAndConditions]);
+    }, [customer, customerId]);
         
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {

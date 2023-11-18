@@ -15,7 +15,8 @@ const CreditNoteFormP2 = ({
 }) => {
     const { units, loading: unitLoading } = useSelector(state => state.unitReducer);
     const { taxRates, taxRateLoading } = useSelector(state => state.onboardingReducer);
-    const { customer } = useSelector(state => state.customerReducer);
+    // const { customer } = useSelector(state => state.customerReducer);
+    const { user } = useSelector(state => state.userReducer);
 
     const [showDescription, setShowDescription] = useState([]);
 
@@ -129,7 +130,7 @@ const CreditNoteFormP2 = ({
 
         const calculateTotalAmount = calculateTotalAmounts();
         setItemTotal(calculateTotalAmount);
-    }, [items]);
+    }, [items, taxRates]);
 
 
 
@@ -168,6 +169,7 @@ const CreditNoteFormP2 = ({
                                     onSearch={handleUnitSearch}
                                     onChange={(value) => handleInputChange(index, 'unit', value)}
                                     placeholder="Unit"
+                                    disabled={user?.localInfo?.role ? true : false}
                                 />
                             </div>
                             <div className='creditNote__items--number-item'>
@@ -343,12 +345,14 @@ const CreditNoteFormP2 = ({
                                     rows={5}
                                     value={termsAndConditions}
                                     onChange={(e) => setTermsAndConditions(e.target.value)}
+                                    disabled={user?.localInfo?.role ? true : false}
                                 />
                             </div>
                             <div style={{ marginTop: "1rem" }} className='creditNote--details__modal--checkbox'>
                                 <input type="checkbox" value={isSetDefaultTncCustomer}
                                     checked={isSetDefaultTncCustomer}
                                     onChange={(e) => setIsSetDefaultTncCustomer(e.target.checked)}
+                                    disabled={user?.localInfo?.role ? true : false}
                                 />
                                 <span
                                     style={{
@@ -360,6 +364,7 @@ const CreditNoteFormP2 = ({
                                 <input type="checkbox" value={isSetDefaultTncClient}
                                     checked={isSetDefaultTncClient}
                                     onChange={(e) => setIsSetDefaultTncClient(e.target.checked)}
+                                    disabled={user?.localInfo?.role ? true : false}
                                 />
                                 <span
                                     style={{

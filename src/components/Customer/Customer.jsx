@@ -1,14 +1,12 @@
-import { Modal, Input, Table } from 'antd';
-import { EyeOutlined } from '@ant-design/icons';
-import editIcon from '../../assets/Icons/editIcon.svg';
-import deleteIcon from '../../assets/Icons/deleteIcon.svg';
-import errorIcon from '../../assets/Icons/error.svg';
-import "./Customer.css"
-
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteCustomer, getCustomerList } from '../../Actions/Customer';
-import { useEffect, useState } from 'react';
+
+import "./Customer.css"
+import { Modal, Input } from 'antd';
+import errorIcon from '../../assets/Icons/error.svg';
+
 import TableCard from '../../Shared/TableCard/TableCard';
 import customerColumns from '../../Columns/Customer';
 

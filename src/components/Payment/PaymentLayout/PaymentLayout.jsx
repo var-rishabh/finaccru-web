@@ -2,21 +2,25 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import { ToWords } from 'to-words';
+import moment from 'moment';
+import { Select, Input } from 'antd';
+const { TextArea } = Input;
+import { LoadingOutlined, CloseOutlined } from '@ant-design/icons';
+
+import "./PaymentLayout.css";
+
 import { getCurrency } from '../../../Actions/Onboarding';
 import { createPayments, getPaymentsDetails, getNewPaymentsNumber, updatePayments } from '../../../Actions/Payment';
 import { getCustomerDetails, getCustomerInfiniteScroll, getShippingAddressList } from '../../../Actions/Customer';
 import { readOpenTaxInvoicesForCustomer } from '../../../Actions/TaxInvoice';
+
 import CustomerInfiniteScrollSelect from '../../Customer/CustomerInfiniteScrollSelect/CustomerInfiniteScrollSelect';
 import AddCustomerModal from '../../Customer/AddCustomerModal/AddCustomerModal';
-import { ToWords } from 'to-words';
-import moment from 'moment';
 
-import "./PaymentLayout.css";
-import { Select, Input } from 'antd';
-const { TextArea } = Input;
-import { LoadingOutlined, CloseOutlined } from '@ant-design/icons';
 import backButton from "../../../assets/Icons/back.svg"
 import logo from "../../../assets/Icons/cropped_logo.svg"
+import { readAccountantClient } from '../../../Actions/Accountant';
 
 const PaymentLayout = () => {
     const navigate = useNavigate();
@@ -38,36 +42,46 @@ const PaymentLayout = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [customerKeyword, setCustomerKeyword] = useState(null);
 
-    const isAdd = window.location.pathname.split('/')[2] === 'create';
+
     const { user } = useSelector(state => state.userReducer);
+    const { client } = useSelector(state => state.accountantReducer);
     const { loading: paymentLoading, payment, number } = useSelector(state => state.paymentReducer);
     const { currencies, currencyLoading } = useSelector(state => state.onboardingReducer);
     const { loading: customerLoading, customersInf, totalCustomers, customer } = useSelector(state => state.customerReducer);
     const { loading: taxLoading, openTaxInvoices } = useSelector(state => state.taxInvoiceReducer);
 
+
+    const type = user?.localInfo?.role ? window.location.pathname.split('/')[4] : window.location.pathname.split('/')[2];
+    const receipt_id = user?.localInfo?.role ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
+    const client_id = user?.localInfo?.role ? window.location.pathname.split('/')[2] : 0;
+    const isAdd = type === 'create';
+
     const [currentCustomerPage, setCurrentCustomerPage] = useState(1);
     const [currency, setCurrency] = useState('AED');
 
     useEffect(() => {
-        if (window.location.pathname.split('/')[2] === 'edit') {
+        if (type === 'edit') {
             dispatch(getCurrency());
-            dispatch(getPaymentsDetails(window.location.pathname.split('/')[3]));
+            dispatch(getPaymentsDetails(receipt_id, user?.localInfo?.role));
+            if (user?.localInfo?.role) {
+                dispatch(readAccountantClient(client_id));
+            }
         }
-        if (window.location.pathname.split('/')[2] === 'create') {
+        if (type === 'create') {
             dispatch(getCurrency());
             dispatch(getNewPaymentsNumber());
         }
-    }, [dispatch]);
+    }, [dispatch, type, receipt_id, client_id]);
 
     useEffect(() => {
-        if (window.location.pathname.split('/')[2] === 'edit') {
+        if (type === 'edit') {
             dispatch(getCustomerDetails(payment?.customer?.customer_id));
-            dispatch(readOpenTaxInvoicesForCustomer(payment?.customer?.customer_id, payment?.currency_id));
+            dispatch(readOpenTaxInvoicesForCustomer(payment?.customer?.customer_id, payment?.currency_id, user?.localInfo?.role));
         }
     }, [dispatch, payment]);
 
     useEffect(() => {
-        if (window.location.pathname.split('/')[2] === 'edit') {
+        if (type === 'edit') {
             setReceiptNumber(payment?.receipt_number);
             setReceiptDate(moment(payment?.receipt_date).format('YYYY-MM-DD'));
             setCustomerId(payment?.customer?.customer_id);
@@ -83,7 +97,7 @@ const PaymentLayout = () => {
             setInvoiceList(payment?.invoice_mappings?.map((invoice) => invoice.invoice_id));
             setTermsAndConditions(payment?.terms_and_conditions);
         }
-        if (window.location.pathname.split('/')[2] === 'create') {
+        if (type === 'create') {
             setReceiptNumber(number);
         }
     }, [currencies, payment, number, openTaxInvoices]);
@@ -141,7 +155,7 @@ const PaymentLayout = () => {
             dispatch(createPayments(data, navigate));
         }
         else {
-            dispatch(updatePayments(window.location.pathname.split('/')[3], data, navigate));
+            dispatch(updatePayments(receipt_id, data, navigate, user?.localInfo?.role));
         }
     }
 
@@ -193,8 +207,10 @@ const PaymentLayout = () => {
         <>
             <div className='create__payment__header'>
                 <div className='create__payment__header--left'>
-                    <img src={backButton} alt='back' className='create__payment__header--back-btn' onClick={() => navigate("/payment")} />
-                    <h1 className='create__payment__header--title'> Payments List </h1>
+                    <img src={backButton} alt='back' className='create__payment__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role ? `/clients/${client_id}` : "/payment"}`)} />
+                    <h1 className='create__payment__header--title'>
+                        {user?.localInfo?.role ? 'Go Back' : 'Payments List'}
+                    </h1>
                 </div>
             </div>
             <div className="payment__container">
@@ -208,12 +224,12 @@ const PaymentLayout = () => {
                             <div className='payment__form--part1-head'>
                                 <div className='payment__form--head-info1'>
                                     <h3>Receipt From</h3>
-                                    <span style={{ fontWeight: 500 }}>{user?.clientInfo?.company_data?.company_name}</span>
-                                    <span>{user?.clientInfo?.company_data?.address_line_1}</span>
-                                    <span>{user?.clientInfo?.company_data?.address_line_2}</span>
-                                    <span>{user?.clientInfo?.company_data?.address_line_3}</span>
-                                    <span>{user?.clientInfo?.company_data?.state + ', ' + user?.clientInfo?.company_data?.country}</span>
-                                    <span>TRN: {user?.clientInfo?.company_data?.trade_license_number}</span>
+                                    <span style={{ fontWeight: 500 }}>{user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}</span>
+                                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1}</span>
+                                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2}</span>
+                                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_3 : user?.clientInfo?.company_data?.address_line_3}</span>
+                                    <span>{user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state + ', ' + user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}</span>
+                                    <span>TRN: {user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}</span>
                                 </div>
                                 <div className='payment__form--head-info2'>
                                     <div className='payment__form--head-info2-data'>
@@ -226,6 +242,7 @@ const PaymentLayout = () => {
                                                 const input = e.target.value
                                                 setReceiptNumber("RC-" + input.substr("RC-".length))
                                             }}
+                                            {...user?.localInfo?.role && { disabled: true }}
                                         />
                                     </div>
                                     <div className='payment__form--head-info2-data'>
@@ -247,17 +264,29 @@ const PaymentLayout = () => {
                                             <div className='payment__form--customer-data'>
                                                 <div className='payment__form--customer-data-info'>
                                                     <span style={{ fontWeight: 500 }}>{customerName}</span>
-                                                    <span>{customer?.billing_address_line_1}</span>
-                                                    {customer?.billing_address_line_2 && <span>{customer?.billing_address_line_2}</span>}
-                                                    {customer?.billing_address_line_3 && <span>{customer?.billing_address_line_3}</span>}
-                                                    <span>{customer?.billing_state + ', ' + customer?.billing_country}</span>
-                                                    {customer?.trn && <span>TRN: {customer?.trn}</span>}
+                                                    {user?.localInfo?.role ?
+                                                        <>
+                                                            <span>{payment?.customer?.billing_address_line_1}</span>
+                                                            {payment?.customer?.billing_address_line_2 && <span>{payment?.customer?.billing_address_line_2}</span>}
+                                                            {payment?.customer?.billing_address_line_3 && <span>{payment?.customer?.billing_address_line_3}</span>}
+                                                            {payment?.customer?.billing_state && <span>{payment?.customer?.billing_state + ', ' + payment?.customer?.billing_country}</span>}
+                                                            {payment?.customer?.trn && <span>TRN: {payment?.customer?.trn}</span>}
+                                                        </>
+                                                        :
+                                                        <>
+                                                            <span>{customer?.billing_address_line_1}</span>
+                                                            {customer?.billing_address_line_2 && <span>{customer?.billing_address_line_2}</span>}
+                                                            {customer?.billing_address_line_3 && <span>{customer?.billing_address_line_3}</span>}
+                                                            {customer?.billing_state && <span>{customer?.billing_state + ', ' + customer?.billing_country}</span>}
+                                                            {customer?.trn && <span>TRN: {customer?.trn}</span>}
+                                                        </>
+                                                    }
                                                 </div>
-                                                <CloseOutlined className='payment__for--anticon-close'
+                                                {!user?.localInfo?.role && <CloseOutlined className='payment__for--anticon-close'
                                                     onClick={() => {
                                                         setCustomerName(''); setCustomerId(null);
                                                     }}
-                                                />
+                                                />}
                                             </div>
                                             :
                                             <CustomerInfiniteScrollSelect loadMoreOptions={addPage} onChange={onChangeCustomer} customerKeyword={customerKeyword} setCustomerKeyword={setCustomerKeyword} />
@@ -272,19 +301,6 @@ const PaymentLayout = () => {
                                                 <div className='payment__table--customer-data'>
                                                     <div className='payment__table--customer-data-head'>
                                                         <div>
-                                                            {/* <input
-                                                                className='margin-right-07'
-                                                                type="checkbox"
-                                                                checked={false}
-                                                                onChange={(e) => {
-                                                                    if (e.target.checked) {
-                                                                        setInvoiceList((prev) => [...prev, invoice.invoice_id]);
-                                                                    }
-                                                                    else {
-                                                                        setInvoiceList((prev) => prev.filter((invoiceId) => invoiceId !== invoice.invoice_id));
-                                                                    }
-                                                                }}
-                                                            /> */}
                                                             <span style={{ fontWeight: 500 }}>Invoice Number</span>
                                                         </div>
                                                         <span style={{ fontWeight: 500 }}>Balance Due</span>
@@ -394,8 +410,9 @@ const PaymentLayout = () => {
                                     options={[
                                         { value: 0, label: 'Cash' },
                                         { value: user?.clientInfo?.primary_bank?.bank_id, label: user?.clientInfo?.primary_bank?.bank_name },
-                                        ...user?.clientInfo?.other_bank_accounts?.map((bank) => ({ value: bank.bank_id, label: bank.bank_name }))
+                                        ...(user?.clientInfo?.other_bank_accounts?.map((bank) => ({ value: bank.bank_id, label: bank.bank_name })) ?? [])
                                     ]}
+                                    disabled={user?.localInfo?.role ? true : false}
                                 />
                             </div>
                             <div className='payment__form--part4-head bottom-margin-3'>

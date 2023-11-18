@@ -12,7 +12,6 @@ const { Option } = Select;
 import backButton from "../../../assets/Icons/back.svg";
 import MinusIcon from "../../../assets/Icons/minus.svg";
 import "./CustomerLayout.css";
-import { updateDoc } from "firebase/firestore";
 
 const CustomerLayout = () => {
     const dispatch = useDispatch();

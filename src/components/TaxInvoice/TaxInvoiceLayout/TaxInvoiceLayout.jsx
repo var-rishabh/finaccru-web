@@ -18,6 +18,7 @@ import backButton from "../../../assets/Icons/back.svg"
 import logo from "../../../assets/Icons/cropped_logo.svg"
 import { readOpenCreditNotesForCustomer } from '../../../Actions/CreditNote';
 import { readOpenPaymentsForCustomer } from '../../../Actions/Payment';
+import { readAccountantClient } from '../../../Actions/Accountant';
 
 const TaxInvoiceLayout = () => {
     const navigate = useNavigate();
@@ -54,8 +55,11 @@ const TaxInvoiceLayout = () => {
         setCreditNoteList([]);
     }
 
-    const isAdd = window.location.pathname.split('/')[2] === 'create';
     const { user } = useSelector(state => state.userReducer);
+    const type = user?.localInfo?.role ? window.location.pathname.split('/')[4] : window.location.pathname.split('/')[2];
+    const ti_id = user?.localInfo?.role ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
+    const client_id = user?.localInfo?.role ? window.location.pathname.split('/')[2] : 0;
+    const isAdd = type === 'create';
     const { loading: taxInvoiceLoading, taxInvoice, number } = useSelector(state => state.taxInvoiceReducer);
     const { estimate } = useSelector(state => state.estimateReducer);
     const { proforma } = useSelector(state => state.proformaReducer);
@@ -70,12 +74,14 @@ const TaxInvoiceLayout = () => {
     const location = useLocation();
 
     useEffect(() => {
-        if (window.location.pathname.split('/')[2] === 'edit') {
+        if (type === 'edit') {
             dispatch(getCurrency());
-            dispatch(getTaxInvoiceDetails(window.location.pathname.split('/')[3]));
-            // taxInvoice?.customer?.customer_id
+            dispatch(getTaxInvoiceDetails(ti_id, user?.localInfo?.role));
+            if (user?.localInfo?.role) {
+                dispatch(readAccountantClient(client_id));
+            }
         }
-        if (window.location.pathname.split('/')[2] === 'create') {
+        if (type === 'create') {
             dispatch(getCurrency());
             dispatch(getNewTaxInvoiceNumber());
             if (convert) {
@@ -87,30 +93,36 @@ const TaxInvoiceLayout = () => {
                 }
             }
         }
-    }, [dispatch, file, convert, reference_id, referenceName]);
+    }, [dispatch, file, convert, reference_id, referenceName, ti_id, type, user?.localInfo?.role, client_id]);
 
     useEffect(() => {
-        if (window.location.pathname.split('/')[2] === 'edit') {
+        if (type === 'edit') {
+            if (user?.localInfo?.role) {
+                return;
+            }
             dispatch(getCustomerDetails(taxInvoice?.customer?.customer_id));
-
             dispatch(readOpenCreditNotesForCustomer(taxInvoice?.customer?.customer_id, taxInvoice?.currency_id));
             dispatch(readOpenPaymentsForCustomer(taxInvoice?.customer?.customer_id, taxInvoice?.currency_id));
         }
     }, [dispatch, taxInvoice?.customer?.customer_id]);
 
     useEffect(() => {
+        if (customerId === null && !user?.clientInfo?.terms_and_conditions) { setTermsAndConditions(''); return; }
         setTermsAndConditions(customer?.terms_and_conditions ? customer?.terms_and_conditions : termsAndConditions);
-    }, [customer, termsAndConditions]);
+    }, [customer, customerId]);
 
     useEffect(() => {
         if (customerId !== null && currencyId !== null) {
+            if (user?.localInfo?.role) {
+                return;
+            }
             dispatch(readOpenCreditNotesForCustomer(customerId, currencyId));
             dispatch(readOpenPaymentsForCustomer(customerId, currencyId));
         }
     }, [dispatch, customerId, currencyId]);
 
     useEffect(() => {
-        if (window.location.pathname.split('/')[2] === 'edit') {
+        if (type === 'edit') {
             setTaxInvoiceNumber(taxInvoice?.ti_number);
             setTaxInvoiceDate(moment(taxInvoice?.ti_date).format('YYYY-MM-DD'));
             setValidTill(moment(taxInvoice?.due_date).format('YYYY-MM-DD'));
@@ -132,10 +144,10 @@ const TaxInvoiceLayout = () => {
             setIsSetDefaultTncClient(taxInvoice?.is_set_default_tnc_client);
             setPaymentReceivedValue(taxInvoice?.payment === null ? 2 : 1);
             setBankId(taxInvoice?.payment !== null ? taxInvoice?.payment?.bank_id : null);
-            setPaymentList(taxInvoice?.payment !== null ? taxInvoice?.linked_recipts?.map((receipt) => (receipt.receipt_id)) : []);
+            setPaymentList(taxInvoice?.payment !== null ? taxInvoice?.linked_receipts?.map((receipt) => (receipt.receipt_id)) : []);
             setCreditNoteList(taxInvoice?.payment !== null ? taxInvoice?.linked_credit_notes?.map((creditNote) => (creditNote.cn_id)) : []);
         }
-        if (window.location.pathname.split('/')[2] === 'create') {
+        if (type === 'create') {
             setTaxInvoiceNumber(number);
             setTermsAndConditions(user?.clientInfo?.terms_and_conditions);
             if (file) {
@@ -248,24 +260,25 @@ const TaxInvoiceLayout = () => {
             attachment_url: attachmentUrl === "" ? null : attachmentUrl,
             payment: bankId === null ? null : {
                 bank_id: bankId,
-                payments_list: paymentList.length === 0 ? [] : paymentList,
-                credit_notes_list: creditNoteList.length === 0 ? [] : creditNoteList,
+                payments_list: paymentList?.length === 0 ? [] : paymentList,
+                credit_notes_list: creditNoteList?.length === 0 ? [] : creditNoteList,
             }
         }
-        console.log("🚀 ~ data:", data);
         if (isAdd) {
             dispatch(createTaxInvoice(data, navigate));
         }
         else {
-            dispatch(updateTaxInvoice(window.location.pathname.split('/')[3], data, navigate));
+            dispatch(updateTaxInvoice(ti_id, data, navigate, user?.localInfo?.role));
         }
     }
     return (
         <>
             <div className='create__taxInvoice__header'>
                 <div className='create__taxInvoice__header--left'>
-                    <img src={backButton} alt='back' className='create__taxInvoice__header--back-btn' onClick={() => navigate("/tax-invoice")} />
-                    <h1 className='create__taxInvoice__header--title'> Tax Invoices List </h1>
+                    <img src={backButton} alt='back' className='create__taxInvoice__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role ? `/clients/${client_id}` : "/tax-invoice"}`)} />
+                    <h1 className='create__taxInvoice__header--title'>
+                        {user?.localInfo?.role ? 'Go Back' : 'Tax Invoices List'}
+                    </h1>
                 </div>
                 <div className='create__taxInvoice__header--right'>
                     <a className='create__taxInvoice__header--btn1'>Download</a>
