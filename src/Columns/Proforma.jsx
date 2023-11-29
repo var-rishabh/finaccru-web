@@ -1,9 +1,9 @@
 import { Tooltip } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
+
 import convertIcon from '../assets/Icons/convertIcon.svg';
 import editIcon from '../assets/Icons/editIcon.svg';
 import deleteIcon from '../assets/Icons/deleteIcon.svg';
-
 
 export default function performaColumns(showModal, navigate) {
     const columns = [
@@ -42,6 +42,7 @@ export default function performaColumns(showModal, navigate) {
             key: 'status',
         },
     ];
+
     if (!navigate || !showModal) {
         return columns;
     } else {
@@ -51,14 +52,14 @@ export default function performaColumns(showModal, navigate) {
             width: 150,
             align: 'right',
             render: (text, record) => (
-                <div className="action__buttons proforma-invoices">
+                <div className="action__buttons">
                     <div className="action__button" onClick={() => navigate(`/proforma/view/${record.pi_id}`)}>
                         <Tooltip title="View" color='gray' placement="bottom">
                             <EyeOutlined />
                         </Tooltip>
                     </div>
                     {
-                        record?.status === "Converted to TI" ? "" :
+                        record?.status === "Converted" ? "" :
                             record?.status === "Void" ?
                                 <div className="action__button" onClick={() => showModal(record)}>
                                     <Tooltip title="Delete" color='red' placement="bottom">
@@ -68,7 +69,7 @@ export default function performaColumns(showModal, navigate) {
                                 :
                                 <>
                                     <div className="action__button">
-                                        <Tooltip title="Convert to TI" color='green' placement="bottom" onClick={() => navigate(`/tax-invoice/create?convert=true&reference=proforma&reference_id=${record.pi_id}`)}>
+                                        <Tooltip title="Convert" color='green' placement="bottom" onClick={() => navigate(`/tax-invoice/create?convert=true&reference=proforma&reference_id=${record.pi_id}`)}>
                                             <img src={convertIcon} alt="convertIcon" />
                                         </Tooltip>
                                     </div>

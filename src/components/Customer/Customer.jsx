@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteCustomer, getCustomerList } from '../../Actions/Customer';
 
-import "./Customer.css"
+import "../../Styles/MainPage.css";
 import { Modal, Input } from 'antd';
 import errorIcon from '../../assets/Icons/error.svg';
 
+import { deleteCustomer, getCustomerList } from '../../Actions/Customer';
 import TableCard from '../../Shared/TableCard/TableCard';
 import customerColumns from '../../Columns/Customer';
 
@@ -42,7 +42,7 @@ const Customer = () => {
         if (searchText.length === 0) {
             dispatch(getCustomerList());
         }
-    }, [searchText]);
+    }, [dispatch, searchText]);
 
     const columns = customerColumns(showModal, navigate);
     return (
@@ -52,9 +52,9 @@ const Customer = () => {
                 onCancel={handleCancel}
                 footer={null}
                 width={400}
-                className='customer__list--delete--modal'
+                className='mainPage__list--delete--modal'
             >
-                <div className='customer__delete--modal'>
+                <div className='delete--modal'>
                     <img src={errorIcon} alt="error" />
                     <h1>Are you sure you?</h1>
                     <p>This action cannot be undone.</p>
@@ -64,14 +64,14 @@ const Customer = () => {
                     </div>
                 </div>
             </Modal>
-            <div className='customer__header'>
-                <div className='customer__header--left'>
-                    <h1 className='customer__header--title'> Customers </h1>
+            <div className='mainPage__header'>
+                <div className='mainPage__header--left'>
+                    <h1 className='mainPage__header--title'> Customers </h1>
                     <Input placeholder='Search' onChange={(e) => setSearchText(e.target.value)} value={searchText} />
                 </div>
-                <div className='customer__header--right'>
-                    {/* <a className='customer__header--btn1' onClick={() => dispatch(downloadCustomerList())}>Download</a> */}
-                    <a onClick={() => navigate("/customer/create")} className='customer__header--btn2'>Create Customer</a>
+                <div className='mainPage__header--right'>
+                    {/* <a className='mainPage__header--btn1' onClick={() => dispatch(downloadCustomerList())}>Download</a> */}
+                    <a onClick={() => navigate("/customer/create")} className='mainPage__header--btn2'>Create Customer</a>
                 </div>
             </div>
             <div className="table">

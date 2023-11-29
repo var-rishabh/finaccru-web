@@ -20,7 +20,7 @@ import creditNoteColumns from '../../Columns/CreditNote';
 const Client = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { id } = useParams();
+    const { id, jr_id } = useParams();
     const { user } = useSelector(state => state.userReducer);
 
     const [showTaxInvoiceModal, setShowTaxInvoiceModal] = useState(false);
@@ -35,7 +35,7 @@ const Client = () => {
     const { taxInvoices, loading: taxInvoiceLoading } = useSelector(state => state.taxInvoiceReducer);
     const { payments, loading: paymentsLoading } = useSelector(state => state.paymentReducer);
     const { creditNotes, loading: creditNotesLoading } = useSelector(state => state.creditNoteReducer, id);
-    
+
     useEffect(() => {
         dispatch(readAccountantClient(id));
     }, [dispatch, id])
@@ -80,14 +80,14 @@ const Client = () => {
             dispatch(approveTaxInvoice(record.ti_id, user?.localInfo?.role, id));
             setShowTaxInvoiceModal(false);
         } else if (activeTab === "3") {
-            dispatch(approveCreditNote(record.cn_id, user?.localInfo?.role, id, ));
+            dispatch(approveCreditNote(record.cn_id, user?.localInfo?.role, id,));
             setShowCreditNoteModal(false);
         }
     }
 
-    const taxInvoiceColumns2 = taxInvoiceColumns(handleShowModal, navigate, user?.localInfo?.role, id);
-    const creditNoteColumns2 = creditNoteColumns(handleShowModal, navigate, showAdjustModal, user?.localInfo?.role, id);
-    const paymentColumns2 = paymentColumns(handleShowModal, navigate, user?.localInfo?.role, id);
+    const taxInvoiceColumns2 = taxInvoiceColumns(handleShowModal, navigate, user?.localInfo?.role, id, jr_id);
+    const creditNoteColumns2 = creditNoteColumns(handleShowModal, navigate, showAdjustModal, user?.localInfo?.role, id, jr_id);
+    const paymentColumns2 = paymentColumns(handleShowModal, navigate, user?.localInfo?.role, id, jr_id);
 
     const items = [
         {
@@ -129,7 +129,7 @@ const Client = () => {
                     </div>
                 </div>
             </Modal>
-            <Header headerFor={client} />
+            <Header headerFor={client} backNeeded={true} backFor={user?.localInfo?.role} backId={id} backJrId={jr_id} />
             <div className='clients__tabs'>
                 <div className='client__switch'>
                     <Switch checkedChildren="All" unCheckedChildren="Pending" onChange={(e) => setShowAll(e)} />

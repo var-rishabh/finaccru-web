@@ -29,6 +29,7 @@ export const styles = {
         fontWeight: 'normal', 
         lineHeight: '1.5',
         gap: "1.5rem",
+        width: "35%",
     },
     mainRightData: {
         display: "flex",
@@ -77,6 +78,7 @@ export const pdfStyle = {
         fontWeight: 'normal', 
         lineHeight: '1.5',
         gap: "20px",
+        width: "35%",
     },
     mainRightData: {
         display: "flex",

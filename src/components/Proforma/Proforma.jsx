@@ -1,16 +1,14 @@
-import { Modal, Input, Table, Tooltip } from 'antd';
-import { EyeOutlined } from '@ant-design/icons';
-import convertIcon from '../../assets/Icons/convertIcon.svg';
-import editIcon from '../../assets/Icons/editIcon.svg';
-import deleteIcon from '../../assets/Icons/deleteIcon.svg';
-import errorIcon from '../../assets/Icons/error.svg';
-import "./Proforma.css"
-
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+
+import "../../Styles/MainPage.css"
+import { Modal, Input } from 'antd';
+import errorIcon from '../../assets/Icons/error.svg';
+
 import { deleteProforma, downloadProformaList, getProformaList } from '../../Actions/Proforma';
-import { useEffect, useState } from 'react';
 import performaColumns from '../../Columns/Proforma';
+import TableCard from '../../Shared/TableCard/TableCard';
 
 const Proforma = () => {
     const dispatch = useDispatch();
@@ -34,7 +32,7 @@ const Proforma = () => {
         if (searchText.length === 0) {
             dispatch(getProformaList());
         }
-    }, [searchText]);
+    }, [dispatch, searchText]);
 
     const showModal = (record) => {
         setIsModalOpen(true);
@@ -58,9 +56,9 @@ const Proforma = () => {
                 onCancel={handleCancel}
                 footer={null}
                 width={400}
-                className='proforma__list--delete--modal'
+                className='mainPage__list--delete--modal'
             >
-                <div className='proforma__delete--modal'>
+                <div className='delete--modal'>
                     <img src={errorIcon} alt="error" />
                     <h1>Are you sure you?</h1>
                     <p>This action cannot be undone.</p>
@@ -70,35 +68,18 @@ const Proforma = () => {
                     </div>
                 </div>
             </Modal>
-            <div className='proforma__header'>
-                <div className='proforma__header--left'>
-                    <h1 className='proforma__header--title'> Proformas </h1>
+            <div className='mainPage__header'>
+                <div className='mainPage__header--left'>
+                    <h1 className='mainPage__header--title'> Proformas </h1>
                     <Input placeholder='Search' onChange={(e) => setSearchText(e.target.value)} value={searchText} />
                 </div>
-                <div className='proforma__header--right'>
-                    <a className='proforma__header--btn1' onClick={() => dispatch(downloadProformaList())}>Download</a>
-                    <a onClick={() => navigate("/proforma/create")} className='proforma__header--btn2'>Create Proforma</a>
+                <div className='mainPage__header--right'>
+                    <a className='mainPage__header--btn1' onClick={() => dispatch(downloadProformaList())}>Download</a>
+                    <a onClick={() => navigate("/proforma/create")} className='mainPage__header--btn2'>Create Proforma</a>
                 </div>
             </div>
             <div className="table">
-                <Table
-                    columns={columns}
-                    pagination={{
-                        position: ['bottomCenter'],
-                        pageSize: 20,
-                        total: proformas?.total_items,
-                        defaultCurrent: 1,
-                        showSizeChanger: false,
-                    }}
-                    sticky={true}
-                    sortDirections={['descend', 'ascend']}
-                    scroll={{ y: 550 }}
-                    loading={loading}
-                    dataSource={proformas?.items}
-                    onChange={(pagination) => {
-                        searchText.length > 2 ? dispatch(getProformaList(pagination.current, searchText)) : dispatch(getProformaList(pagination.current));
-                    }}
-                />
+                <TableCard columns={columns} dispatch={dispatch} loading={loading} items={proformas} getList={getProformaList} searchText={searchText} />
             </div>
         </>
     )

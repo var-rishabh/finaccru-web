@@ -43,7 +43,7 @@ const TaxInvoiceLayout = () => {
     const [shippingState, setShippingState] = useState('');
     const [currency, setCurrency] = useState('AED');
     const [attachmentUrl, setAttachmentUrl] = useState(null);
-    const [paymentReceivedValue, setPaymentReceivedValue] = useState(2);
+    const [paymentReceivedValue, setPaymentReceivedValue] = useState(null);
     const [bankId, setBankId] = useState(null);
     const [paymentList, setPaymentList] = useState([]);
     const [creditNoteList, setCreditNoteList] = useState([]);
@@ -56,10 +56,13 @@ const TaxInvoiceLayout = () => {
     }
 
     const { user } = useSelector(state => state.userReducer);
-    const type = user?.localInfo?.role ? window.location.pathname.split('/')[4] : window.location.pathname.split('/')[2];
-    const ti_id = user?.localInfo?.role ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
-    const client_id = user?.localInfo?.role ? window.location.pathname.split('/')[2] : 0;
+
+    const type = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[6] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[4] : window.location.pathname.split('/')[2];
+    const ti_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
+    const client_id =  user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
+    const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;    
     const isAdd = type === 'create';
+
     const { loading: taxInvoiceLoading, taxInvoice, number } = useSelector(state => state.taxInvoiceReducer);
     const { estimate } = useSelector(state => state.estimateReducer);
     const { proforma } = useSelector(state => state.proformaReducer);
@@ -97,12 +100,9 @@ const TaxInvoiceLayout = () => {
 
     useEffect(() => {
         if (type === 'edit') {
-            if (user?.localInfo?.role) {
-                return;
-            }
             dispatch(getCustomerDetails(taxInvoice?.customer?.customer_id));
-            dispatch(readOpenCreditNotesForCustomer(taxInvoice?.customer?.customer_id, taxInvoice?.currency_id));
-            dispatch(readOpenPaymentsForCustomer(taxInvoice?.customer?.customer_id, taxInvoice?.currency_id));
+            dispatch(readOpenCreditNotesForCustomer(taxInvoice?.customer?.customer_id, taxInvoice?.currency_id, user?.localInfo?.role, client_id));
+            dispatch(readOpenPaymentsForCustomer(taxInvoice?.customer?.customer_id, taxInvoice?.currency_id, user?.localInfo?.role, client_id));
         }
     }, [dispatch, taxInvoice?.customer?.customer_id]);
 
@@ -275,7 +275,7 @@ const TaxInvoiceLayout = () => {
         <>
             <div className='create__taxInvoice__header'>
                 <div className='create__taxInvoice__header--left'>
-                    <img src={backButton} alt='back' className='create__taxInvoice__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role ? `/clients/${client_id}` : "/tax-invoice"}`)} />
+                    <img src={backButton} alt='back' className='create__taxInvoice__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : "/tax-invoice"}`)} />
                     <h1 className='create__taxInvoice__header--title'>
                         {user?.localInfo?.role ? 'Go Back' : 'Tax Invoices List'}
                     </h1>

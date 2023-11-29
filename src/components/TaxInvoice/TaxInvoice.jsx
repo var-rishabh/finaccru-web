@@ -1,19 +1,22 @@
-import { ArrowRightOutlined, InboxOutlined } from '@ant-design/icons';
-import { Modal, Input, Divider } from 'antd';
-import errorIcon from '../../assets/Icons/error.svg';
-import "./TaxInvoice.css"
-
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+
+import "./TaxInvoice.css";
+import "../../Styles/MainPage.css";
+import { Modal, Input, Divider } from 'antd';
+import { ArrowRightOutlined, InboxOutlined } from '@ant-design/icons';
+import errorIcon from '../../assets/Icons/error.svg';
+
 import { deleteTaxInvoice, downloadTaxInvoiceList, extractDataFromTaxInvoice, getTaxInvoiceList } from '../../Actions/TaxInvoice';
-import { useEffect, useState } from 'react';
 import taxInvoiceColumns from '../../Columns/TaxInvoice';
 import TableCard from '../../Shared/TableCard/TableCard';
 
 const TaxInvoice = () => {
     const dispatch = useDispatch();
-    const {loading, taxInvoices } = useSelector(state => state.taxInvoiceReducer);
     const navigate = useNavigate();
+
+    const {loading, taxInvoices } = useSelector(state => state.taxInvoiceReducer);
     useEffect(() => {
         dispatch(getTaxInvoiceList());
     }, [dispatch]);
@@ -76,9 +79,9 @@ const TaxInvoice = () => {
                 onCancel={handleCancel}
                 footer={null}
                 width={400}
-                className='taxInvoice__list--delete--modal'
+                className='mainPage__list--delete--modal'
             >
-                <div className='taxInvoice__delete--modal'>
+                <div className='delete--modal'>
                     <img src={errorIcon} alt="error" />
                     <h1>Are you sure you?</h1>
                     <p>This action cannot be undone.</p>
@@ -88,14 +91,14 @@ const TaxInvoice = () => {
                     </div>
                 </div>
             </Modal>
-            <div className='taxInvoice__header'>
-                <div className='taxInvoice__header--left'>
-                    <h1 className='taxInvoice__header--title'> Tax Invoices </h1>
+            <div className='mainPage__header'>
+                <div className='mainPage__header--left'>
+                    <h1 className='mainPage__header--title'> Tax Invoices </h1>
                     <Input placeholder='Search' onChange={(e) => setSearchText(e.target.value)} value={searchText} />
                 </div>
-                <div className='taxInvoice__header--right'>
-                    <a className='taxInvoice__header--btn1' onClick={() => dispatch(downloadTaxInvoiceList())}>Download</a>
-                    <a onClick={showModalCreateTax} className='taxInvoice__header--btn2'>Create Tax Invoice</a>
+                <div className='mainPage__header--right'>
+                    <a className='mainPage__header--btn1' onClick={() => dispatch(downloadTaxInvoiceList())}>Download</a>
+                    <a onClick={showModalCreateTax} className='mainPage__header--btn2'>Create / Upload Tax Invoice</a>
                 </div>
             </div>
             <Modal

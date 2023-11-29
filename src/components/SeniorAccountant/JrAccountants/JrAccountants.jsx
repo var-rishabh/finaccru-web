@@ -21,8 +21,8 @@ const JrAccountants = () => {
 
   return (
     <div className="accountant__body">
-      <Header />
-      <Table tableFor="clients" data={clients} loading={loading} />
+      <Header backNeeded={true} backFor="jr" />
+      <Table tableFor="clients" data={clients} loading={loading} id={id} />
     </div>
   )
 }

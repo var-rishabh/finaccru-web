@@ -1,10 +1,25 @@
+.back__btn {
+    padding: 2rem 4rem 1rem;
+}
+
+.back__btn .read__header--back-btn {
+    width: 1rem !important;
+}
+
 .header__accountant {
     top: 0;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.header__accountant--padding1 {
     padding: 2rem 4rem;
+}
+
+.header__accountant--padding2 {
+    padding: 0 4rem 0.5rem;
 }
 
 .header__accountant--left {

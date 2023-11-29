@@ -33,6 +33,7 @@ export default function JuniorAccountantColumns(navigate) {
             align: 'right'
         },
     ];
+    
     if (!navigate) {
         return columns;
     } else {

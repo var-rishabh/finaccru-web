@@ -34,15 +34,15 @@ import { readAccountantClient } from '../../../Actions/Accountant';
 const TaxInvoiceReadLayout = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    
+
     const { user } = useSelector(state => state.userReducer);
     const { client } = useSelector(state => state.accountantReducer);
     const { loading, taxInvoice } = useSelector(state => state.taxInvoiceReducer);
     const { taxRates } = useSelector(state => state.onboardingReducer);
-    
-    const ti_id = user?.localInfo?.role ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
-    const client_id = user?.localInfo?.role ? window.location.pathname.split('/')[2] : 0;
 
+    const ti_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
+    const client_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
+    const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;
     const [itemTotal, setItemTotal] = useState([]);
     const [itemTax, setItemTax] = useState([]);
     const [groupedItems, setGroupedItems] = useState([]);
@@ -107,8 +107,10 @@ const TaxInvoiceReadLayout = () => {
         <>
             <div className='read__header'>
                 <div className='read__header--left'>
-                    <img src={backButton} alt='back' className='read__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role ? `/clients/${client_id}` : "/tax-invoice"}`)} />
-                    <h1 className='read__header--title'> Tax Invoices List </h1>
+                    <img src={backButton} alt='back' className='read__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : "/tax-invoice"}`)} />
+                    <h1 className='read__header--title'>
+                        {user?.localInfo?.role ? 'Go Back' : 'Tax Invoices List'}
+                    </h1>
                 </div>
                 <div className='read__header--right'>
                     {
@@ -121,7 +123,7 @@ const TaxInvoiceReadLayout = () => {
                                         }}
                                     >Mark as Void</a>
                                     <a className='read__header--btn1'
-                                        onClick={() => navigate(`${user?.localInfo?.role ? `/clients/${client_id}` : ""}/tax-invoice/edit/${taxInvoice?.ti_id}`)}
+                                        onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/tax-invoice/edit/${taxInvoice?.ti_id}`)}
                                     >Edit</a>
                                 </> :
                                 <>
@@ -136,7 +138,7 @@ const TaxInvoiceReadLayout = () => {
                                         }}
                                     >Mark as Void</a>
                                     <a className='read__header--btn1'
-                                        onClick={() => navigate(`${user?.localInfo?.role ? `/clients/${client_id}` : ""}/tax-invoice/edit/${taxInvoice?.ti_id}`)}
+                                        onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/tax-invoice/edit/${taxInvoice?.ti_id}`)}
                                     >Edit</a>
                                 </>
                     }

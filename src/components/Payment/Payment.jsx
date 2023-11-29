@@ -1,10 +1,12 @@
-import { Modal, Input } from 'antd';
-import errorIcon from '../../assets/Icons/error.svg';
-import "./Payment.css"
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+
+import "../../Styles/MainPage.css";
+import { Modal, Input } from 'antd';
+import errorIcon from '../../assets/Icons/error.svg';
+
 import { deletePayments, downloadPaymentsList, getPaymentsList } from '../../Actions/Payment';
-import { useEffect, useState } from 'react';
 import paymentColumns from '../../Columns/Payment';
 import TableCard from '../../Shared/TableCard/TableCard';
 
@@ -51,9 +53,9 @@ const Payment = () => {
                 onCancel={handleCancel}
                 footer={null}
                 width={400}
-                className='payment__list--delete--modal'
+                className='mainPage__list--delete--modal'
             >
-                <div className='payment__delete--modal'>
+                <div className='delete--modal'>
                     <img src={errorIcon} alt="error" />
                     <h1>Are you sure you?</h1>
                     <p>This action cannot be undone.</p>
@@ -63,14 +65,14 @@ const Payment = () => {
                     </div>
                 </div>
             </Modal>
-            <div className='payment__header'>
-                <div className='payment__header--left'>
-                    <h1 className='payment__header--title'> Payments </h1>
+            <div className='mainPage__header'>
+                <div className='mainPage__header--left'>
+                    <h1 className='mainPage__header--title'> Payments </h1>
                     <Input placeholder='Search' onChange={(e) => setSearchText(e.target.value)} value={searchText} />
                 </div>
-                <div className='payment__header--right'>
-                    <a className='payment__header--btn1' onClick={() => dispatch(downloadPaymentsList())}>Download</a>
-                    <a onClick={() => navigate("/payment/create")} className='payment__header--btn2'>Create Payment</a>
+                <div className='mainPage__header--right'>
+                    <a className='mainPage__header--btn1' onClick={() => dispatch(downloadPaymentsList())}>Download</a>
+                    <a onClick={() => navigate("/payment/create")} className='mainPage__header--btn2'>Create Payment</a>
                 </div>
             </div>
             <div className="table">

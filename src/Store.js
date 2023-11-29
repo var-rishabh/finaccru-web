@@ -9,6 +9,7 @@ import { taxInvoiceReducer } from './Reducers/TaxInvoice';
 import { creditNoteReducer } from './Reducers/CreditNote';
 import { paymentReducer } from './Reducers/Payment';
 import { accountantReducer } from './Reducers/Accountant';
+import { vendorReducer } from './Reducers/Vendor';
 
 const store = configureStore({
     reducer: {
@@ -23,6 +24,7 @@ const store = configureStore({
         creditNoteReducer: creditNoteReducer,
         paymentReducer: paymentReducer,
         accountantReducer: accountantReducer,
+        vendorReducer: vendorReducer,
     },
 });
 

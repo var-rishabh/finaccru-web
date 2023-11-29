@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import './CreditNote.css'
+import './CreditNote.css';
+import "../../Styles/MainPage.css";
 import { Modal, Input } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import errorIcon from '../../assets/Icons/error.svg';
@@ -16,13 +17,14 @@ import TableCard from '../../Shared/TableCard/TableCard';
 
 const CreditNote = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const { error, loading, creditNotes } = useSelector(state => state.creditNoteReducer);
     const { loading: taxLoading, openTaxInvoices } = useSelector(state => state.taxInvoiceReducer);
     const { currencies } = useSelector(state => state.onboardingReducer);
 
     const [invoiceList, setInvoiceList] = useState([]);
 
-    const navigate = useNavigate();
     useEffect(() => {
         dispatch(getCurrency());
         dispatch(getCreditNoteList());
@@ -72,7 +74,7 @@ const CreditNote = () => {
         if (searchText.length === 0) {
             dispatch(getCreditNoteList());
         }
-    }, [searchText]);
+    }, [dispatch, searchText]);
 
     const columns = creditNoteColumns(showModal, navigate, showAdjustModal, 0);
     return (
@@ -82,9 +84,9 @@ const CreditNote = () => {
                 onCancel={handleCancel}
                 footer={null}
                 width={400}
-                className='creditNote__list--delete--modal'
+                className='mainPage__list--delete--modal'
             >
-                <div className='creditNote__delete--modal'>
+                <div className='delete--modal'>
                     <img src={errorIcon} alt="error" />
                     <h1>Are you sure you?</h1>
                     <p>This action cannot be undone.</p>
@@ -99,7 +101,7 @@ const CreditNote = () => {
                 onCancel={handleAdjustCancel}
                 footer={null}
                 width={400}
-                className='creditNote__list--delete--modal'
+                className='mainPage__list--delete--modal'
             >
                 <div className='creditNote__adjustModal'>
                     <h1>Open Tax Invoices</h1>
@@ -138,14 +140,14 @@ const CreditNote = () => {
                     </div>
                 </div>
             </Modal>
-            <div className='creditNote__header'>
-                <div className='creditNote__header--left'>
-                    <h1 className='creditNote__header--title'> Credit Notes </h1>
+            <div className='mainPage__header'>
+                <div className='mainPage__header--left'>
+                    <h1 className='mainPage__header--title'> Credit Notes </h1>
                     <Input placeholder='Search' onChange={(e) => setSearchText(e.target.value)} value={searchText} />
                 </div>
-                <div className='creditNote__header--right'>
-                    <a className='creditNote__header--btn1' onClick={() => dispatch(downloadCreditNoteList())}>Download</a>
-                    <a onClick={() => navigate("/credit-note/create")} className='creditNote__header--btn2'>Create Credit Note</a>
+                <div className='mainPage__header--right'>
+                    <a className='mainPage__header--btn1' onClick={() => dispatch(downloadCreditNoteList())}>Download</a>
+                    <a onClick={() => navigate("/credit-note/create")} className='mainPage__header--btn2'>Create Credit Note</a>
                 </div>
             </div>
             <div className="table">

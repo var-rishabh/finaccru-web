@@ -18,7 +18,7 @@ const SeniorAccountant = () => {
 
   return (
     <div className="accountant__body">
-      <Header />
+      <Header backNeeded={false} />
       <Table tableFor="jrAccountant" data={jr_accountants} loading={loading} />
     </div>
   )

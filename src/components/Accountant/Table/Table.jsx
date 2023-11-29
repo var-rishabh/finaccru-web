@@ -7,12 +7,11 @@ import juniorAccountantColumns from '../../../Columns/JuniorAccountant';
 import TableCard from "../../../Shared/TableCard/TableCard";
 import "./Table.css";
 
-const Table = ({ tableFor, data, loading }) => {
+const Table = ({ tableFor, data, loading, id }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { user } = useSelector(state => state.userReducer);
-
-    const client_columns = clientColumns(navigate, user?.localInfo?.role);
+    const client_columns = clientColumns(navigate, user?.localInfo?.role, id);
     const junior_accountant_columns = juniorAccountantColumns(navigate);
 
     return (

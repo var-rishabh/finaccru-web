@@ -121,6 +121,7 @@ const ProformaFormP1 = ({
 
     const handleAddShippingAddressSubmit = (data) => {
         dispatch(getShippingAddressList(customerId));
+        setShippingLabel(data.label);
         setShippingId(data.shipping_address_id);
         setShippingAddress1(data.address_line_1);
         setShippingAddress2(data.address_line_2);

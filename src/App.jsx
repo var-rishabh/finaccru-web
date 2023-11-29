@@ -105,14 +105,14 @@ function App() {
                     <>
                       <Route path="/" element={<SeniorAccountant />} />
                       <Route path="/jr/:id" element={<JrAccountants />} />
-                      <Route path="/clients/:id" element={<Client />} />
+                      <Route path="/jr/:jr_id/clients/:id" element={<Client />} />
                       <Route path="*" element={<NotFound />} />
                       {
                         menuItems.slice(4, 8).map((item) => {
                           return (
                             <>
-                              <Route key={`${item.key}-edit`} path={"/clients/:client_id" + item.key + "/edit/:id"} element={item.changecomponent} />
-                              <Route key={`${item.key}-view`} path={"/clients/:client_id" + item.key + "/view/:id"} element={item.viewcomponent} />
+                              <Route key={`${item.key}-edit`} path={"/jr/:jr_id/clients/:client_id" + item.key + "/edit/:id"} element={item.changecomponent} />
+                              <Route key={`${item.key}-view`} path={"/jr/:jr_id/clients/:client_id" + item.key + "/view/:id"} element={item.viewcomponent} />
                             </>
                           )
                         })

@@ -1,7 +1,7 @@
 import { Tooltip } from 'antd';
 import { EyeOutlined, MessageOutlined } from '@ant-design/icons';
 
-export default function clientColumns(navigate, role = 1) {
+export default function clientColumns(navigate, role = 1, jr_id = 0) {
     const columns = [
         {
             title: 'Company Name',
@@ -18,8 +18,8 @@ export default function clientColumns(navigate, role = 1) {
             dataIndex: 'contact_number',
             key: 'contact_number',
         },
-
     ];
+    
     if (role === 1) {
         columns.push({
             title: 'Pending Actions',
@@ -51,7 +51,7 @@ export default function clientColumns(navigate, role = 1) {
             align: 'right',
             render: (text, record) => (
                 <div className="accountant__action__buttons">
-                    <div className="accountant__action__button" onClick={() => navigate(`/clients/${record.client_id}`)} >
+                    <div className="accountant__action__button" onClick={() => role === 1 ? navigate(`/clients/${record.client_id}`) : navigate(`/jr/${jr_id}/clients/${record.client_id}`)}>
                         <Tooltip title="View" color='gray' placement="bottom">
                             <EyeOutlined />
                         </Tooltip>
