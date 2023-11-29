@@ -3,8 +3,9 @@ export const styles = {
         display: 'flex',
         flexDirection: 'row',
         width: "100%",
+        justifyContent: "space-between",
         padding: "1rem 4rem 0",
-        gap: "0.8rem",
+        gap: "2rem",
     },
     mainLeft: { 
         display: 'flex', 
@@ -14,7 +15,6 @@ export const styles = {
         fontWeight: '300', 
         lineHeight: '1.5',
         textAlign: "left",
-        width: "30%",
     },
     mainLeftHeading: {
         fontSize: '1.125rem',
@@ -35,6 +35,7 @@ export const styles = {
         fontWeight: '300', 
         lineHeight: '1.5',
         textAlign: "left",
+        width: "35%",
     },
     mainRightHeading: {
         fontSize: '1.125rem',
@@ -51,6 +52,7 @@ export const pdfStyle = {
     main: {
         display: 'flex',
         flexDirection: 'row',
+        justifyContent: 'space-between',
         width: "100%",
         gap: "40px",
         padding: "8px 40px 10px",
@@ -84,6 +86,7 @@ export const pdfStyle = {
         fontWeight: 'normal', 
         lineHeight: '1.5',
         textAlign: "left",
+        width: "35%",
     },
     mainRightHeading: {
         fontSize: '12px',

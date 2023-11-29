@@ -116,7 +116,7 @@ export const updateCreditNote = (id, data, navigate, role = 0) => async (dispatc
             const response = await axios.put(`${url}/private/accountant/update-credit-note/${id}`, data, config);
             dispatch({ type: "CreditNoteUpdateSuccess", payload: response.data });
         }
-        if (role === 0) navigate("/credit-note/view/" + id);
+        if (role === 0) navigate(`/credit-note/view/${id}`);
         toast.success("CreditNote updated successfully");
     }
     catch (err) {
@@ -222,7 +222,7 @@ export const submitCreditNoteForApproval = (id) => async (dispatch) => {
     }
 }
 
-export const readOpenCreditNotesForCustomer = (id, currency_id = 1) => async (dispatch) => {
+export const readOpenCreditNotesForCustomer = (id, currency_id = 1, role = 0, client_id = 0) => async (dispatch) => {
     try {
         dispatch({ type: "ReadOpenCreditNotesForCustomerRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -231,9 +231,13 @@ export const readOpenCreditNotesForCustomer = (id, currency_id = 1) => async (di
                 token: token,
             },
         };
-
-        const response = await axios.get(`${url}/private/client/credit-notes/read-open-credit-notes-for-customer/${id}?currency_id=${currency_id}`, config);
-        dispatch({ type: "ReadOpenCreditNotesForCustomerSuccess", payload: response.data });
+        if (role === 0) {
+            const response = await axios.get(`${url}/private/client/credit-notes/read-open-credit-notes-for-customer/${id}?currency_id=${currency_id}`, config);
+            dispatch({ type: "ReadOpenCreditNotesForCustomerSuccess", payload: response.data });
+        } else {
+            const response = await axios.get(`${url}/private/accountant/read-open-credit-notes-for-customer/${id}?currency_id=${currency_id}`, config);
+            dispatch({ type: "ReadOpenCreditNotesForCustomerSuccess", payload: response.data });
+        }
     } catch (error) {
         console.log(error);
         dispatch({ type: "ReadOpenCreditNotesForCustomerFailure", payload: error.response?.data || error.message });

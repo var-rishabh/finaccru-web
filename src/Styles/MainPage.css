@@ -1,54 +1,54 @@
-.estimate__header {
+.mainPage__header {
     top: 0;
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 3rem 5rem 0;
+    padding: 3rem 3rem 0;
 }
 
-.estimate__header--left {
+.mainPage__header--left {
     display: flex;
     flex-direction: row;
     width: 50%;
-    justify-content: space-between;
     align-items: center;
+    gap: 1rem;
 }
 
-.estimate__header--title {
+.mainPage__header--title {
     font-family: 'Work Sans', sans-serif;
     font-size: 2rem;
     font-style: normal;
     font-weight: 700;
     line-height: 120%;
-    letter-spacing: 0.0125rem;
 }
 
-.estimate__header--left>Input {
-    width: 60%;
+.mainPage__header--left>Input {
+    width: 50%;
     height: 2.2rem;
     background-color: #fff;
 }
 
-.estimate__header--left .ant-input,
-.estimate__header--left .ant-input:hover,
-.estimate__header--left .ant-input:focus { 
+.mainPage__header--left .ant-input,
+.mainPage__header--left .ant-input:hover,
+.mainPage__header--left .ant-input:focus {
     color: black;
     border-color: #3463AE;
 }
-.estimate__header--left .ant-input::placeholder {
+
+.mainPage__header--left .ant-input::placeholder {
     color: #3463AE;
     opacity: 0.5;
 }
 
-.estimate__header--right {
+.mainPage__header--right {
     display: flex;
     flex-direction: row;
     width: 50%;
     justify-content: flex-end;
 }
 
-.estimate__header--btn1 {
+.mainPage__header--btn1 {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -64,7 +64,7 @@
     overflow: hidden;
 }
 
-.estimate__header--btn2 {
+.mainPage__header--btn2 {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -99,23 +99,23 @@ th.ant-table-cell {
     font-weight: 300 !important;
 }
 
-.estimate-invoice.action__buttons {
+.action__buttons {
     display: flex;
     justify-content: flex-end !important;
     gap: 0.5rem;
 }
 
-.estimate-invoice.action__button>span>svg {
+.action__button>span>svg {
     width: 1.2rem !important;
     height: 1.2rem !important;
     color: var(--gray) !important;
 }
 
-.estimate-invoice.action__button {
+.action__button {
     cursor: pointer;
 }
 
-.estimate-invoice.action__button>img {
+.action__button>img {
     width: 1.2rem;
 }
 
@@ -127,7 +127,7 @@ th.ant-table-cell {
     overflow: hidden !important;
 }
 
-.estimate__convert--modal {
+.convert--modal {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -160,7 +160,7 @@ th.ant-table-cell {
     background: #3463AE;
 }
 
-.estimate__delete--modal {
+.delete--modal {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -199,6 +199,6 @@ th.ant-table-cell {
     background-color: rgba(0, 0, 0, 0.08) !important;
 }
 
-.estimate__list--delete--modal .ant-modal-content {
+.mainPage__list--delete--modal .ant-modal-content {
     box-shadow: none !important;
 }

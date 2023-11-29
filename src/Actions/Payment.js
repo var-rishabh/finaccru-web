@@ -222,7 +222,7 @@ export const submitPaymentsForApproval = (id) => async (dispatch) => {
     }
 }
 
-export const readOpenPaymentsForCustomer = (id, currency_id) => async (dispatch) => {
+export const readOpenPaymentsForCustomer = (id, currency_id, role = 0, client_id = 0) => async (dispatch) => {
     try {
         dispatch({ type: "ReadOpenPaymentsForCustomerRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -231,9 +231,13 @@ export const readOpenPaymentsForCustomer = (id, currency_id) => async (dispatch)
                 token: token,
             },
         };
-
-        const response = await axios.get(`${url}/private/client/payments/read-open-payments-for-customer/${id}?currency_id=${currency_id}`, config);
-        dispatch({ type: "ReadOpenPaymentsForCustomerSuccess", payload: response.data });
+        if (role === 0) {
+            const response = await axios.get(`${url}/private/client/payments/read-open-payments-for-customer/${id}?currency_id=${currency_id}`, config);
+            dispatch({ type: "ReadOpenPaymentsForCustomerSuccess", payload: response.data });
+        } else {
+            const response = await axios.get(`${url}/private/accountant/read-open-payments-for-customer/${id}?currency_id=${currency_id}`, config);
+            dispatch({ type: "ReadOpenPaymentsForCustomerSuccess", payload: response.data });
+        }
     } catch (error) {
         console.log(error);
         dispatch({ type: "ReadOpenPaymentsForCustomerFailure", payload: error.response?.data || error.message });

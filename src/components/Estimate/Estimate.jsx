@@ -1,11 +1,12 @@
-import { Modal, Input } from 'antd';
-import errorIcon from '../../assets/Icons/error.svg';
-import "./Estimate.css"
-
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+
+import "../../Styles/MainPage.css"
+import { Modal, Input } from 'antd';
+import errorIcon from '../../assets/Icons/error.svg';
+
 import { deleteEstimate, downloadEstimateList, getEstimateList } from '../../Actions/Estimate';
-import { useEffect, useState } from 'react';
 import estimateColumns from '../../Columns/Estimate';
 import TableCard from '../../Shared/TableCard/TableCard';
 
@@ -66,9 +67,9 @@ const Estimate = () => {
                 onCancel={hideConvertModal}
                 footer={null}
                 width={300}
-                className='estimate__list--delete--modal'
+                className='mainPage__list--delete--modal'
             >
-                <div className='estimate__convert--modal'>
+                <div className='convert--modal'>
                     <div className="convert__modal__buttons">
                         <button id='confirm' onClick={() => navigate(`/proforma/create?convert=true&reference=estimate&reference_id=${record.estimate_id}`)}>Convert to PI</button>
                         <button id='confirm' onClick={() => navigate(`/tax-invoice/create?convert=true&reference=estimate&reference_id=${record.estimate_id}`)}>Convert to TI</button>
@@ -80,9 +81,9 @@ const Estimate = () => {
                 onCancel={handleCancel}
                 footer={null}
                 width={400}
-                className='estimate__list--delete--modal'
+                className='mainPage__list--delete--modal'
             >
-                <div className='estimate__delete--modal'>
+                <div className='delete--modal'>
                     <img src={errorIcon} alt="error" />
                     <h1>Are you sure you?</h1>
                     <p>This action cannot be undone.</p>
@@ -92,14 +93,14 @@ const Estimate = () => {
                     </div>
                 </div>
             </Modal>
-            <div className='estimate__header'>
-                <div className='estimate__header--left'>
-                    <h1 className='estimate__header--title'> Estimates </h1>
+            <div className='mainPage__header'>
+                <div className='mainPage__header--left'>
+                    <h1 className='mainPage__header--title'> Estimates </h1>
                     <Input placeholder='Search' onChange={(e) => setSearchText(e.target.value)} value={searchText} />
                 </div>
-                <div className='estimate__header--right'>
-                    <a className='estimate__header--btn1' onClick={() => dispatch(downloadEstimateList())}>Download</a>
-                    <a onClick={() => navigate("/estimate/create")} className='estimate__header--btn2'>Create Estimate</a>
+                <div className='mainPage__header--right'>
+                    <a className='mainPage__header--btn1' onClick={() => dispatch(downloadEstimateList())}>Download</a>
+                    <a onClick={() => navigate("/estimate/create")} className='mainPage__header--btn2'>Create Estimate</a>
                 </div>
             </div>
             <div className='table'>

@@ -92,15 +92,15 @@ const AddShippingAddress = ({ isShippingModalOpen, handleShippingCancel, custome
                 </div>
                 <div className='add__shipping__modal--input'>
                     <span className='required__field'>Shipping Address 1</span>
-                    <input type="text" name='address1' value={address1} onChange={(e) => setAddress1(e.target.value)} />
+                    <input type="text" name='address1' value={address1} onChange={(e) => setAddress1(e.target.value)} maxLength="45" />
                 </div>
                 <div className='add__shipping__modal--input'>
                     <span>Shipping Address 2</span>
-                    <input type="text" name='address2' value={address2} onChange={(e) => setAddress2(e.target.value)} />
+                    <input type="text" name='address2' value={address2} onChange={(e) => setAddress2(e.target.value)} maxLength="45" />
                 </div>
                 <div className='add__shipping__modal--input'>
                     <span>Shipping Address 3</span>
-                    <input type="text" name='address3' value={address3} onChange={(e) => setAddress3(e.target.value)} />
+                    <input type="text" name='address3' value={address3} onChange={(e) => setAddress3(e.target.value)} maxLength="45" />
                 </div>
                 <div className='add__shipping__modal--select'>
                     <span className='required__field'>Shipping Country</span>

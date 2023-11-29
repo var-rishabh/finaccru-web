@@ -33,7 +33,7 @@ export const createUnit = (data) => async (dispatch) => {
     }
 };
 
-export const getUnit = () => async (dispatch) => {
+export const getUnit = (role = 0, client_id = 0) => async (dispatch) => {
     try {
         dispatch({ type: "GetUnitRequest" });
         const token = await auth.currentUser.getIdToken();
@@ -42,8 +42,14 @@ export const getUnit = () => async (dispatch) => {
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/units/read`, config);
-        dispatch({ type: "GetUnitSuccess", payload: response.data });
+        if (!role) {
+            const response = await axios.get(`${url}/private/client/units/read`, config);
+            dispatch({ type: "GetUnitSuccess", payload: response.data });
+        } else {
+            const response = await axios.get(`${url}/private/accountant/read-units-for-client/${client_id}`, config);
+            dispatch({ type: "GetUnitSuccess", payload: response.data });
+        
+        }
     } catch (error) {
         console.log(error);
         dispatch({ type: "GetUnitFailure", payload: error.response?.data || error.message });

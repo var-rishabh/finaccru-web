@@ -1,11 +1,12 @@
 import { Tooltip } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
+
 import approveIcon from '../assets/Icons/approveIcon.svg';
 import convertIcon from '../assets/Icons/convertIcon.svg';
 import editIcon from '../assets/Icons/editIcon.svg';
 import deleteIcon from '../assets/Icons/deleteIcon.svg';
 
-export default function creditNoteColumns(showModal, navigate, showAdjustModal, role = 0, client_id = 0) {
+export default function creditNoteColumns(showModal, navigate, showAdjustModal, role = 0, client_id = 0, jr_id = 0) {
     const columns = [
         {
             title: 'CN Date',
@@ -42,8 +43,8 @@ export default function creditNoteColumns(showModal, navigate, showAdjustModal, 
             key: 'status',
             width: 160
         },
-
     ];
+
     if (role === 0) {
         if (!navigate || !showModal || !showAdjustModal) {
             return columns;
@@ -54,7 +55,7 @@ export default function creditNoteColumns(showModal, navigate, showAdjustModal, 
                 width: 150,
                 align: 'right',
                 render: (text, record) => (
-                    <div className="action__buttons credit-note">
+                    <div className="action__buttons">
                         <div className="action__button" onClick={() => navigate(`/credit-note/view/${record.cn_id}`)}>
                             <Tooltip title="View" color='gray' placement="bottom">
                                 <EyeOutlined />
@@ -91,7 +92,6 @@ export default function creditNoteColumns(showModal, navigate, showAdjustModal, 
                 ),
             });
             return columns;
-
         }
     } else if (role === 1 || role === 2) {
         columns.push({
@@ -101,7 +101,7 @@ export default function creditNoteColumns(showModal, navigate, showAdjustModal, 
             align: 'right',
             render: (text, record) => (
                 <div className="action__buttons credit-notes">
-                    <div className="action__button" onClick={() => navigate(`/clients/${client_id}/credit-note/view/${record.cn_id}`)}>
+                    <div className="action__button" onClick={() => role === 1 ? navigate(`/clients/${client_id}/credit-note/view/${record.cn_id}`) : navigate(`/jr/${jr_id}/clients/${client_id}/credit-note/view/${record.cn_id}`)}>
                         <Tooltip title="View" color='gray' placement="bottom">
                             <EyeOutlined />
                         </Tooltip>
@@ -109,7 +109,7 @@ export default function creditNoteColumns(showModal, navigate, showAdjustModal, 
                     {
                         record?.status === "Approved" ? "" :
                             <>
-                                <div className="action__button" onClick={() => navigate(`/clients/${client_id}/credit-note/edit/${record.cn_id}`)} >
+                                <div className="action__button" onClick={() => role === 1 ? navigate(`/clients/${client_id}/credit-note/edit/${record.cn_id}`) : navigate(`/jr/${jr_id}/clients/${client_id}/credit-note/edit/${record.cn_id}`)} >
                                     <Tooltip title="Edit" color='blue' placement="bottom">
                                         <img src={editIcon} alt="editIcon" />
                                     </Tooltip>

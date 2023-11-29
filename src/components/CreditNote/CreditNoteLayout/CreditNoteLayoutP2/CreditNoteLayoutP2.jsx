@@ -6,6 +6,7 @@ import { getTaxRate } from '../../../../Actions/Onboarding';
 import { PlusOutlined } from '@ant-design/icons';
 import MinusIcon from '../../../../assets/Icons/minus.svg'
 import { Input, Select, AutoComplete } from 'antd';
+import { useParams } from 'react-router-dom';
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -17,7 +18,7 @@ const CreditNoteFormP2 = ({
     const { taxRates, taxRateLoading } = useSelector(state => state.onboardingReducer);
     // const { customer } = useSelector(state => state.customerReducer);
     const { user } = useSelector(state => state.userReducer);
-
+    const { client_id } = useParams();
     const [showDescription, setShowDescription] = useState([]);
 
     const [itemTotal, setItemTotal] = useState([]);
@@ -32,7 +33,7 @@ const CreditNoteFormP2 = ({
 
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(getUnit());
+        dispatch(getUnit(user?.localInfo?.role, client_id));
         dispatch(getTaxRate());
     }, [dispatch]);
 
@@ -169,7 +170,6 @@ const CreditNoteFormP2 = ({
                                     onSearch={handleUnitSearch}
                                     onChange={(value) => handleInputChange(index, 'unit', value)}
                                     placeholder="Unit"
-                                    disabled={user?.localInfo?.role ? true : false}
                                 />
                             </div>
                             <div className='creditNote__items--number-item'>
@@ -345,7 +345,6 @@ const CreditNoteFormP2 = ({
                                     rows={5}
                                     value={termsAndConditions}
                                     onChange={(e) => setTermsAndConditions(e.target.value)}
-                                    disabled={user?.localInfo?.role ? true : false}
                                 />
                             </div>
                             <div style={{ marginTop: "1rem" }} className='creditNote--details__modal--checkbox'>

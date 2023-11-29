@@ -1,10 +1,11 @@
 import { Tooltip } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
+
 import deleteIcon from '../assets/Icons/deleteIcon.svg';
 import editIcon from '../assets/Icons/editIcon.svg';
 import approveIcon from '../assets/Icons/approveIcon.svg';
 
-export default function taxInvoiceColumns(showModal, navigate, role = 0, client_id = 0) {
+export default function taxInvoiceColumns(showModal, navigate, role = 0, client_id = 0, jr_id = 0) {
     const columns = [
         {
             title: 'TI Date',
@@ -41,8 +42,8 @@ export default function taxInvoiceColumns(showModal, navigate, role = 0, client_
             key: 'status',
             width: 160
         },
-
     ];
+
     if (role === 0) {
         if (!navigate || !showModal) {
             return columns;
@@ -53,7 +54,7 @@ export default function taxInvoiceColumns(showModal, navigate, role = 0, client_
                 width: 120,
                 align: 'right',
                 render: (text, record) => (
-                    <div className="action__buttons tax-invoices">
+                    <div className="action__buttons">
                         <div className="action__button" onClick={() => navigate(`/tax-invoice/view/${record.ti_id}`)}>
                             <Tooltip title="View" color='gray' placement="bottom">
                                 <EyeOutlined />
@@ -94,7 +95,7 @@ export default function taxInvoiceColumns(showModal, navigate, role = 0, client_
             align: 'right',
             render: (text, record) => (
                 <div className="action__buttons tax-invoices">
-                    <div className="action__button" onClick={() => navigate(`/clients/${client_id}/tax-invoice/view/${record.ti_id}`)}>
+                    <div className="action__button" onClick={() => role === 1 ? navigate(`/clients/${client_id}/tax-invoice/view/${record.ti_id}`) : navigate(`/jr/${jr_id}/clients/${client_id}/tax-invoice/view/${record.ti_id}`)}>
                         <Tooltip title="View" color='gray' placement="bottom">
                             <EyeOutlined />
                         </Tooltip>
@@ -102,7 +103,7 @@ export default function taxInvoiceColumns(showModal, navigate, role = 0, client_
                     {
                         record?.status === "Approved" ? "" :
                             <>
-                                <div className="action__button" onClick={() => navigate(`/clients/${client_id}/tax-invoice/edit/${record.ti_id}`)} >
+                                <div className="action__button" onClick={() => role === 1 ? navigate(`/clients/${client_id}/tax-invoice/edit/${record.ti_id}`) : navigate(`/jr/${jr_id}/clients/${client_id}/tax-invoice/edit/${record.ti_id}`)} >
                                     <Tooltip title="Edit" color='blue' placement="bottom">
                                         <img src={editIcon} alt="editIcon" />
                                     </Tooltip>

@@ -51,9 +51,10 @@ const PaymentLayout = () => {
     const { loading: taxLoading, openTaxInvoices } = useSelector(state => state.taxInvoiceReducer);
 
 
-    const type = user?.localInfo?.role ? window.location.pathname.split('/')[4] : window.location.pathname.split('/')[2];
-    const receipt_id = user?.localInfo?.role ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
-    const client_id = user?.localInfo?.role ? window.location.pathname.split('/')[2] : 0;
+    const type =  user?.localInfo?.role === 2 ? window.location.pathname.split('/')[6] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[4] : window.location.pathname.split('/')[2];
+    const receipt_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
+    const client_id =  user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
+    const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;    
     const isAdd = type === 'create';
 
     const [currentCustomerPage, setCurrentCustomerPage] = useState(1);
@@ -207,7 +208,7 @@ const PaymentLayout = () => {
         <>
             <div className='create__payment__header'>
                 <div className='create__payment__header--left'>
-                    <img src={backButton} alt='back' className='create__payment__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role ? `/clients/${client_id}` : "/payment"}`)} />
+                    <img src={backButton} alt='back' className='create__payment__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : "/payment"}`)} />
                     <h1 className='create__payment__header--title'>
                         {user?.localInfo?.role ? 'Go Back' : 'Payments List'}
                     </h1>
@@ -409,10 +410,9 @@ const PaymentLayout = () => {
                                     onChange={(e) => setBankId(e)}
                                     options={[
                                         { value: 0, label: 'Cash' },
-                                        { value: user?.clientInfo?.primary_bank?.bank_id, label: user?.clientInfo?.primary_bank?.bank_name },
-                                        ...(user?.clientInfo?.other_bank_accounts?.map((bank) => ({ value: bank.bank_id, label: bank.bank_name })) ?? [])
+                                        { value: (user?.localInfo?.role ? client : user?.clientInfo)?.primary_bank?.bank_id, label: (user?.localInfo?.role ? client : user?.clientInfo)?.primary_bank?.bank_name },
+                                        ...((user?.localInfo?.role ? client : user?.clientInfo)?.other_bank_accounts?.map((bank) => ({ value: bank.bank_id, label: bank.bank_name })) ?? [])
                                     ]}
-                                    disabled={user?.localInfo?.role ? true : false}
                                 />
                             </div>
                             <div className='payment__form--part4-head bottom-margin-3'>

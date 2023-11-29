@@ -7,6 +7,7 @@ import calculateTotalAmounts from '../../../../utils/calculateTotalAmounts';
 import { PlusOutlined } from '@ant-design/icons';
 import MinusIcon from '../../../../assets/Icons/minus.svg'
 import { Input, Select, AutoComplete, Radio } from 'antd';
+import { useParams } from 'react-router-dom';
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -18,9 +19,9 @@ const TaxInvoiceFormP2 = ({
     const { taxRates, taxRateLoading } = useSelector(state => state.onboardingReducer);
     const { openPayments } = useSelector(state => state.paymentReducer);
     const { openCreditNotes } = useSelector(state => state.creditNoteReducer);
-
+    const { client_id } = useParams();
     const { user } = useSelector(state => state.userReducer);
-
+    const { client } = useSelector(state => state.accountantReducer);
     const [showDescription, setShowDescription] = useState([]);
 
     const [itemTotal, setItemTotal] = useState([]);
@@ -42,7 +43,7 @@ const TaxInvoiceFormP2 = ({
 
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(getUnit());
+        dispatch(getUnit(user?.localInfo?.role, client_id));
         dispatch(getTaxRate());
     }, [dispatch, customerId]);
 
@@ -139,7 +140,6 @@ const TaxInvoiceFormP2 = ({
                                     onSearch={handleUnitSearch}
                                     onChange={(value) => handleInputChange(index, 'unit', value)}
                                     placeholder="Unit"
-                                    disabled={user?.localInfo?.role ? true : false}
                                 />
                             </div>
                             <div className='taxInvoice__items--number-item'>
@@ -315,7 +315,6 @@ const TaxInvoiceFormP2 = ({
                                     rows={5}
                                     value={termsAndConditions}
                                     onChange={(e) => setTermsAndConditions(e.target.value)}
-                                    disabled={user?.localInfo?.role ? true : false}
                                 />
                             </div>
                             <div style={{ marginTop: "1rem" }} className='taxInvoice--details__modal--checkbox'>
@@ -379,13 +378,13 @@ const TaxInvoiceFormP2 = ({
             <div className='taxInvoice__payment'>
                 <div className='taxInvoice__payment-options'>
                     <p>Payment Received?</p>
-                    <Radio.Group onChange={onChangePaymentReceived} value={paymentReceivedValue} disabled={user?.localInfo?.role ? true : false}>
+                    <Radio.Group onChange={onChangePaymentReceived} value={paymentReceivedValue} >
                         <Radio value={1}>Yes</Radio>
                         <Radio value={2}>No</Radio>
                     </Radio.Group>
                 </div>
                 {
-                    !user?.localInfo?.role && paymentReceivedValue === 1 ?
+                    paymentReceivedValue === 1 ?
                         <>
                             <div className='taxInvoice__payment-data'>
                                 <div className='taxInvoice__payment-table'>
@@ -460,11 +459,11 @@ const TaxInvoiceFormP2 = ({
                                     <Option key="0" value="0">
                                         Cash
                                     </Option>
-                                    <Option key={user?.clientInfo?.primary_bank?.bank_id} value={user?.clientInfo?.primary_bank?.bank_id}>
-                                        {user?.clientInfo?.primary_bank?.bank_name}
+                                    <Option key={(user?.localInfo?.role ? client : user?.clientInfo)?.primary_bank?.bank_id} value={(user?.localInfo?.role ? client : user?.clientInfo)?.primary_bank?.bank_id}>
+                                        {(user?.localInfo?.role ? client : user?.clientInfo)?.primary_bank?.bank_name}
                                     </Option>
                                     {
-                                        user?.clientInfo?.other_bank_accounts?.map((bank) => (
+                                        (user?.localInfo?.role ? client : user?.clientInfo)?.other_bank_accounts?.map((bank) => (
                                             <Option key={bank.bank_id} value={bank.bank_id}>
                                                 {bank.bank_name}
                                             </Option>

@@ -43,15 +43,15 @@ import { readAccountantClient } from '../../../Actions/Accountant';
 const CreditNoteReadLayout = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    
+
     const { user } = useSelector(state => state.userReducer);
     const { client } = useSelector(state => state.accountantReducer);
     const { loading, creditNote } = useSelector(state => state.creditNoteReducer);
     const { taxRates } = useSelector(state => state.onboardingReducer);
-    
-    const cn_id = user?.localInfo?.role ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
-    const client_id = user?.localInfo?.role ? window.location.pathname.split('/')[2] : 0;
-    
+
+    const cn_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
+    const client_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
+    const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;
     const [itemTotal, setItemTotal] = useState([]);
     const [itemTax, setItemTax] = useState([]);
     const [groupedItems, setGroupedItems] = useState([]);
@@ -116,8 +116,10 @@ const CreditNoteReadLayout = () => {
         <>
             <div className='read__header'>
                 <div className='read__header--left'>
-                    <img src={backButton} alt='back' className='read__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role ? `/clients/${client_id}` : "/credit-note"}`)} />
-                    <h1 className='read__header--title'> Credit Notes List </h1>
+                    <img src={backButton} alt='back' className='read__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : "/credit-note"}`)} />
+                    <h1 className='read__header--title'>
+                        {user?.localInfo?.role ? 'Go Back' : 'Credit Notes List'}
+                    </h1>
                 </div>
                 <div className='read__header--right'>
                     {
@@ -150,7 +152,7 @@ const CreditNoteReadLayout = () => {
                     {
                         creditNote?.cn_status === "Void" ? "" :
                             creditNote?.cn_status === "Approved" ? "" :
-                                <a className='read__header--btn1' onClick={() => navigate(`${user?.localInfo?.role ? `/clients/${client_id}` : ""}/credit-note/edit/${creditNote?.cn_id}`)}>Edit</a>
+                                <a className='read__header--btn1' onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/credit-note/edit/${creditNote?.cn_id}`)}>Edit</a>
                     }
                     <PdfDownload contents={contents} heading={"Credit Note"} />
                 </div>
