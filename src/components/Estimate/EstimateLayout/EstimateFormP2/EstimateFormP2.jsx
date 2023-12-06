@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getUnit } from '../../../../Actions/Unit';
 import { getTaxRate } from '../../../../Actions/Onboarding';
 
+import "../../../../Styles/Layout/LayoutListItems.css";
+import "../../../../Styles/Layout/LayoutP2.css";
 import { PlusOutlined } from '@ant-design/icons';
 import MinusIcon from '../../../../assets/Icons/minus.svg'
 import { Input, Select, AutoComplete } from 'antd';
@@ -129,17 +131,17 @@ const EstimateFormP2 = ({
 
         const calculateTotalAmount = calculateTotalAmounts();
         setItemTotal(calculateTotalAmount);
-    }, [items]);
+    }, [items, taxRates]);
 
 
 
     return (
         <>
-            <div className='estimate__items'>
+            <div className='layout__items'>
                 {items?.map((item, index) => (
-                    <div className='estimate__items--main' key={index}>
-                        <div className='estimate__items--whole-item'>
-                            <div className='estimate__items--itemName'>
+                    <div className='layout__items--main' key={index}>
+                        <div className='layout__items--whole-item'>
+                            <div className='layout__items--itemName'>
                                 {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem' }}>Item Name</span> : <></>}
                                 <Input
                                     type='text'
@@ -152,7 +154,7 @@ const EstimateFormP2 = ({
                                     onChange={(e) => handleInputChange(index, 'item_name', e.target.value)}
                                 />
                             </div>
-                            <div className='estimate__items--unitSelect'>
+                            <div className='layout__items--unitSelect'>
                                 {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem' }}>Unit</span> : <></>}
                                 <AutoComplete
                                     options={allUnits?.map((unit) => ({
@@ -170,7 +172,7 @@ const EstimateFormP2 = ({
                                     placeholder="Unit"
                                 />
                             </div>
-                            <div className='estimate__items--number-item'>
+                            <div className='layout__items--number-item'>
                                 {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem', marginLeft: '3px' }}>Qty</span> : <></>}
                                 <Input
                                     type="number"
@@ -188,7 +190,7 @@ const EstimateFormP2 = ({
                                     }}
                                 />
                             </div>
-                            <div className='estimate__items--number-item'>
+                            <div className='layout__items--number-item'>
                                 {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem', marginLeft: '3px' }}>Rate</span> : <></>}
                                 <Input
                                     type="number"
@@ -206,7 +208,7 @@ const EstimateFormP2 = ({
                                     }}
                                 />
                             </div>
-                            <div className='estimate__items--discount'>
+                            <div className='layout__items--discount'>
                                 {index === 0 ? <span style={{ marginBottom: '1rem', marginLeft: '3px' }}>Discount</span> : <></>}
                                 <Input
                                     type="number"
@@ -240,7 +242,7 @@ const EstimateFormP2 = ({
                                     }}
                                 />
                             </div>
-                            <div className='estimate__items--tax'>
+                            <div className='layout__items--tax'>
                                 {index === 0 ? <span style={{ marginBottom: '0.9rem' }}>Tax</span> : <></>}
                                 <Input
                                     type="number"
@@ -275,7 +277,7 @@ const EstimateFormP2 = ({
                                     }}
                                 />
                             </div>
-                            <div className='estimate__items--amount'>
+                            <div className='layout__items--amount'>
                                 {index === 0 ? <span style={{ marginBottom: '1rem' }}>Amount</span> : <></>}
                                 <Input
                                     type='text'
@@ -288,15 +290,15 @@ const EstimateFormP2 = ({
                                 />
                             </div>
                             {items.length > 1 && (
-                                <div className='estimate__items--sr'>
+                                <div className='layout__items--sr'>
                                     {index === 0 ? <span style={{ marginBottom: '1rem' }}>&nbsp;</span> : <></>}
-                                    <div className='estimate--cancel-icon'>
+                                    <div className='layout--cancel-icon'>
                                         <img src={MinusIcon} onClick={(e) => handleRemovePerson(index, e)} />
                                     </div>
                                 </div>
                             )}
                         </div>
-                        <div className='estimate__items--description'>
+                        <div className='layout__items--description'>
                             {showDescription[index] || item?.description ? (
                                 <>
                                     <div className='remove--description-btn'>
@@ -332,11 +334,11 @@ const EstimateFormP2 = ({
                     </div>
                 ))}
             </div>
-            <div className='estimate--details'>
-                <div className='estimate--details--bank'>
-                    <div className='estimate--details--split'>
-                        <div className='estimate--details-left'>
-                            <div className='estimate--details-tnc'>
+            <div className='layout--details'>
+                <div className='layout--details--bank'>
+                    <div className='layout--details--split'>
+                        <div className='layout--details-left'>
+                            <div className='layout--details-tnc'>
                                 <h3>Add Terms and Conditions</h3>
                                 <TextArea
                                     placeholder="Terms and Conditions"
@@ -345,7 +347,7 @@ const EstimateFormP2 = ({
                                     onChange={(e) => setTermsAndConditions(e.target.value)}
                                 />
                             </div>
-                            <div style={{ marginTop: "1rem" }} className='estimate--details__modal--checkbox'>
+                            <div style={{ marginTop: "1rem" }} className='layout--details__modal--checkbox'>
                                 <input type="checkbox" value={isSetDefaultTncCustomer}
                                     checked={isSetDefaultTncCustomer}
                                     onChange={(e) => setIsSetDefaultTncCustomer(e.target.checked)}
@@ -356,7 +358,7 @@ const EstimateFormP2 = ({
                                     }}
                                 >Save for this customer</span>
                             </div>
-                            <div className='estimate--details__modal--checkbox'>
+                            <div className='layout--details__modal--checkbox'>
                                 <input type="checkbox" value={isSetDefaultTncClient}
                                     checked={isSetDefaultTncClient}
                                     onChange={(e) => setIsSetDefaultTncClient(e.target.checked)}
@@ -368,14 +370,14 @@ const EstimateFormP2 = ({
                                 >Save for all customers</span>
                             </div>
                         </div>
-                        <div className='estimate--details-right'>
-                            <div className='estimate--details-right-head'>
+                        <div className='layout--details-right'>
+                            <div className='layout--details-right-head'>
                                 <span>Sub Total</span>
                                 <span>Discount</span>
                                 <span>Tax</span>
                                 <span>Total</span>
                             </div>
-                            <div className='estimate--details-right-info'>
+                            <div className='layout--details-right-info'>
                                 <span>
                                     <p style={{ fontWeight: 500 }}>{currency}</p>
                                     &nbsp; {new Intl.NumberFormat('en-US', {

@@ -1,23 +1,21 @@
 import { Tooltip } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
 
-import convertIcon from '../assets/Icons/convertIcon.svg';
 import editIcon from '../assets/Icons/editIcon.svg';
 import deleteIcon from '../assets/Icons/deleteIcon.svg';
 
 export default function expenseColumns(showModal, navigate) {
     const columns = [
         {
-            title: 'Expense Date',
-            dataIndex: 'expense_date',
-            key: 'expense_date',
+            title: 'Expense ID',
+            dataIndex: 'expense_id',
+            key: 'expense_id',
             width: 120
         },
         {
-            title: 'Expense Number',
-            dataIndex: 'expense_number',
-            key: 'expense_number',
-            width: 150
+            title: 'Category Name',
+            dataIndex: 'category_name',
+            key: 'category_name',
         },
         {
             title: 'Vendor',
@@ -25,9 +23,9 @@ export default function expenseColumns(showModal, navigate) {
             key: 'vendor_name',
         },
         {
-            title: 'Due Date',
-            dataIndex: 'due_date',
-            key: 'due_date',
+            title: 'Expense Date',
+            dataIndex: 'expense_date',
+            key: 'expense_date',
             width: 120
         },
         {
@@ -36,13 +34,8 @@ export default function expenseColumns(showModal, navigate) {
             key: 'amount',
             align: 'right'
         },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-        },
     ];
-    
+
     if (!navigate || !showModal) {
         return columns;
     } else {
@@ -68,11 +61,6 @@ export default function expenseColumns(showModal, navigate) {
                                 </div>
                                 :
                                 <>
-                                    <div className="action__button">
-                                        <Tooltip title="Convert" color='green' placement="bottom" onClick={() => navigate(`/expense/create?convert=true&reference=expense&reference_id=${record.expense_id}`)}>
-                                            <img src={convertIcon} alt="convertIcon" />
-                                        </Tooltip>
-                                    </div>
                                     <div className="action__button" onClick={() => navigate(`/expense/edit/${record.expense_id}`)} >
                                         <Tooltip title="Edit" color='blue' placement="bottom">
                                             <img src={editIcon} alt="editIcon" />

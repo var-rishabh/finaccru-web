@@ -35,6 +35,18 @@ export const vendorReducer = createReducer(initialState, (builder) => {
             state.vendor = action.payload;
             state.error = null;
         })
+        .addCase("CreateInPurchaseDocumentRequest", (state) => {
+            state.loading = true;
+        })
+        .addCase("CreateInPurchaseDocumentFailure", (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+        .addCase("CreateInPurchaseDocumentSuccess", (state, action) => {
+            state.loading = false;
+            state.vendor = action.payload;
+            state.error = null;
+        })
         .addCase("VendorDetailsRequest", (state) => {
             state.loading = true;
         })
@@ -132,5 +144,79 @@ export const vendorReducer = createReducer(initialState, (builder) => {
             state.success = action.payload;
             state.error = null;
         })
-        
+        .addCase("CreatePettyCashHandlerRequest", (state) => {
+            state.loading = true;
+        })
+        .addCase("CreatePettyCashHandlerFailure", (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+        .addCase("CreatePettyCashHandlerSuccess", (state, action) => {
+            state.loading = false;
+            state.success = action.payload;
+            state.error = null;
+        })
+        .addCase("CreateOtherPaymentRequest", (state) => {
+            state.loading = true;
+        })
+        .addCase("CreateOtherPaymentFailure", (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+        .addCase("CreateOtherPaymentSuccess", (state, action) => {
+            state.loading = false;
+            state.success = action.payload;
+            state.error = null;
+        })
+        .addCase("ReadPaymentMethodRequest", (state) => {
+            state.loading = true;
+        })
+        .addCase("ReadPaymentMethodFailure", (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+        .addCase("ReadPaymentMethodSuccess", (state, action) => {
+            state.loading = false;
+            state.paymentMethods = action.payload;
+            state.error = null;
+        })
+        .addCase("ReadPaymentMethodSubCategoriesRequest", (state) => {
+            state.loading = true;
+        })
+        .addCase("ReadPaymentMethodSubCategoriesFailure", (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+        .addCase("ReadPaymentMethodSubCategoriesSuccess", (state, action) => {
+            state.loading = false;
+            state.paymentMethodSubCategories = action.payload;
+            state.error = null;
+        })
+        .addCase("ReadPaymentTermsRequest", (state) => {
+            state.paymentTermsLoading = true;
+        })
+        .addCase("ReadPaymentTermsFailure", (state, action) => {
+            state.paymentTermsLoading = false;
+            state.error = action.payload;
+        })
+        .addCase("ReadPaymentTermsSuccess", (state, action) => {
+            state.paymentTermsLoading = false;
+            state.paymentTerms = action.payload;
+            state.error = null;
+        })
+        .addCase("CalculateExpectedDeliveryDateRequest", (state) => {
+            state.expectedDeliveryDateLoading = true;
+        })
+        .addCase("CalculateExpectedDeliveryDateFailure", (state, action) => {
+            state.expectedDeliveryDateLoading = false;
+            state.error = action.payload;
+        })
+        .addCase("CalculateExpectedDeliveryDateSuccess", (state, action) => {
+            state.expectedDeliveryDateLoading = false;
+            state.expectedDeliveryDate = action.payload;
+            state.error = null;
+        })
+        .addCase("ClearExpectedDeliveryDate", (state) => {
+            state.expectedDeliveryDate = null;
+        })
 })

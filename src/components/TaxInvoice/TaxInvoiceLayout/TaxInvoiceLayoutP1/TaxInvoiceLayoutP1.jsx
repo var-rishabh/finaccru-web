@@ -5,6 +5,7 @@ import CustomerInfiniteScrollSelect from '../../../Customer/CustomerInfiniteScro
 import AddCustomerModal from '../../../Customer/AddCustomerModal/AddCustomerModal';
 import AddShippingAddress from '../../../Customer/AddShippingAddress/AddShippingAddress';
 
+import "../../../../Styles/Layout/LayoutP1.css";
 import { Select, Input } from 'antd';
 const { TextArea } = Input;
 const { Option } = Select;
@@ -53,7 +54,7 @@ const TaxInvoiceFormP1 = ({
             dispatch(getCustomerDetails(customerId));
             dispatch(getShippingAddressList(customerId));
         }
-    }, [customerId]);
+    }, [customerId, dispatch]);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -78,7 +79,7 @@ const TaxInvoiceFormP1 = ({
         if (customerKeyword === null) return;
         dispatch(getCustomerInfiniteScroll(1, true, customerKeyword));
         setCurrentCustomerPage(1);
-    }, [customerKeyword]);
+    }, [customerKeyword, dispatch]);
 
     const onChangeCustomer = (value) => {
         if (value.customer_id === 'addCustomer') {
@@ -147,9 +148,9 @@ const TaxInvoiceFormP1 = ({
 
 
     return (
-        <div className='taxInvoice__form--part1'>
-            <div className='taxInvoice__form--part1-head'>
-                <div className='taxInvoice__form--head-info1'>
+        <div className='layout__form--part1'>
+            <div className='layout__form--part1-head'>
+                <div className='layout__form--head-info1'>
                     <h3>Tax Invoice From</h3>
                     <span style={{ fontWeight: 500 }}>{user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}</span>
                     <span>{user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1}</span>
@@ -158,8 +159,8 @@ const TaxInvoiceFormP1 = ({
                     <span>{user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state + ', ' + user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}</span>
                     <span>TRN: {user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}</span>
                 </div>
-                <div className='taxInvoice__form--head-info2'>
-                    <div className='taxInvoice__form--head-info2-data'>
+                <div className='layout__form--head-info2'>
+                    <div className='layout__form--head-info2-data'>
                         <span className='required__field'>Tax Invoice Number</span>
                         <input
                             name="taxInvoiceNumber"
@@ -172,7 +173,7 @@ const TaxInvoiceFormP1 = ({
                             {...user?.localInfo?.role && { disabled: true }}
                         />
                     </div>
-                    <div className='taxInvoice__form--head-info2-data'>
+                    <div className='layout__form--head-info2-data'>
                         <span className='required__field'>Tax Invoice Date</span>
                         <input type="date"
                             name='taxInvoiceDate'
@@ -181,7 +182,7 @@ const TaxInvoiceFormP1 = ({
                             onChange={(e) => setTaxInvoiceDate(e.target.value)}
                         />
                     </div>
-                    <div className='taxInvoice__form--head-info2-data'>
+                    <div className='layout__form--head-info2-data'>
                         <span className='required__field'>Due Date</span>
                         <input type="date"
                             name='validTill'
@@ -190,19 +191,19 @@ const TaxInvoiceFormP1 = ({
                             onChange={(e) => setValidTill(e.target.value)}
                         />
                     </div>
-                    <div className='taxInvoice__form--head-info2-data'>
+                    <div className='layout__form--head-info2-data'>
                         <span>Reference</span>
                         <input type="text" name='reference' value={reference} onChange={(e) => setReference(e.target.value)} disabled={convert} />
                     </div>
                 </div>
             </div>
-            <div className='taxInvoice__form--part2-head'>
-                <div className='taxInvoice__form--part2-head-customer'>
+            <div className='layout__form--part2-head'>
+                <div className='layout__form--part2-head-customer'>
                     <h3 className='required__field'>Tax Invoice For</h3>
                     {
                         customerName ?
-                            <div className='taxInvoice__form--customer-data'>
-                                <div className='taxInvoice__form--customer-data-info'>
+                            <div className='layout__form--customer-data'>
+                                <div className='layout__form--customer-data-info'>
                                     <span style={{ fontWeight: 500 }}>{customerName}</span>
                                     {user?.localInfo?.role ?
                                         <>
@@ -237,15 +238,15 @@ const TaxInvoiceFormP1 = ({
                     }
                     <AddCustomerModal openingModal={true} isModalOpen={isModalOpen} handleCustomerSubmit={handleCustomerSubmit} handleCancel={handleCancel} />
                 </div>
-                <div className='taxInvoice__form--part2-head-customer second-select'>
+                <div className='layout__form--part2-head-customer second-select'>
                     {
                         customerId ?
                             <>
                                 <h3 className='required__field'>Shipping Address</h3>
                                 {
                                     shippingId || shippingAddress1 ?
-                                        <div className='taxInvoice__form--customer-data'>
-                                            <div className='taxInvoice__form--customer-data-info'>
+                                        <div className='layout__form--customer-data'>
+                                            <div className='layout__form--customer-data-info'>
                                                 {shippingLabel && <span style={{ fontWeight: 500 }}>{shippingLabel}</span>}
                                                 <span>{shippingAddress1}</span>
                                                 {shippingAddress2 && <span>{shippingAddress2}</span>}
@@ -295,10 +296,10 @@ const TaxInvoiceFormP1 = ({
                     }
                 </div>
             </div>
-            <div className='taxInvoice__form--part3-head'>
+            <div className='layout__form--part3-head'>
                 <h3 className='required__field'>Select Currency</h3>
-                <div className='taxInvoice__form--currency'>
-                    <div className='taxInvoice__form--select-currency'>
+                <div className='layout__form--currency'>
+                    <div className='layout__form--select-currency'>
                         <Select
                             showSearch
                             defaultValue="AED"
@@ -310,7 +311,7 @@ const TaxInvoiceFormP1 = ({
                             loading={currencyLoading}
                         />
                     </div>
-                    <div className='taxInvoice__form--currency-conversion'>
+                    <div className='layout__form--currency-conversion'>
                         <span>1</span>
                         <span>{currency} =</span>
                         <input
@@ -327,7 +328,7 @@ const TaxInvoiceFormP1 = ({
                     </div>
                 </div>
             </div>
-            <div className='taxInvoice__form--part4-head'>
+            <div className='layout__form--part4-head'>
                 <h3>Subject</h3>
                 <TextArea
                     placeholder="Subject"

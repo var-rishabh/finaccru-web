@@ -49,6 +49,24 @@ export default function taxInvoiceColumns(showModal, navigate, role = 0, client_
             return columns;
         } else {
             columns.push({
+                title: 'Reference',
+                key: 'related_document_number',
+                align: 'left',
+                render: (text, record) => (
+                    <div className="action__button" onClick={() => {
+                        if (record?.related_document_number.startsWith("PI")) {
+                            navigate(`/proforma/view/${record.related_document_id}`)
+                        } else if (record?.related_document_number.startsWith("EST")) {
+                            navigate(`/estimate/view/${record.related_document_id}`)
+                        }
+                    }}>
+                        {
+                            record.related_document_number ? record.related_document_number : ""
+                        }
+                    </div>
+                ),
+            });
+            columns.push({
                 title: 'Actions',
                 key: 'actions',
                 width: 120,
@@ -101,7 +119,7 @@ export default function taxInvoiceColumns(showModal, navigate, role = 0, client_
                         </Tooltip>
                     </div>
                     {
-                        record?.status === "Approved" ? "" :
+                        record?.status === "Pending Approval" ?
                             <>
                                 <div className="action__button" onClick={() => role === 1 ? navigate(`/clients/${client_id}/tax-invoice/edit/${record.ti_id}`) : navigate(`/jr/${jr_id}/clients/${client_id}/tax-invoice/edit/${record.ti_id}`)} >
                                     <Tooltip title="Edit" color='blue' placement="bottom">
@@ -113,7 +131,7 @@ export default function taxInvoiceColumns(showModal, navigate, role = 0, client_
                                         <img src={approveIcon} alt="approveIcon" />
                                     </Tooltip>
                                 </div>
-                            </>
+                            </> : ""
                     }
                 </div>
             ),

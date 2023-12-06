@@ -2,16 +2,18 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
+
 import { getCountries, getStates } from "country-state-picker";
 import { createVendor, getVendorDetails, getVendorShippingAddressList, updateVendor } from "../../../Actions/Vendor";
 import uaeStates from "../../../data/uaeStates";
 
+import "./VendorLayout.css";
+import "../../../Styles/Layout/LayoutHeader.css";
 import { Select, Input } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 const { Option } = Select;
 import backButton from "../../../assets/Icons/back.svg";
 import MinusIcon from "../../../assets/Icons/minus.svg";
-import "./VendorLayout.css";
 
 const VendorLayout = () => {
     const dispatch = useDispatch();
@@ -214,10 +216,10 @@ const VendorLayout = () => {
 
     return (
         <>
-            <div className='create__estimate__header'>
-                <div className='create__estimate__header--left'>
-                    <img src={backButton} alt='back' className='create__estimate__header--back-btn' onClick={() => navigate("/vendor")} />
-                    <h1 className='create__estimate__header--title'> Vendors List </h1>
+            <div className='layout__header'>
+                <div className='layout__header--left'>
+                    <img src={backButton} alt='back' className='layout__header--back-btn' onClick={() => navigate("/vendor")} />
+                    <h1 className='layout__header--title'> Vendors List </h1>
                 </div>
             </div>
             <div className="create__vendor--main">
@@ -363,18 +365,21 @@ const VendorLayout = () => {
                                                         <span className="required__field">Address Line 1</span>
                                                         <input type="text" name="address_line_1" value={address.address_line_1}
                                                             onChange={(e) => handleShippingAddressChange(index, "address_line_1", e.target.value)}
+                                                            maxLength="45"
                                                         />
                                                     </div>
                                                     <div className="create__vendor--input shipping-input">
                                                         <span>Address Line 2</span>
                                                         <input type="text" name="address_line_2" value={address.address_line_2}
                                                             onChange={(e) => handleShippingAddressChange(index, "address_line_2", e.target.value)}
+                                                            maxLength="45"
                                                         />
                                                     </div>
                                                     <div className="create__vendor--input shipping-input">
                                                         <span>Address Line 3</span>
                                                         <input type="text" name="address_line_3" value={address.address_line_3}
                                                             onChange={(e) => handleShippingAddressChange(index, "address_line_3", e.target.value)}
+                                                            maxLength="45"
                                                         />
                                                     </div>
                                                 </div>

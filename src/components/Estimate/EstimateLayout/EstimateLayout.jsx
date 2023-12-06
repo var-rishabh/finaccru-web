@@ -1,22 +1,26 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+
+import moment from 'moment';
+import { getCurrency } from '../../../Actions/Onboarding';
+import { getCustomerDetails } from '../../../Actions/Customer';
+import { createEstimate, getEstimateDetails, getNewEstimateNumber, updateEstimate } from '../../../Actions/Estimate';
+
 import EstimateFormP1 from './EstimateFormP1/EstimateFormP1';
 import EstimateFormP2 from './EstimateFormP2/EstimateFormP2';
-import { useNavigate } from 'react-router-dom';
-import { createEstimate, getEstimateDetails, getNewEstimateNumber, updateEstimate } from '../../../Actions/Estimate';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
-import { getCurrency } from '../../../Actions/Onboarding';
-import { toast } from 'react-toastify';
-import moment from 'moment';
 
-import "./EstimateLayout.css"
+import "../../../Styles/Layout/LayoutHeader.css";
+import "../../../Styles/Layout/LayoutContainer.css";
 import { LoadingOutlined } from '@ant-design/icons';
-import backButton from "../../../assets/Icons/back.svg"
-import logo from "../../../assets/Icons/cropped_logo.svg"
-import { getCustomerDetails } from '../../../Actions/Customer';
+import backButton from "../../../assets/Icons/back.svg";
+import logo from "../../../assets/Icons/cropped_logo.svg";
 
 const EstimateLayout = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
     const [estimateNumber, setEstimateNumber] = useState('');
     const [estimateDate, setEstimateDate] = useState(moment().format('YYYY-MM-DD'));
     const [validTill, setValidTill] = useState(moment().format('YYYY-MM-DD'));
@@ -64,7 +68,7 @@ const EstimateLayout = () => {
     useEffect(() => {
         if (customerId === null && !user?.clientInfo?.terms_and_conditions) { setTermsAndConditions(''); return; }
         setTermsAndConditions(customer?.terms_and_conditions ? customer?.terms_and_conditions : termsAndConditions);
-    }, [customer, customerId]);
+    }, [customer, customerId, termsAndConditions, user?.clientInfo?.terms_and_conditions]);
         
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
@@ -92,7 +96,7 @@ const EstimateLayout = () => {
             setEstimateNumber(number);
             setTermsAndConditions(user?.clientInfo?.terms_and_conditions);
         }
-    }, [currencies, estimate, number]);
+    }, [currencies, estimate, number, currencyId, user?.clientInfo?.terms_and_conditions]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -155,17 +159,17 @@ const EstimateLayout = () => {
     }
     return (
         <>
-            <div className='create__estimate__header'>
-                <div className='create__estimate__header--left'>
-                    <img src={backButton} alt='back' className='create__estimate__header--back-btn' onClick={() => navigate("/estimate")} />
-                    <h1 className='create__estimate__header--title'> Estimates List </h1>
+            <div className='layout__header'>
+                <div className='layout__header--left'>
+                    <img src={backButton} alt='back' className='layout__header--back-btn' onClick={() => navigate("/estimate")} />
+                    <h1 className='layout__header--title'> Estimates List </h1>
                 </div>
             </div>
-            <div className="estimate__container">
-                <div className="create__estimate--main">
-                    <div className="create__estimate--top">
+            <div className="layout__container">
+                <div className="create__layout--main">
+                    <div className="create__layout--top">
                         <img style={{ width: "9rem" }} src={logo} alt="logo" />
-                        <h1 className='create__estimate--head'>Estimate</h1>
+                        <h1 className='create__layout--head'>Estimate</h1>
                     </div>
                     <form>
                         <EstimateFormP1 estimateNumber={estimateNumber} setEstimateNumber={setEstimateNumber}
@@ -188,7 +192,7 @@ const EstimateLayout = () => {
                             isSetDefaultTncCustomer={isSetDefaultTncCustomer} setIsSetDefaultTncCustomer={setIsSetDefaultTncCustomer}
                             isSetDefaultTncClient={isSetDefaultTncClient} setIsSetDefaultTncClient={setIsSetDefaultTncClient}
                         />
-                        <div className='estimate__form--submit-btn'>
+                        <div className='layout__form--submit-btn'>
                             <button type='submit' onClick={handleSubmit}>
                                 {
                                     estimateLoading ? <LoadingOutlined /> : "Submit"
@@ -196,9 +200,9 @@ const EstimateLayout = () => {
                             </button>
                         </div>
                     </form>
-                    <div className="estimate__footer">
+                    <div className="layout__footer">
                         <img style={{ width: "5rem" }} src={logo} alt="logo" />
-                        <div className='estimate__footer--text'>
+                        <div className='layout__footer--text'>
                             <p style={{ fontWeight: "400", fontSize: "0.8rem" }}> This is electronically generated document and does not require sign or stamp. </p>
                             <span style={{ marginTop: "0.2rem", fontWeight: "600", fontSize: "0.8rem" }}> powered by Finaccru </span>
                         </div>

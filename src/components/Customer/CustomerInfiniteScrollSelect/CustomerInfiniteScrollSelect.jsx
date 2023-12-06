@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import './CustomerInfiniteScrollSelect.css';
 import { useSelector } from 'react-redux';
+
 import { LoadingOutlined } from '@ant-design/icons';
+import './CustomerInfiniteScrollSelect.css';
 
 const CustomerInfiniteScrollSelect = ({ loadMoreOptions, onChange, customerKeyword, setCustomerKeyword }) => {
     const selectRef = useRef(null);
@@ -31,6 +32,7 @@ const CustomerInfiniteScrollSelect = ({ loadMoreOptions, onChange, customerKeywo
             loadMoreOptions(currentScrollPage);
         }
     };
+
     useEffect(() => {
         const select = selectRef.current;
         if (select) {

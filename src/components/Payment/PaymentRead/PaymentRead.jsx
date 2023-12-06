@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getPaymentsDetails, submitPaymentsForApproval, markPaymentsVoid } from '../../../Actions/Payment';
+import { getPaymentsDetails, submitPaymentsForApproval, markPaymentsVoid, approvePayments } from '../../../Actions/Payment';
 import { getCurrency, getTaxRate } from '../../../Actions/Onboarding';
 import { readAccountantClient } from '../../../Actions/Accountant';
 import Loader from '../../Loader/Loader';
@@ -26,9 +26,9 @@ const PaymentReadLayout = () => {
     const { client } = useSelector(state => state.accountantReducer);
     const { loading, payment } = useSelector(state => state.paymentReducer);
 
-    const payment_id =  user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
-    const client_id =  user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
-    const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;    
+    const payment_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
+    const client_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
+    const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -116,33 +116,44 @@ const PaymentReadLayout = () => {
                 </div>
                 <div className='read__payment__header--right'>
                     {
-                        payment?.receipt_status === "Approved" || payment?.receipt_status === "Void" ? "" :
-                            payment?.receipt_status === "Pending Approval" ?
-                                <>
-                                    <a className='read__payment__header--btn1'
-                                        onClick={() => {
-                                            dispatch(markPaymentsVoid(payment_id))
-                                        }}
-                                    >Mark as Void</a>
-                                    <a className='read__payment__header--btn1'
-                                        onClick={() => navigate(`/payment/edit/${payment?.receipt_id}`)}
-                                    >Edit</a>
-                                </> :
-                                <>
-                                    <a className='read__payment__header--btn1'
-                                        onClick={() => {
-                                            dispatch(submitPaymentsForApproval(payment_id))
-                                        }}
-                                    >Submit for Approval</a>
-                                    <a className='read__payment__header--btn1'
-                                        onClick={() => {
-                                            dispatch(markPaymentsVoid(payment_id))
-                                        }}
-                                    >Mark as Void</a>
-                                    <a className='read__payment__header--btn1'
-                                        onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/payment/edit/${payment?.receipt_id}`)}
-                                    >Edit</a>
-                                </>
+                        user?.localInfo?.role ?
+                            <>
+                                <a className='read__payment__header--btn1'
+                                    onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/payment/edit/${payment?.receipt_id}`)}
+                                >Edit</a>
+                                <a className='read__payment__header--btn2'
+                                    onClick={() => {
+                                        dispatch(approvePayments(payment_id, user?.localInfo?.role, client_id));
+                                    }}
+                                >Approve</a>
+                            </> :
+                            payment?.receipt_status === "Approved" || payment?.receipt_status === "Void" ? "" :
+                                payment?.receipt_status === "Pending Approval" ?
+                                    <>
+                                        <a className='read__payment__header--btn1'
+                                            onClick={() => {
+                                                dispatch(markPaymentsVoid(payment_id))
+                                            }}
+                                        >Mark as Void</a>
+                                        <a className='read__payment__header--btn1'
+                                            onClick={() => navigate(`/payment/edit/${payment?.receipt_id}`)}
+                                        >Edit</a>
+                                    </> :
+                                    <>
+                                        <a className='read__payment__header--btn1'
+                                            onClick={() => {
+                                                dispatch(submitPaymentsForApproval(payment_id))
+                                            }}
+                                        >Submit for Approval</a>
+                                        <a className='read__payment__header--btn1'
+                                            onClick={() => {
+                                                dispatch(markPaymentsVoid(payment_id))
+                                            }}
+                                        >Mark as Void</a>
+                                        <a className='read__payment__header--btn1'
+                                            onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/payment/edit/${payment?.receipt_id}`)}
+                                        >Edit</a>
+                                    </>
                     }
                     <PdfDownload contents={contents} heading={"Payment"} />
                 </div>

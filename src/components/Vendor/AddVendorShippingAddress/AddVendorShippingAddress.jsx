@@ -2,16 +2,16 @@ import { useState } from 'react'
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from 'react-redux';
 import { getCountries, getStates } from 'country-state-picker';
-import { createShippingAddress } from '../../../Actions/Customer';
+import { createVendorShippingAddress } from '../../../Actions/Vendor';
 import uaeStates from '../../../data/uaeStates';
 
-import "./AddShippingAddress.css"
+import "./AddVendorShippingAddress.css"
 import { Modal, Select } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
-const AddShippingAddress = ({ isShippingModalOpen, handleShippingCancel, customerId, handleAddShippingAddressSubmit }) => {
+const AddVendorShippingAddress = ({ isShippingModalOpen, handleShippingCancel, vendorId, handleAddVendorShippingAddressSubmit }) => {
     const dispatch = useDispatch();
-    const { loading } = useSelector((state) => state.customerReducer);
+    const { loading } = useSelector((state) => state.vendorReducer);
 
     const [label, setLabel] = useState('');
     const [address1, setAddress1] = useState('');
@@ -52,7 +52,7 @@ const AddShippingAddress = ({ isShippingModalOpen, handleShippingCancel, custome
             state: state,
             country: country
         }
-        dispatch(createShippingAddress(values, customerId, handleAddShippingAddressSubmit));
+        dispatch(createVendorShippingAddress(values, vendorId, handleAddVendorShippingAddressSubmit));
         setLabel('');
         setAddress1('');
         setAddress2('');
@@ -92,15 +92,15 @@ const AddShippingAddress = ({ isShippingModalOpen, handleShippingCancel, custome
                 </div>
                 <div className='add__shipping__modal--input'>
                     <span className='required__field'>Shipping Address 1</span>
-                    <input type="text" name='address1' value={address1} onChange={(e) => setAddress1(e.target.value)} />
+                    <input type="text" name='address1' value={address1} onChange={(e) => setAddress1(e.target.value)} maxLength="45" />
                 </div>
                 <div className='add__shipping__modal--input'>
                     <span>Shipping Address 2</span>
-                    <input type="text" name='address2' value={address2} onChange={(e) => setAddress2(e.target.value)} />
+                    <input type="text" name='address2' value={address2} onChange={(e) => setAddress2(e.target.value)} maxLength="45" />
                 </div>
                 <div className='add__shipping__modal--input'>
                     <span>Shipping Address 3</span>
-                    <input type="text" name='address3' value={address3} onChange={(e) => setAddress3(e.target.value)} />
+                    <input type="text" name='address3' value={address3} onChange={(e) => setAddress3(e.target.value)} maxLength="45" />
                 </div>
                 <div className='add__shipping__modal--select'>
                     <span className='required__field'>Shipping Country</span>
@@ -151,4 +151,4 @@ const AddShippingAddress = ({ isShippingModalOpen, handleShippingCancel, custome
     )
 }
 
-export default AddShippingAddress;
+export default AddVendorShippingAddress;

@@ -107,7 +107,7 @@ export default function creditNoteColumns(showModal, navigate, showAdjustModal, 
                         </Tooltip>
                     </div>
                     {
-                        record?.status === "Approved" ? "" :
+                        record?.status === "Pending Approval" ?
                             <>
                                 <div className="action__button" onClick={() => role === 1 ? navigate(`/clients/${client_id}/credit-note/edit/${record.cn_id}`) : navigate(`/jr/${jr_id}/clients/${client_id}/credit-note/edit/${record.cn_id}`)} >
                                     <Tooltip title="Edit" color='blue' placement="bottom">
@@ -119,7 +119,7 @@ export default function creditNoteColumns(showModal, navigate, showAdjustModal, 
                                         <img src={approveIcon} alt="approveIcon" />
                                     </Tooltip>
                                 </div>
-                            </>
+                            </> : ""
                     }
                 </div>
             ),
