@@ -56,6 +56,38 @@ export const createVendor = (data, handleVendorSubmit, navigate) => async (dispa
     }
 }
 
+export const createInPurchaseDocument = (data, handleVendorSubmit) => async (dispatch) => {
+    try {
+        dispatch({ type: "CreateInPurchaseDocumentRequest" });
+        const token = await auth.currentUser.getIdToken();
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        const response = await axios.post(`${url}/private/client/vendors/create-in-purchase-document`, data, config);
+        dispatch({ type: "CreateInPurchaseDocumentSuccess", payload: response.data });
+        toast.success("Vendor Created successfully");
+        if (handleVendorSubmit) {
+            handleVendorSubmit(response.data);
+        }
+        dispatch(getVendorList());
+    } catch (error) {
+        console.log(error);
+        if (error.response?.status === 422) {
+            // I will get an array of errors from the backend in details
+            const errors = error.response.data.detail;
+            // I will loop through the array and display the errors
+            errors?.forEach((error) => {
+                toast.error(error.loc[1] + ": " + error.msg);
+            });
+            dispatch({ type: "CreateInPurchaseDocumentFailure", payload: error.response?.data || error.message });
+        } else {
+            dispatch({ type: "CreateInPurchaseDocumentFailure", payload: error.response?.data || error.message });
+            toast.error(error.response?.data || error.message);
+        }
+    }
+}
 
 export const updateVendor = (data, id, handleVendorSubmit, navigate) => async (dispatch) => {
     try {
@@ -110,7 +142,7 @@ export const getVendorDetails = (id) => async (dispatch) => {
     }
 }
 
-export const getVendorInfiniteScroll = (page = 1, refresh = false, keyword="") => async (dispatch) => {
+export const getVendorInfiniteScroll = (page = 1, refresh = false, keyword = "") => async (dispatch) => {
     try {
         dispatch({ type: "VendorInfiniteScrollRequest" });
         const token = await auth.currentUser.getIdToken();
@@ -129,7 +161,7 @@ export const getVendorInfiniteScroll = (page = 1, refresh = false, keyword="") =
     }
 }
 
-export const createVendorShippingAddress = (data, customer_id, handleVendorShippingAddressSubmit) => async (dispatch) => {
+export const createVendorShippingAddress = (data, vendor_id, handleVendorShippingAddressSubmit) => async (dispatch) => {
     try {
         dispatch({ type: "CreateVendorShippingAddressRequest" });
         const token = await auth.currentUser.getIdToken();
@@ -138,7 +170,7 @@ export const createVendorShippingAddress = (data, customer_id, handleVendorShipp
                 token: token,
             },
         };
-        const response = await axios.post(`${url}/private/client/vendors/${customer_id}/create-shipping-address`, data, config);
+        const response = await axios.post(`${url}/private/client/vendors/${vendor_id}/create-shipping-address`, data, config);
         dispatch({ type: "CreateVendorShippingAddressSuccess", payload: response.data });
         toast.success("Vendor Shipping Address created successfully");
         if (handleVendorShippingAddressSubmit) {
@@ -162,7 +194,7 @@ export const createVendorShippingAddress = (data, customer_id, handleVendorShipp
     }
 }
 
-export const getVendorShippingAddressList = (customer_id) => async (dispatch) => {
+export const getVendorShippingAddressList = (vendor_id) => async (dispatch) => {
     try {
         dispatch({ type: "VendorShippingAddressListRequest" });
         const token = await auth.currentUser.getIdToken();
@@ -171,7 +203,7 @@ export const getVendorShippingAddressList = (customer_id) => async (dispatch) =>
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/vendors/${customer_id}/read-shipping-address-list`, config);
+        const response = await axios.get(`${url}/private/client/vendors/${vendor_id}/read-shipping-address-list`, config);
         dispatch({ type: "VendorShippingAddressListSuccess", payload: response.data });
     } catch (error) {
         console.log(error);
@@ -252,3 +284,110 @@ export const deleteVendorShippingAddress = (id) => async (dispatch) => {
     }
 }
 
+export const createPettyCashHandler = (data) => async (dispatch) => {
+    try {
+        dispatch({ type: "CreatePettyCashHandlerRequest" });
+        const token = await auth.currentUser.getIdToken();
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        await axios.post(`${url}/private/client/petty_cash_handler/create`, data, config);
+        dispatch({ type: "CreatePettyCashHandlerSuccess" });
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "CreatePettyCashHandlerFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+export const createOtherPayment = (data) => async (dispatch) => {
+    try {
+        dispatch({ type: "CreateOtherPaymentRequest" });
+        const token = await auth.currentUser.getIdToken();
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        await axios.post(`${url}/private/client/other_payment/create`, data, config);
+        dispatch({ type: "CreateOtherPaymentSuccess" });
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "CreateOtherPaymentFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+export const readPaymentMethod = () => async (dispatch) => {
+    try {
+        dispatch({ type: "ReadPaymentMethodRequest" });
+        const token = await auth.currentUser.getIdToken();
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        const response = await axios.get(`${url}/private/read-payment-method`, config);
+        dispatch({ type: "ReadPaymentMethodSuccess", payload: response.data });
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ReadPaymentMethodFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+export const readPaymentMethodSubCategories = (payment_type) => async (dispatch) => {
+    try {
+        dispatch({ type: "ReadPaymentMethodSubCategoriesRequest" });
+        const token = await auth.currentUser.getIdToken();
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        const response = await axios.get(`${url}/private/read-payment-method-subcategories/${payment_type}`, config);
+        dispatch({ type: "ReadPaymentMethodSubCategoriesSuccess", payload: response.data });
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ReadPaymentMethodSubCategoriesFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+export const readPaymentTerms = () => async (dispatch) => {
+    try {
+        dispatch({ type: "ReadPaymentTermsRequest" });
+        const token = await auth.currentUser.getIdToken();
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        const response = await axios.get(`${url}/private/read-payment-terms`, config);
+        dispatch({ type: "ReadPaymentTermsSuccess", payload: response.data });
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ReadPaymentTermsFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+export const calculateExpectedDeliveryDate = (order_date, payment_term_id) => async (dispatch) => {
+    try {
+        dispatch({ type: "CalculateExpectedDeliveryDateRequest" });
+        const token = await auth.currentUser.getIdToken();
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        const response = await axios.get(`${url}/private/calculate-expected-delivery-date?order_date=${order_date}&payment_term_id=${payment_term_id}`, config);
+        dispatch({ type: "CalculateExpectedDeliveryDateSuccess", payload: response.data });
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "CalculateExpectedDeliveryDateFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}

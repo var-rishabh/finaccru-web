@@ -5,6 +5,7 @@ import CustomerInfiniteScrollSelect from '../../../Customer/CustomerInfiniteScro
 import AddCustomerModal from '../../../Customer/AddCustomerModal/AddCustomerModal';
 import AddShippingAddress from '../../../Customer/AddShippingAddress/AddShippingAddress';
 
+import "../../../../Styles/Layout/LayoutP1.css";
 import { Select, Input } from 'antd';
 const { TextArea } = Input;
 const { Option } = Select;
@@ -121,11 +122,10 @@ const EstimateFormP1 = ({
         setCurrentCustomerPage((prev) => prev + 1);
     }
 
-
     return (
-        <div className='estimate__form--part1'>
-            <div className='estimate__form--part1-head'>
-                <div className='estimate__form--head-info1'>
+        <div className='layout__form--part1'>
+            <div className='layout__form--part1-head'>
+                <div className='layout__form--head-info1'>
                     <h3>Estimate From</h3>
                     <span style={{ fontWeight: 500 }}>{user?.clientInfo?.company_data?.company_name}</span>
                     <span>{user?.clientInfo?.company_data?.address_line_1}</span>
@@ -134,8 +134,8 @@ const EstimateFormP1 = ({
                     <span>{user?.clientInfo?.company_data?.state + ', ' + user?.clientInfo?.company_data?.country}</span>
                     <span>TRN: {user?.clientInfo?.company_data?.trade_license_number}</span>
                 </div>
-                <div className='estimate__form--head-info2'>
-                    <div className='estimate__form--head-info2-data'>
+                <div className='layout__form--head-info2'>
+                    <div className='layout__form--head-info2-data'>
                         <span className='required__field'>Estimate Number</span>
                         <input
                             name="estimateNumber"
@@ -147,7 +147,7 @@ const EstimateFormP1 = ({
                             }}
                         />
                     </div>
-                    <div className='estimate__form--head-info2-data'>
+                    <div className='layout__form--head-info2-data'>
                         <span className='required__field'>Estimate Date</span>
                         <input type="date"
                             name='estimateDate'
@@ -156,7 +156,7 @@ const EstimateFormP1 = ({
                             onChange={(e) => setEstimateDate(e.target.value)}
                         />
                     </div>
-                    <div className='estimate__form--head-info2-data'>
+                    <div className='layout__form--head-info2-data'>
                         <span className='required__field'>Valid Till</span>
                         <input type="date"
                             name='validTill'
@@ -165,19 +165,19 @@ const EstimateFormP1 = ({
                             onChange={(e) => setValidTill(e.target.value)}
                         />
                     </div>
-                    <div className='estimate__form--head-info2-data'>
+                    <div className='layout__form--head-info2-data'>
                         <span>Reference</span>
                         <input type="text" name='reference' value={reference} onChange={(e) => setReference(e.target.value)} />
                     </div>
                 </div>
             </div>
-            <div className='estimate__form--part2-head'>
-                <div className='estimate__form--part2-head-customer'>
+            <div className='layout__form--part2-head'>
+                <div className='layout__form--part2-head-customer'>
                     <h3 className='required__field'>Estimate For</h3>
                     {
                         customerName ?
-                            <div className='estimate__form--customer-data'>
-                                <div className='estimate__form--customer-data-info'>
+                            <div className='layout__form--customer-data'>
+                                <div className='layout__form--customer-data-info'>
                                     <span style={{ fontWeight: 500 }}>{customerName}</span>
                                     <span>{customer?.billing_address_line_1}</span>
                                     {customer?.billing_address_line_2 && <span>{customer?.billing_address_line_2}</span>}
@@ -185,7 +185,7 @@ const EstimateFormP1 = ({
                                     <span>{customer?.billing_state + ', ' + customer?.billing_country}</span>
                                     {customer?.trn && <span>TRN: {customer?.trn}</span>}
                                 </div>
-                                <CloseOutlined className='estimate__for--anticon-close' 
+                                <CloseOutlined className='layout__for--anticon-close' 
                                     onClick={() => {
                                         setCustomerName(''); setCustomerId(null); setShippingId(null);
                                         setShippingAddress1(null);
@@ -199,15 +199,15 @@ const EstimateFormP1 = ({
                     }
                     <AddCustomerModal isModalOpen={isModalOpen} handleCustomerSubmit={handleCustomerSubmit} handleCancel={handleCancel} />
                 </div>
-                <div className='estimate__form--part2-head-customer second-select'>
+                <div className='layout__form--part2-head-customer second-select'>
                     {
                         customerId ?
                             <>
                                 <h3 className='required__field'>Shipping Address</h3>
                                 {
                                     shippingId || shippingAddress1 ?
-                                        <div className='estimate__form--customer-data'>
-                                            <div className='estimate__form--customer-data-info'>
+                                        <div className='layout__form--customer-data'>
+                                            <div className='layout__form--customer-data-info'>
                                                 {shippingLabel && <span style={{ fontWeight: 500 }}>{shippingLabel}</span>}
                                                 <span>{shippingAddress1}</span>
                                                 {shippingAddress2 && <span>{shippingAddress2}</span>}
@@ -216,7 +216,7 @@ const EstimateFormP1 = ({
 
                                             </div>
                                             <CloseOutlined
-                                                className='estimate__for--anticon-close'
+                                                className='layout__for--anticon-close'
                                                 onClick={() => {
                                                     setShippingId(null); setShippingAddress1(null);
                                                     setShippingAddress2(null); setShippingAddress3(null);
@@ -256,10 +256,10 @@ const EstimateFormP1 = ({
                     }
                 </div>
             </div>
-            <div className='estimate__form--part3-head'>
+            <div className='layout__form--part3-head'>
                 <h3 className='required__field'>Select Currency</h3>
-                <div className='estimate__form--currency'>
-                    <div className='estimate__form--select-currency'>
+                <div className='layout__form--currency'>
+                    <div className='layout__form--select-currency'>
                         <Select
                             showSearch
                             defaultValue="AED"
@@ -271,7 +271,7 @@ const EstimateFormP1 = ({
                             loading={currencyLoading}
                         />
                     </div>
-                    <div className='estimate__form--currency-conversion'>
+                    <div className='layout__form--currency-conversion'>
                         <span>1</span>
                         <span>{currency} =</span>
                         <input
@@ -288,7 +288,7 @@ const EstimateFormP1 = ({
                     </div>
                 </div>
             </div>
-            <div className='estimate__form--part4-head'>
+            <div className='layout__form--part4-head'>
                 <h3>Subject</h3>
                 <TextArea
                     placeholder="Subject"

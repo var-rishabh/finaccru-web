@@ -2,20 +2,23 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
-import { getCountries, getStates } from "country-state-picker";
+
 import { createCustomer, getCustomerDetails, getShippingAddressList, updateCustomer } from "../../../Actions/Customer";
+import { getCountries, getStates } from "country-state-picker";
 import uaeStates from "../../../data/uaeStates";
 
+import "./CustomerLayout.css";
+import "../../../Styles/Layout/LayoutHeader.css";
+import backButton from "../../../assets/Icons/back.svg";
+import MinusIcon from "../../../assets/Icons/minus.svg";
 import { Select, Input } from "antd";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 const { Option } = Select;
-import backButton from "../../../assets/Icons/back.svg";
-import MinusIcon from "../../../assets/Icons/minus.svg";
-import "./CustomerLayout.css";
 
 const CustomerLayout = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
     const isEdit = window.location.pathname.split('/')[2] === 'edit';
     const { loading, customer, shippingAddresses: sA } = useSelector((state) => state.customerReducer);
 
@@ -48,7 +51,6 @@ const CustomerLayout = () => {
     const [allBillingState, setAllBillingStates] = useState(uaeStates);
     const [selectedBillingCountry, setSelectedBillingCountry] = useState("ae");
     const [isPhoneError, setIsPhoneError] = useState(false);
-
 
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
@@ -215,10 +217,10 @@ const CustomerLayout = () => {
 
     return (
         <>
-            <div className='create__estimate__header'>
-                <div className='create__estimate__header--left'>
-                    <img src={backButton} alt='back' className='create__estimate__header--back-btn' onClick={() => navigate("/customer")} />
-                    <h1 className='create__estimate__header--title'> Customers List </h1>
+            <div className='layout__header'>
+                <div className='layout__header--left'>
+                    <img src={backButton} alt='back' className='layout__header--back-btn' onClick={() => navigate("/customer")} />
+                    <h1 className='layout__header--title'> Customers List </h1>
                 </div>
             </div>
             <div className="create__customer--main">
@@ -364,18 +366,21 @@ const CustomerLayout = () => {
                                                         <span className="required__field">Address Line 1</span>
                                                         <input type="text" name="address_line_1" value={address.address_line_1}
                                                             onChange={(e) => handleShippingAddressChange(index, "address_line_1", e.target.value)}
+                                                            maxLength="45"
                                                         />
                                                     </div>
                                                     <div className="create__customer--input shipping-input">
                                                         <span>Address Line 2</span>
                                                         <input type="text" name="address_line_2" value={address.address_line_2}
                                                             onChange={(e) => handleShippingAddressChange(index, "address_line_2", e.target.value)}
+                                                            maxLength="45"
                                                         />
                                                     </div>
                                                     <div className="create__customer--input shipping-input">
                                                         <span>Address Line 3</span>
                                                         <input type="text" name="address_line_3" value={address.address_line_3}
                                                             onChange={(e) => handleShippingAddressChange(index, "address_line_3", e.target.value)}
+                                                            maxLength="45"
                                                         />
                                                     </div>
                                                 </div>

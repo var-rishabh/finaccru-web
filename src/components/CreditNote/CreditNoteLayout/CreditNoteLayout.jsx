@@ -1,23 +1,27 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+
+import moment from 'moment';
+import { getCustomerDetails } from '../../../Actions/Customer';
+import { readAccountantClient } from '../../../Actions/Accountant';
+import { createCreditNote, getCreditNoteDetails, getNewCreditNoteNumber, updateCreditNote } from '../../../Actions/CreditNote';
+import { getCurrency } from '../../../Actions/Onboarding';
+
 import CreditNoteLayoutP1 from './CreditNoteLayoutP1/CreditNoteLayoutP1';
 import CreditNoteLayoutP2 from './CreditNoteLayoutP2/CreditNoteLayoutP2';
-import { useNavigate } from 'react-router-dom';
-import { createCreditNote, getCreditNoteDetails, getNewCreditNoteNumber, updateCreditNote } from '../../../Actions/CreditNote';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
-import { getCurrency } from '../../../Actions/Onboarding';
-import { toast } from 'react-toastify';
-import moment from 'moment';
 
-import "./CreditNoteLayout.css"
+import "../../../Styles/Layout/LayoutHeader.css";
+import "../../../Styles/Layout/LayoutContainer.css";
 import { LoadingOutlined } from '@ant-design/icons';
 import backButton from "../../../assets/Icons/back.svg"
 import logo from "../../../assets/Icons/cropped_logo.svg"
-import { getCustomerDetails } from '../../../Actions/Customer';
-import { readAccountantClient } from '../../../Actions/Accountant';
 
 const CreditNoteLayout = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
     const [creditNoteNumber, setCreditNoteNumber] = useState('');
     const [creditNoteDate, setCreditNoteDate] = useState(moment().format('YYYY-MM-DD'));
     const [validTill, setValidTill] = useState(moment().format('YYYY-MM-DD'));
@@ -63,7 +67,7 @@ const CreditNoteLayout = () => {
             dispatch(getCurrency());
             dispatch(getNewCreditNoteNumber());
         }
-    }, [dispatch]);
+    }, [dispatch, cn_id, type, client_id, user?.localInfo?.role]);
 
     useEffect(() => {
         if (type === 'edit') {
@@ -72,12 +76,12 @@ const CreditNoteLayout = () => {
             }
             dispatch(getCustomerDetails(creditNote?.customer?.customer_id));
         }
-    }, [dispatch, creditNote?.customer?.customer_id]);
+    }, [dispatch, creditNote?.customer?.customer_id, type, user?.localInfo?.role]);
 
     useEffect(() => {
         if (customerId === null && !user?.clientInfo?.terms_and_conditions) { setTermsAndConditions(''); return; }
         setTermsAndConditions(customer?.terms_and_conditions ? customer?.terms_and_conditions : termsAndConditions);
-    }, [customer, customerId]);
+    }, [customer, customerId, termsAndConditions, user?.clientInfo?.terms_and_conditions]);
 
     useEffect(() => {
         if (type === 'edit') {
@@ -105,7 +109,7 @@ const CreditNoteLayout = () => {
             setCreditNoteNumber(number);
             setTermsAndConditions(user?.clientInfo?.terms_and_conditions);
         }
-    }, [currencies, creditNote, number]);
+    }, [currencies, creditNote, number, type, user?.clientInfo?.terms_and_conditions, currencyId]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -169,23 +173,19 @@ const CreditNoteLayout = () => {
     }
     return (
         <>
-            <div className='create__creditNote__header'>
-                <div className='create__creditNote__header--left'>
-                    <img src={backButton} alt='back' className='create__creditNote__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : "/credit-note"}`)} />
-                    <h1 className='create__creditNote__header--title'>
+            <div className='layout__header'>
+                <div className='layout__header--left'>
+                    <img src={backButton} alt='back' className='layout__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : "/credit-note"}`)} />
+                    <h1 className='layout__header--title'>
                         {user?.localInfo?.role ? 'Go Back' : 'Credit Notes List'}
                     </h1>
                 </div>
-                <div className='create__creditNote__header--right'>
-                    <a className='create__creditNote__header--btn1'>Download</a>
-                    <a className='create__creditNote__header--btn2'>Share</a>
-                </div>
             </div>
-            <div className="creditNote__container">
-                <div className="create__creditNote--main">
-                    <div className="create__creditNote--top">
+            <div className="layout__container">
+                <div className="create__layout--main">
+                    <div className="create__layout--top">
                         <img style={{ width: "9rem" }} src={logo} alt="logo" />
-                        <h1 className='create__creditNote--head'>Credit Note</h1>
+                        <h1 className='create__layout--head'>Credit Note</h1>
                     </div>
                     <form>
                         <CreditNoteLayoutP1 creditNoteNumber={creditNoteNumber} setCreditNoteNumber={setCreditNoteNumber}
@@ -208,7 +208,7 @@ const CreditNoteLayout = () => {
                             isSetDefaultTncCustomer={isSetDefaultTncCustomer} setIsSetDefaultTncCustomer={setIsSetDefaultTncCustomer}
                             isSetDefaultTncClient={isSetDefaultTncClient} setIsSetDefaultTncClient={setIsSetDefaultTncClient}
                         />
-                        <div className='creditNote__form--submit-btn'>
+                        <div className='layout__form--submit-btn'>
                             <button type='submit' onClick={handleSubmit}>
                                 {
                                     creditNoteLoading ? <LoadingOutlined /> : "Submit"
@@ -216,9 +216,9 @@ const CreditNoteLayout = () => {
                             </button>
                         </div>
                     </form>
-                    <div className="creditNote__footer">
+                    <div className="layout__footer">
                         <img style={{ width: "5rem" }} src={logo} alt="logo" />
-                        <div className='creditNote__footer--text'>
+                        <div className='layout__footer--text'>
                             <p style={{ fontWeight: "400", fontSize: "0.8rem" }}> This is electronically generated document and does not require sign or stamp. </p>
                             <span style={{ marginTop: "0.2rem", fontWeight: "600", fontSize: "0.8rem" }}> powered by Finaccru </span>
                         </div>

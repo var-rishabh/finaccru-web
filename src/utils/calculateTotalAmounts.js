@@ -2,7 +2,9 @@ const calculateTotalAmounts = (line_items, setSubTotal, setDiscount, setTax, set
     let subTotalAmount = 0;
     let discountAmount = 0;
     let taxAmount = 0;
+
     const calculatedTax = [];
+    
     const calculateFinalAmount = line_items?.map((item) => {
         const { qty, rate, discount, is_percentage_discount, tax_id } = item;
         let finalRate = 0;

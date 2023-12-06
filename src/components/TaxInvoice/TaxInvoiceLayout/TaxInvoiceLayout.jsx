@@ -2,27 +2,30 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+
+import moment from 'moment';
 import { createTaxInvoice, getTaxInvoiceDetails, getNewTaxInvoiceNumber, updateTaxInvoice } from '../../../Actions/TaxInvoice';
 import { getCurrency } from '../../../Actions/Onboarding';
 import { getCustomerDetails } from '../../../Actions/Customer';
 import { getEstimateDetails } from '../../../Actions/Estimate';
 import { getProformaDetails } from '../../../Actions/Proforma';
-import moment from 'moment';
-
-import TaxInvoiceLayoutP1 from './TaxInvoiceLayoutP1/TaxInvoiceLayoutP1';
-import TaxInvoiceLayoutP2 from './TaxInvoiceLayoutP2/TaxInvoiceLayoutP2';
-
-import "./TaxInvoiceLayout.css"
-import { LoadingOutlined } from '@ant-design/icons';
-import backButton from "../../../assets/Icons/back.svg"
-import logo from "../../../assets/Icons/cropped_logo.svg"
 import { readOpenCreditNotesForCustomer } from '../../../Actions/CreditNote';
 import { readOpenPaymentsForCustomer } from '../../../Actions/Payment';
 import { readAccountantClient } from '../../../Actions/Accountant';
 
+import TaxInvoiceLayoutP1 from './TaxInvoiceLayoutP1/TaxInvoiceLayoutP1';
+import TaxInvoiceLayoutP2 from './TaxInvoiceLayoutP2/TaxInvoiceLayoutP2';
+
+import "../../../Styles/Layout/LayoutHeader.css";
+import "../../../Styles/Layout/LayoutContainer.css";
+import { LoadingOutlined } from '@ant-design/icons';
+import backButton from "../../../assets/Icons/back.svg"
+import logo from "../../../assets/Icons/cropped_logo.svg"
+
 const TaxInvoiceLayout = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
     const [taxInvoiceNumber, setTaxInvoiceNumber] = useState('');
     const [taxInvoiceDate, setTaxInvoiceDate] = useState(moment().format('YYYY-MM-DD'));
     const [validTill, setValidTill] = useState(moment().format('YYYY-MM-DD'));
@@ -59,8 +62,8 @@ const TaxInvoiceLayout = () => {
 
     const type = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[6] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[4] : window.location.pathname.split('/')[2];
     const ti_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
-    const client_id =  user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
-    const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;    
+    const client_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
+    const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;
     const isAdd = type === 'create';
 
     const { loading: taxInvoiceLoading, taxInvoice, number } = useSelector(state => state.taxInvoiceReducer);
@@ -104,12 +107,12 @@ const TaxInvoiceLayout = () => {
             dispatch(readOpenCreditNotesForCustomer(taxInvoice?.customer?.customer_id, taxInvoice?.currency_id, user?.localInfo?.role, client_id));
             dispatch(readOpenPaymentsForCustomer(taxInvoice?.customer?.customer_id, taxInvoice?.currency_id, user?.localInfo?.role, client_id));
         }
-    }, [dispatch, taxInvoice?.customer?.customer_id]);
+    }, [dispatch, taxInvoice?.customer?.customer_id, taxInvoice?.currency_id, type, user?.localInfo?.role, client_id]);
 
     useEffect(() => {
         if (customerId === null && !user?.clientInfo?.terms_and_conditions) { setTermsAndConditions(''); return; }
         setTermsAndConditions(customer?.terms_and_conditions ? customer?.terms_and_conditions : termsAndConditions);
-    }, [customer, customerId]);
+    }, [customer, customerId, termsAndConditions, user?.clientInfo?.terms_and_conditions]);
 
     useEffect(() => {
         if (customerId !== null && currencyId !== null) {
@@ -119,7 +122,7 @@ const TaxInvoiceLayout = () => {
             dispatch(readOpenCreditNotesForCustomer(customerId, currencyId));
             dispatch(readOpenPaymentsForCustomer(customerId, currencyId));
         }
-    }, [dispatch, customerId, currencyId]);
+    }, [dispatch, customerId, currencyId, user?.localInfo?.role]);
 
     useEffect(() => {
         if (type === 'edit') {
@@ -204,7 +207,7 @@ const TaxInvoiceLayout = () => {
                 }
             }
         }
-    }, [currencies, taxInvoice, number, estimate, proforma, convert, reference_id, referenceName, file, location.state, user?.clientInfo?.terms_and_conditions, currencyId]);
+    }, [currencies, taxInvoice, number, estimate, proforma, convert, reference_id, referenceName, file, location.state, user?.clientInfo?.terms_and_conditions, currencyId, type]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -273,23 +276,19 @@ const TaxInvoiceLayout = () => {
     }
     return (
         <>
-            <div className='create__taxInvoice__header'>
-                <div className='create__taxInvoice__header--left'>
-                    <img src={backButton} alt='back' className='create__taxInvoice__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : "/tax-invoice"}`)} />
-                    <h1 className='create__taxInvoice__header--title'>
+            <div className='layout__header'>
+                <div className='layout__header--left'>
+                    <img src={backButton} alt='back' className='layout__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : "/tax-invoice"}`)} />
+                    <h1 className='layout__header--title'>
                         {user?.localInfo?.role ? 'Go Back' : 'Tax Invoices List'}
                     </h1>
                 </div>
-                <div className='create__taxInvoice__header--right'>
-                    <a className='create__taxInvoice__header--btn1'>Download</a>
-                    <a className='create__taxInvoice__header--btn2'>Share</a>
-                </div>
             </div>
-            <div className="taxInvoice__container">
-                <div className="create__taxInvoice--main">
-                    <div className="create__taxInvoice--top">
+            <div className="layout__container">
+                <div className="create__layout--main">
+                    <div className="create__layout--top">
                         <img style={{ width: "9rem" }} src={logo} alt="logo" />
-                        <h1 className='create__taxInvoice--head'>Tax Invoice</h1>
+                        <h1 className='create__layout--head'>Tax Invoice</h1>
                     </div>
                     <form>
                         <TaxInvoiceLayoutP1 taxInvoiceNumber={taxInvoiceNumber} setTaxInvoiceNumber={setTaxInvoiceNumber}
@@ -317,7 +316,7 @@ const TaxInvoiceLayout = () => {
                             customerId={customerId} paymentReceivedValue={paymentReceivedValue} setPaymentReceivedValue={setPaymentReceivedValue}
                             setPaymentOptionsNull={setPaymentOptionsNull}
                         />
-                        <div className='taxInvoice__form--submit-btn'>
+                        <div className='layout__form--submit-btn'>
                             <button type='submit' onClick={handleSubmit}>
                                 {
                                     taxInvoiceLoading ? <LoadingOutlined /> : "Submit"
@@ -325,9 +324,9 @@ const TaxInvoiceLayout = () => {
                             </button>
                         </div>
                     </form>
-                    <div className="taxInvoice__footer">
+                    <div className="layout__footer">
                         <img style={{ width: "5rem" }} src={logo} alt="logo" />
-                        <div className='taxInvoice__footer--text'>
+                        <div className='layout__footer--text'>
                             <p style={{ fontWeight: "400", fontSize: "0.8rem" }}> This is electronically generated document and does not require sign or stamp. </p>
                             <span style={{ marginTop: "0.2rem", fontWeight: "600", fontSize: "0.8rem" }}> powered by Finaccru </span>
                         </div>

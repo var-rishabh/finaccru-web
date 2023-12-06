@@ -51,6 +51,7 @@
     border: none;
     width: 100% !important;
     max-width: 100% !important;
+    overflow: hidden;
 }
 
 .ant-select-selection-item {

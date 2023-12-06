@@ -10,6 +10,8 @@ import { creditNoteReducer } from './Reducers/CreditNote';
 import { paymentReducer } from './Reducers/Payment';
 import { accountantReducer } from './Reducers/Accountant';
 import { vendorReducer } from './Reducers/Vendor';
+import { expenseReducer } from './Reducers/Expense';
+import { purchaseOrderReducer } from './Reducers/PurchaseOrder';
 
 const store = configureStore({
     reducer: {
@@ -25,6 +27,8 @@ const store = configureStore({
         paymentReducer: paymentReducer,
         accountantReducer: accountantReducer,
         vendorReducer: vendorReducer,
+        expenseReducer: expenseReducer,
+        purchaseOrderReducer: purchaseOrderReducer,
     },
 });
 

@@ -4,6 +4,9 @@ import { getUnit } from '../../../../Actions/Unit';
 import { getTaxRate } from '../../../../Actions/Onboarding';
 import calculateTotalAmounts from '../../../../utils/calculateTotalAmounts';
 
+import "../../../../Styles/Layout/LayoutListItems.css";
+import "../../../../Styles/Layout/LayoutP2.css";
+import "../../../../Styles/Layout/LayoutPayment.css";
 import { PlusOutlined } from '@ant-design/icons';
 import MinusIcon from '../../../../assets/Icons/minus.svg'
 import { Input, Select, AutoComplete, Radio } from 'antd';
@@ -107,11 +110,11 @@ const TaxInvoiceFormP2 = ({
 
     return (
         <>
-            <div className='taxInvoice__items'>
+            <div className='layout__items'>
                 {items?.map((item, index) => (
-                    <div className='taxInvoice__items--main' key={index}>
-                        <div className='taxInvoice__items--whole-item'>
-                            <div className='taxInvoice__items--itemName'>
+                    <div className='layout__items--main' key={index}>
+                        <div className='layout__items--whole-item'>
+                            <div className='layout__items--itemName'>
                                 {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem' }}>Item Name</span> : <></>}
                                 <Input
                                     type='text'
@@ -124,7 +127,7 @@ const TaxInvoiceFormP2 = ({
                                     onChange={(e) => handleInputChange(index, 'item_name', e.target.value)}
                                 />
                             </div>
-                            <div className='taxInvoice__items--unitSelect'>
+                            <div className='layout__items--unitSelect'>
                                 {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem' }}>Unit</span> : <></>}
                                 <AutoComplete
                                     options={allUnits?.map((unit) => ({
@@ -142,7 +145,7 @@ const TaxInvoiceFormP2 = ({
                                     placeholder="Unit"
                                 />
                             </div>
-                            <div className='taxInvoice__items--number-item'>
+                            <div className='layout__items--number-item'>
                                 {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem', marginLeft: '3px' }}>Qty</span> : <></>}
                                 <Input
                                     type="number"
@@ -160,7 +163,7 @@ const TaxInvoiceFormP2 = ({
                                     }}
                                 />
                             </div>
-                            <div className='taxInvoice__items--number-item'>
+                            <div className='layout__items--number-item'>
                                 {index === 0 ? <span className='required__field' style={{ marginBottom: '1rem', marginLeft: '3px' }}>Rate</span> : <></>}
                                 <Input
                                     type="number"
@@ -178,7 +181,7 @@ const TaxInvoiceFormP2 = ({
                                     }}
                                 />
                             </div>
-                            <div className='taxInvoice__items--discount'>
+                            <div className='layout__items--discount'>
                                 {index === 0 ? <span style={{ marginBottom: '1rem', marginLeft: '3px' }}>Discount</span> : <></>}
                                 <Input
                                     type="number"
@@ -212,7 +215,7 @@ const TaxInvoiceFormP2 = ({
                                     }}
                                 />
                             </div>
-                            <div className='taxInvoice__items--tax'>
+                            <div className='layout__items--tax'>
                                 {index === 0 ? <span style={{ marginBottom: '0.9rem' }}>Tax</span> : <></>}
                                 <Input
                                     type="number"
@@ -247,7 +250,7 @@ const TaxInvoiceFormP2 = ({
                                     }}
                                 />
                             </div>
-                            <div className='taxInvoice__items--amount'>
+                            <div className='layout__items--amount'>
                                 {index === 0 ? <span style={{ marginBottom: '1rem' }}>Amount</span> : <></>}
                                 <Input
                                     type='text'
@@ -260,15 +263,15 @@ const TaxInvoiceFormP2 = ({
                                 />
                             </div>
                             {items.length > 1 && (
-                                <div className='taxInvoice__items--sr'>
+                                <div className='layout__items--sr'>
                                     {index === 0 ? <span style={{ marginBottom: '1rem' }}>&nbsp;</span> : <></>}
-                                    <div className='taxInvoice--cancel-icon'>
+                                    <div className='layout--cancel-icon'>
                                         <img src={MinusIcon} onClick={(e) => handleRemovePerson(index, e)} />
                                     </div>
                                 </div>
                             )}
                         </div>
-                        <div className='taxInvoice__items--description'>
+                        <div className='layout__items--description'>
                             {showDescription[index] || item?.description ? (
                                 <>
                                     <div className='remove--description-btn'>
@@ -304,11 +307,11 @@ const TaxInvoiceFormP2 = ({
                     </div>
                 ))}
             </div>
-            <div className='taxInvoice--details'>
-                <div className='taxInvoice--details--bank'>
-                    <div className='taxInvoice--details--split'>
-                        <div className='taxInvoice--details-left'>
-                            <div className='taxInvoice--details-tnc'>
+            <div className='layout--details'>
+                <div className='layout--details--bank'>
+                    <div className='layout--details--split'>
+                        <div className='layout--details-left'>
+                            <div className='layout--details-tnc'>
                                 <h3>Add Terms and Conditions</h3>
                                 <TextArea
                                     placeholder="Terms and Conditions"
@@ -317,7 +320,7 @@ const TaxInvoiceFormP2 = ({
                                     onChange={(e) => setTermsAndConditions(e.target.value)}
                                 />
                             </div>
-                            <div style={{ marginTop: "1rem" }} className='taxInvoice--details__modal--checkbox'>
+                            <div style={{ marginTop: "1rem" }} className='layout--details__modal--checkbox'>
                                 <input type="checkbox" value={isSetDefaultTncCustomer}
                                     checked={isSetDefaultTncCustomer}
                                     onChange={(e) => setIsSetDefaultTncCustomer(e.target.checked)}
@@ -329,7 +332,7 @@ const TaxInvoiceFormP2 = ({
                                     }}
                                 >Save for this customer</span>
                             </div>
-                            <div className='taxInvoice--details__modal--checkbox'>
+                            <div className='layout--details__modal--checkbox'>
                                 <input type="checkbox" value={isSetDefaultTncClient}
                                     checked={isSetDefaultTncClient}
                                     onChange={(e) => setIsSetDefaultTncClient(e.target.checked)}
@@ -342,14 +345,14 @@ const TaxInvoiceFormP2 = ({
                                 >Save for all customers</span>
                             </div>
                         </div>
-                        <div className='taxInvoice--details-right'>
-                            <div className='taxInvoice--details-right-head'>
+                        <div className='layout--details-right'>
+                            <div className='layout--details-right-head'>
                                 <span>Sub Total</span>
                                 <span>Discount</span>
                                 <span>Tax</span>
                                 <span>Total</span>
                             </div>
-                            <div className='taxInvoice--details-right-info'>
+                            <div className='layout--details-right-info'>
                                 <span>
                                     <p style={{ fontWeight: 500 }}>{currency}</p>
                                     &nbsp; {new Intl.NumberFormat('en-US', {
@@ -375,8 +378,8 @@ const TaxInvoiceFormP2 = ({
                     </div>
                 </div>
             </div>
-            <div className='taxInvoice__payment'>
-                <div className='taxInvoice__payment-options'>
+            <div className='layout__payment'>
+                <div className='layout__payment-options'>
                     <p>Payment Received?</p>
                     <Radio.Group onChange={onChangePaymentReceived} value={paymentReceivedValue} >
                         <Radio value={1}>Yes</Radio>
@@ -386,17 +389,17 @@ const TaxInvoiceFormP2 = ({
                 {
                     paymentReceivedValue === 1 ?
                         <>
-                            <div className='taxInvoice__payment-data'>
-                                <div className='taxInvoice__payment-table'>
-                                    <div className='taxInvoice__payments-table-head'>
+                            <div className='layout__payment-data'>
+                                <div className='layout__payment-table'>
+                                    <div className='layout__payments-table-head'>
                                         <p>Receipt Number</p>
                                         <p>Total Amount</p>
                                     </div>
-                                    <div className='taxInvoice__payment-table--body'>
+                                    <div className='layout__payment-table--body'>
                                         {
                                             openPayments?.length > 0 && customerId !== null ? openPayments?.map((payment, index) => (
-                                                <div key={index} className='taxInvoice__payment-table--data'>
-                                                    <div className='taxInvoice__payment-table--checkdata'>
+                                                <div key={index} className='layout__payment-table--data'>
+                                                    <div className='layout__payment-table--checkdata'>
                                                         <input
                                                             className='margin-right-07'
                                                             type="checkbox"
@@ -414,20 +417,20 @@ const TaxInvoiceFormP2 = ({
                                                     </div>
                                                     <p>{currencies?.find((currency) => currency.currency_id === payment?.currency_id)?.currency_abv} {payment?.total_amount}</p>
                                                 </div>
-                                            )) : <p className='taxInvoice__payment-table-noData'>No Payments</p>
+                                            )) : <p className='layout__payment-table-noData'>No Payments</p>
                                         }
                                     </div>
                                 </div>
-                                <div className='taxInvoice__payment-table'>
-                                    <div className='taxInvoice__payments-table-head'>
+                                <div className='layout__payment-table'>
+                                    <div className='layout__payments-table-head'>
                                         <p>CN Number</p>
                                         <p>Total Amount</p>
                                     </div>
-                                    <div className='taxInvoice__payment-table--body'>
+                                    <div className='layout__payment-table--body'>
                                         {
                                             openCreditNotes?.length > 0 && customerId !== null ? openCreditNotes?.map((creditNote, index) => (
-                                                <div key={index} className='taxInvoice__payment-table--data'>
-                                                    <div className='taxInvoice__payment-table--checkdata'>
+                                                <div key={index} className='layout__payment-table--data'>
+                                                    <div className='layout__payment-table--checkdata'>
                                                         <input
                                                             className='margin-right-07'
                                                             type="checkbox"
@@ -445,12 +448,12 @@ const TaxInvoiceFormP2 = ({
                                                     </div>
                                                     <p>{currencies?.find((currency) => currency.currency_id === creditNote?.currency_id)?.currency_abv} {creditNote?.total}</p>
                                                 </div>
-                                            )) : <p className='taxInvoice__payment-table-noData'>No Credit Notes</p>
+                                            )) : <p className='layout__payment-table-noData'>No Credit Notes</p>
                                         }
                                     </div>
                                 </div>
                             </div>
-                            <div className='taxInvoice__payment-select'>
+                            <div className='layout__payment-select'>
                                 <Select
                                     placeholder='Select Payment Method'
                                     value={bankId}

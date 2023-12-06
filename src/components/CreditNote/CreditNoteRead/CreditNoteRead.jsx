@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 // Actions
-import { getCreditNoteDetails, markCreditNoteVoid, submitCreditNoteForApproval } from '../../../Actions/CreditNote';
+import { getCreditNoteDetails, markCreditNoteVoid, submitCreditNoteForApproval, approveCreditNote } from '../../../Actions/CreditNote';
 import { getCurrency, getTaxRate } from '../../../Actions/Onboarding';
 
 import Loader from '../../Loader/Loader';
@@ -123,36 +123,60 @@ const CreditNoteReadLayout = () => {
                 </div>
                 <div className='read__header--right'>
                     {
-                        creditNote?.cn_status === "Draft" ?
+                        user?.localInfo?.role ?
                             <>
                                 <a className='read__header--btn1'
                                     onClick={() => {
-                                        dispatch(submitCreditNoteForApproval(cn_id))
+                                        navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/credit-note/edit/${creditNote?.cn_id}`)
                                     }}
                                 >
-                                    Submit for Approval
+                                    Edit
                                 </a>
-                                <a className='read__header--btn1'
+                                <a className='read__header--btn2'
                                     onClick={() => {
-                                        dispatch(markCreditNoteVoid(cn_id))
+                                        dispatch(approveCreditNote(cn_id, user?.localInfo?.role, client_id))
                                     }}
                                 >
-                                    Mark as Void
+                                    Approve
                                 </a>
-                            </>
-                            : creditNote?.cn_status === "Pending Approval" ?
-                                <a className='read__header--btn1'
-                                    onClick={() => {
-                                        dispatch(markCreditNoteVoid(cn_id))
-                                    }}
-                                >
-                                    Mark as Void
-                                </a> : ""
+                            </> :
+                            creditNote?.cn_status === "Draft" ?
+                                <>
+                                    <a className='read__header--btn1'
+                                        onClick={() => {
+                                            dispatch(submitCreditNoteForApproval(cn_id))
+                                        }}
+                                    >
+                                        Submit for Approval
+                                    </a>
+                                    <a className='read__header--btn1'
+                                        onClick={() => {
+                                            dispatch(markCreditNoteVoid(cn_id))
+                                        }}
+                                    >
+                                        Mark as Void
+                                    </a>
+                                </>
+                                : creditNote?.cn_status === "Pending Approval" ?
+                                    <a className='read__header--btn1'
+                                        onClick={() => {
+                                            dispatch(markCreditNoteVoid(cn_id))
+                                        }}
+                                    >
+                                        Mark as Void
+                                    </a> : ""
                     }
                     {
-                        creditNote?.cn_status === "Void" ? "" :
-                            creditNote?.cn_status === "Approved" ? "" :
-                                <a className='read__header--btn1' onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/credit-note/edit/${creditNote?.cn_id}`)}>Edit</a>
+                        user?.localInfo?.role ? "" :
+                            creditNote?.cn_status === "Void" ? "" :
+                                creditNote?.cn_status === "Approved" ? "" :
+                                    <a className='read__header--btn1'
+                                        onClick={() => {
+                                            navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/credit-note/edit/${creditNote?.cn_id}`)
+                                        }}
+                                    >
+                                        Edit
+                                    </a>
                     }
                     <PdfDownload contents={contents} heading={"Credit Note"} />
                 </div>

@@ -12,25 +12,29 @@ export default function JuniorAccountantColumns(navigate) {
             title: 'Number of Clients',
             dataIndex: 'number_of_clients',
             key: 'number_of_clients',
-            align: 'right'
+            align: 'right',
+            width: 150,
         },
         {
             title: 'Jr. Accountant Pending Tasks',
             dataIndex: 'jr_accountant_pending_tasks',
             key: 'jr_accountant_pending_tasks',
-            align: 'right'
+            align: 'right',
+            width: 250,
         },
         {
             title: 'Your Pending Tasks',
             dataIndex: 'sr_accountant_pending_tasks',
             key: 'sr_accountant_pending_tasks',
-            align: 'right'
+            align: 'right',
+            width: 200,
         },
         {
             title: 'Last Active',
             dataIndex: 'last_active',
             key: 'last_active',
-            align: 'right'
+            align: 'right',
+            width: 200,
         },
     ];
     

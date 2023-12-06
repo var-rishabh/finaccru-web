@@ -5,6 +5,7 @@ import CustomerInfiniteScrollSelect from '../../../Customer/CustomerInfiniteScro
 import AddCustomerModal from '../../../Customer/AddCustomerModal/AddCustomerModal';
 import AddShippingAddress from '../../../Customer/AddShippingAddress/AddShippingAddress';
 
+import "../../../../Styles/Layout/LayoutP1.css";
 import { Select, Input } from 'antd';
 const { TextArea } = Input;
 const { Option } = Select;
@@ -13,7 +14,7 @@ import { CloseOutlined } from '@ant-design/icons';
 const ProformaFormP1 = ({
     proformaNumber, proformaDate, validTill, reference, subject, customerName, customerId, currency, currencyId, currencyConversionRate, shippingAddress1, shippingAddress2, shippingAddress3, shippingState, shippingCountry,
     setProformaNumber, setProformaDate, setValidTill, setReference, setSubject, setCustomerName, setCustomerId, setCurrency, setCurrencyId, setCurrencyConversionRate, setShippingAddress1, setShippingAddress2, setShippingAddress3, setShippingState, setShippingCountry,
-    termsAndConditions, setTermsAndConditions,convert
+    termsAndConditions, setTermsAndConditions, convert
 }) => {
     const filterOption = (input, option) => {
         return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
@@ -141,9 +142,9 @@ const ProformaFormP1 = ({
 
 
     return (
-        <div className='proforma__form--part1'>
-            <div className='proforma__form--part1-head'>
-                <div className='proforma__form--head-info1'>
+        <div className='layout__form--part1'>
+            <div className='layout__form--part1-head'>
+                <div className='layout__form--head-info1'>
                     <h3>Proforma From</h3>
                     <span style={{ fontWeight: 500 }}>{user?.clientInfo?.company_data?.company_name}</span>
                     <span>{user?.clientInfo?.company_data?.address_line_1}</span>
@@ -152,8 +153,8 @@ const ProformaFormP1 = ({
                     <span>{user?.clientInfo?.company_data?.state + ', ' + user?.clientInfo?.company_data?.country}</span>
                     <span>TRN: {user?.clientInfo?.company_data?.trade_license_number}</span>
                 </div>
-                <div className='proforma__form--head-info2'>
-                    <div className='proforma__form--head-info2-data'>
+                <div className='layout__form--head-info2'>
+                    <div className='layout__form--head-info2-data'>
                         <span className='required__field'>Proforma Number</span>
                         <input
                             name="proformaNumber"
@@ -165,7 +166,7 @@ const ProformaFormP1 = ({
                             }}
                         />
                     </div>
-                    <div className='proforma__form--head-info2-data'>
+                    <div className='layout__form--head-info2-data'>
                         <span className='required__field'>Proforma Date</span>
                         <input type="date"
                             name='proformaDate'
@@ -174,7 +175,7 @@ const ProformaFormP1 = ({
                             onChange={(e) => setProformaDate(e.target.value)}
                         />
                     </div>
-                    <div className='proforma__form--head-info2-data'>
+                    <div className='layout__form--head-info2-data'>
                         <span className='required__field'>Due Date</span>
                         <input type="date"
                             name='validTill'
@@ -183,19 +184,19 @@ const ProformaFormP1 = ({
                             onChange={(e) => setValidTill(e.target.value)}
                         />
                     </div>
-                    <div className='proforma__form--head-info2-data'>
+                    <div className='layout__form--head-info2-data'>
                         <span>Reference</span>
                         <input type="text" name='reference' value={reference} onChange={(e) => setReference(e.target.value)} disabled={convert} />
                     </div>
                 </div>
             </div>
-            <div className='proforma__form--part2-head'>
-                <div className='proforma__form--part2-head-customer'>
+            <div className='layout__form--part2-head'>
+                <div className='layout__form--part2-head-customer'>
                     <h3 className='required__field'>Proforma For</h3>
                     {
                         customerName ?
-                            <div className='proforma__form--customer-data'>
-                                <div className='proforma__form--customer-data-info'>
+                            <div className='layout__form--customer-data'>
+                                <div className='layout__form--customer-data-info'>
                                     <span style={{ fontWeight: 500 }}>{customerName}</span>
                                     <span>{customer?.billing_address_line_1}</span>
                                     {customer?.billing_address_line_2 && <span>{customer?.billing_address_line_2}</span>}
@@ -203,7 +204,7 @@ const ProformaFormP1 = ({
                                     <span>{customer?.billing_state + ', ' + customer?.billing_country}</span>
                                     {customer?.trn && <span>TRN: {customer?.trn}</span>}
                                 </div>
-                                <CloseOutlined className='proforma__for--anticon-close'
+                                <CloseOutlined className='layout__for--anticon-close'
                                     onClick={() => {
                                         setCustomerName(''); setCustomerId(null); setShippingId(null);
                                         setShippingAddress1(null);
@@ -217,15 +218,15 @@ const ProformaFormP1 = ({
                     }
                     <AddCustomerModal openingModal={true} isModalOpen={isModalOpen} handleCustomerSubmit={handleCustomerSubmit} handleCancel={handleCancel} />
                 </div>
-                <div className='proforma__form--part2-head-customer second-select'>
+                <div className='layout__form--part2-head-customer second-select'>
                     {
                         customerId ?
                             <>
                                 <h3 className='required__field'>Shipping Address</h3>
                                 {
                                     shippingId || shippingAddress1 ?
-                                        <div className='proforma__form--customer-data'>
-                                            <div className='proforma__form--customer-data-info'>
+                                        <div className='layout__form--customer-data'>
+                                            <div className='layout__form--customer-data-info'>
                                                 {shippingLabel && <span style={{ fontWeight: 500 }}>{shippingLabel}</span>}
                                                 <span>{shippingAddress1}</span>
                                                 {shippingAddress2 && <span>{shippingAddress2}</span>}
@@ -234,7 +235,7 @@ const ProformaFormP1 = ({
 
                                             </div>
                                             <CloseOutlined
-                                                className='proforma__for--anticon-close'
+                                                className='layout__for--anticon-close'
                                                 onClick={() => {
                                                     setShippingId(null); setShippingAddress1(null);
                                                     setShippingAddress2(null); setShippingAddress3(null);
@@ -274,10 +275,10 @@ const ProformaFormP1 = ({
                     }
                 </div>
             </div>
-            <div className='proforma__form--part3-head'>
+            <div className='layout__form--part3-head'>
                 <h3 className='required__field'>Select Currency</h3>
-                <div className='proforma__form--currency'>
-                    <div className='proforma__form--select-currency'>
+                <div className='layout__form--currency'>
+                    <div className='layout__form--select-currency'>
                         <Select
                             showSearch
                             defaultValue="AED"
@@ -289,7 +290,7 @@ const ProformaFormP1 = ({
                             loading={currencyLoading}
                         />
                     </div>
-                    <div className='proforma__form--currency-conversion'>
+                    <div className='layout__form--currency-conversion'>
                         <span>1</span>
                         <span>{currency} =</span>
                         <input
@@ -306,7 +307,7 @@ const ProformaFormP1 = ({
                     </div>
                 </div>
             </div>
-            <div className='proforma__form--part4-head'>
+            <div className='layout__form--part4-head'>
                 <h3>Subject</h3>
                 <TextArea
                     placeholder="Subject"
