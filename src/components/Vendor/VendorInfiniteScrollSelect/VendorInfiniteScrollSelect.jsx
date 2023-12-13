@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import './VendorInfiniteScrollSelect.css';
 import { useSelector } from 'react-redux';
+
+import './VendorInfiniteScrollSelect.css';
 import { LoadingOutlined } from '@ant-design/icons';
 
-const VendorInfiniteScrollSelect = ({ loadMoreOptions, onChange, vendorKeyword, setVendorKeyword }) => {
+const VendorInfiniteScrollSelect = ({ loadMoreOptions, onChange, vendorKeyword, setVendorKeyword, scrollFor }) => {
     const selectRef = useRef(null);
     const { loading, vendorsInf, totalVendors } = useSelector(state => state.vendorReducer);
     const [visibleOptions, setVisibleOptions] = useState([]);
@@ -56,39 +57,65 @@ const VendorInfiniteScrollSelect = ({ loadMoreOptions, onChange, vendorKeyword, 
 
     const handleOptionClick = (option) => {
         setSelectedOption(option);
+        setVendorKeyword(option.vendor_name);
         setIsOpen(false);
         onChange(option);
     };
 
     return (
-        <div className={`custom-select-cont ${isOpen ? 'open' : ''}`} ref={inputRef}>
-            <div className={`custom-select ${isOpen ? 'open' : ''}`}>
-                <div className={`select-header ${isOpen ? 'open' : ''}`} onClick={toggleDropdown} >
-                    <input type='text' placeholder='Select Vendor' value={vendorKeyword} onChange={(e) => setVendorKeyword(e.target.value)} />
-                    <i className={`arrow ${isOpen ? 'up' : 'down'}`} />
-                </div>
-                <ul className={`options ${isOpen ? 'open' : ''}`} ref={selectRef}>
-                    <li key={0}
-                        style={{
-                            fontWeight: 'bold',
-                            backgroundColor: '#f5f5f5',
-                            borderBottom: '2px solid #e8e8e8',
-                        }}
-                        onClick={() => {
-                            handleOptionClick({ vendor_id: 'addVendor', vendor_name: 'Add Vendor' })
-                        }}
-                    >
-                        Add Vendor
-                    </li>
-                    {visibleOptions.map((option) => (
-                        <li key={option.vendor_id} onClick={() => handleOptionClick(option)}>
-                            {option.vendor_name}
-                        </li>
-                    ))}
-                    {loading && <LoadingOutlined />}
-                </ul>
-            </div>
-        </div>
+        <>
+            {
+                scrollFor === 'createPO' ?
+                    <>
+                        <div className={`custom-select-cont ${isOpen ? 'open' : ''}`} ref={inputRef}>
+                            <div className={`custom-select ${isOpen ? 'open' : ''}`}>
+                                <div className={`select-header ${isOpen ? 'open' : ''}`} onClick={toggleDropdown} >
+                                    <input type='text' placeholder='Select Vendor' value={vendorKeyword} onChange={(e) => setVendorKeyword(e.target.value)} />
+                                    <i className={`arrow ${isOpen ? 'up' : 'down'}`} />
+                                </div>
+                                <ul className={`options ${isOpen ? 'open' : ''}`} ref={selectRef}>
+                                    <li key={0}
+                                        style={{
+                                            fontWeight: 'bold',
+                                            backgroundColor: '#f5f5f5',
+                                            borderBottom: '2px solid #e8e8e8',
+                                        }}
+                                        onClick={() => {
+                                            handleOptionClick({ vendor_id: 'addVendor', vendor_name: 'Add Vendor' })
+                                        }}
+                                    >
+                                        Add Vendor
+                                    </li>
+                                    {visibleOptions.map((option) => (
+                                        <li key={option.vendor_id} onClick={() => handleOptionClick(option)}>
+                                            {option.vendor_name}
+                                        </li>
+                                    ))}
+                                    {loading && <LoadingOutlined />}
+                                </ul>
+                            </div>
+                        </div>
+                    </> :
+                    <>
+                        <div className={`custom-select-cont ${isOpen ? 'open' : ''}`} ref={inputRef}>
+                            <div className={`custom-select ${isOpen ? 'open' : ''}`}>
+                                <div className={`select-header ${isOpen ? 'open' : ''}`} onClick={toggleDropdown} >
+                                    <input type='text' placeholder='Select Vendor' value={vendorKeyword} onChange={(e) => setVendorKeyword(e.target.value)} />
+                                    <i className={`arrow ${isOpen ? 'up' : 'down'}`} />
+                                </div>
+                                <ul className={`options ${isOpen ? 'open' : ''}`} ref={selectRef}>
+                                    {visibleOptions.map((option) => (
+                                        <li key={option.vendor_id} onClick={() => handleOptionClick(option)}>
+                                            {option.vendor_name}
+                                        </li>
+                                    ))}
+                                    {loading && <LoadingOutlined />}
+                                </ul>
+                            </div>
+                        </div>
+                    </>
+            }
+        </>
     );
 };
 

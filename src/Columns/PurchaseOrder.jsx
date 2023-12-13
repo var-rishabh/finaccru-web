@@ -8,9 +8,15 @@ import deleteIcon from '../assets/Icons/deleteIcon.svg';
 export default function purchaseOrderColumns(showModal, navigate) {
     const columns = [
         {
-            title: 'PO Date',
-            dataIndex: 'po_date',
-            key: 'po_date',
+            title: 'Order Date',
+            dataIndex: 'order_date',
+            key: 'order_date',
+            width: 120
+        },
+        {
+            title: 'Expected Date',
+            dataIndex: 'expected_delivery_date',
+            key: 'expected_delivery_date',
             width: 120
         },
         {
@@ -25,21 +31,16 @@ export default function purchaseOrderColumns(showModal, navigate) {
             key: 'vendor_name',
         },
         {
-            title: 'Due Date',
-            dataIndex: 'due_date',
-            key: 'due_date',
-            width: 120
-        },
-        {
-            title: 'Amount',
-            dataIndex: 'amount',
-            key: 'amount',
+            title: 'Total',
+            dataIndex: 'total',
+            key: 'total',
             align: 'right'
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
+            width: 160
         },
     ];
     
@@ -69,7 +70,7 @@ export default function purchaseOrderColumns(showModal, navigate) {
                                 :
                                 <>
                                     <div className="action__button">
-                                        <Tooltip title="Convert" color='green' placement="bottom" onClick={() => navigate(`/purchase-order/create?convert=true&reference=purchase-order&reference_id=${record.po_id}`)}>
+                                        <Tooltip title="Convert" color='green' placement="bottom" onClick={() => navigate(`/bill/create?convert=true&reference=purchase-order&reference_id=${record.po_id}`)}>
                                             <img src={convertIcon} alt="convertIcon" />
                                         </Tooltip>
                                     </div>

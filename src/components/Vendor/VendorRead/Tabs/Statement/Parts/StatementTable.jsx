@@ -8,7 +8,7 @@ const StatementTable = ({ styles, transactions }) => {
                 <Text style={styles.tableHeaderCellLeft}>Type</Text>
                 <Text style={styles.tableHeaderCellLeft}>Details</Text>
                 <Text style={styles.tableHeaderCellRight}>Amount</Text>
-                <Text style={styles.tableHeaderCellRight}>Payments</Text>
+                <Text style={styles.tableHeaderCellRight}>Bill Payments</Text>
                 <Text style={styles.tableHeaderCellRight}>Balance</Text>
             </View>
             <View style={styles.tableBody}>
@@ -29,7 +29,7 @@ const StatementTable = ({ styles, transactions }) => {
                         </Text>
                         <Text style={styles.tableRowCellRight}>
                             {new Intl.NumberFormat('en-US', {
-                            }).format(parseFloat(transaction.payments || 0).toFixed(2))}
+                            }).format(parseFloat(transaction.bill_payments || 0).toFixed(2))}
                         </Text>
                         <Text style={styles.tableRowCellRight}>
                             {new Intl.NumberFormat('en-US', {

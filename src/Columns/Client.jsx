@@ -17,6 +17,7 @@ export default function clientColumns(navigate, role = 1, jr_id = 0) {
             title: 'Contact Number',
             dataIndex: 'contact_number',
             key: 'contact_number',
+            width: 200,
         },
     ];
     
@@ -25,7 +26,8 @@ export default function clientColumns(navigate, role = 1, jr_id = 0) {
             title: 'Pending Actions',
             dataIndex: 'pending_actions',
             key: 'pending_actions',
-            align: 'right'
+            align: 'right',
+            width: 150,
         })
     } else if (role === 2) {
         columns.push({

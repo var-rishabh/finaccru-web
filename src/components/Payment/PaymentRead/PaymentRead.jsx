@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getPaymentsDetails, submitPaymentsForApproval, markPaymentsVoid } from '../../../Actions/Payment';
+import { getPaymentsDetails, submitPaymentsForApproval, markPaymentsVoid, approvePayments } from '../../../Actions/Payment';
 import { getCurrency, getTaxRate } from '../../../Actions/Onboarding';
 import { readAccountantClient } from '../../../Actions/Accountant';
 import Loader from '../../Loader/Loader';
@@ -26,9 +26,9 @@ const PaymentReadLayout = () => {
     const { client } = useSelector(state => state.accountantReducer);
     const { loading, payment } = useSelector(state => state.paymentReducer);
 
-    const payment_id =  user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
-    const client_id =  user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
-    const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;    
+    const payment_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
+    const client_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
+    const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -61,6 +61,7 @@ const PaymentReadLayout = () => {
             height: 90,
             props: {
                 styles: headPdfStyle,
+                title: "Receipt",
                 address_line_1: user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1,
                 address_line_2: user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2,
                 address_line_3: user?.localInfo?.role ? client?.company_data?.address_line_3 : user?.clientInfo?.company_data?.address_line_3,
@@ -77,6 +78,7 @@ const PaymentReadLayout = () => {
             height: ((payment?.invoice_mappings || []).length) * 35 + 10,
             props: {
                 styles: forPdfStyles,
+                title: "Receipt",
                 customer_name: payment?.customer?.customer_name,
                 billing_address_line_1: payment?.customer?.billing_address_line_1,
                 billing_address_line_2: payment?.customer?.billing_address_line_2,
@@ -116,33 +118,44 @@ const PaymentReadLayout = () => {
                 </div>
                 <div className='read__payment__header--right'>
                     {
-                        payment?.receipt_status === "Approved" || payment?.receipt_status === "Void" ? "" :
-                            payment?.receipt_status === "Pending Approval" ?
-                                <>
-                                    <a className='read__payment__header--btn1'
-                                        onClick={() => {
-                                            dispatch(markPaymentsVoid(payment_id))
-                                        }}
-                                    >Mark as Void</a>
-                                    <a className='read__payment__header--btn1'
-                                        onClick={() => navigate(`/payment/edit/${payment?.receipt_id}`)}
-                                    >Edit</a>
-                                </> :
-                                <>
-                                    <a className='read__payment__header--btn1'
-                                        onClick={() => {
-                                            dispatch(submitPaymentsForApproval(payment_id))
-                                        }}
-                                    >Submit for Approval</a>
-                                    <a className='read__payment__header--btn1'
-                                        onClick={() => {
-                                            dispatch(markPaymentsVoid(payment_id))
-                                        }}
-                                    >Mark as Void</a>
-                                    <a className='read__payment__header--btn1'
-                                        onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/payment/edit/${payment?.receipt_id}`)}
-                                    >Edit</a>
-                                </>
+                        user?.localInfo?.role ?
+                            <>
+                                <a className='read__payment__header--btn1'
+                                    onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/payment/edit/${payment?.receipt_id}`)}
+                                >Edit</a>
+                                <a className='read__payment__header--btn2'
+                                    onClick={() => {
+                                        dispatch(approvePayments(payment_id, user?.localInfo?.role, client_id));
+                                    }}
+                                >Approve</a>
+                            </> :
+                            payment?.receipt_status === "Approved" || payment?.receipt_status === "Void" ? "" :
+                                payment?.receipt_status === "Pending Approval" ?
+                                    <>
+                                        <a className='read__payment__header--btn1'
+                                            onClick={() => {
+                                                dispatch(markPaymentsVoid(payment_id))
+                                            }}
+                                        >Mark as Void</a>
+                                        <a className='read__payment__header--btn1'
+                                            onClick={() => navigate(`/payment/edit/${payment?.receipt_id}`)}
+                                        >Edit</a>
+                                    </> :
+                                    <>
+                                        <a className='read__payment__header--btn1'
+                                            onClick={() => {
+                                                dispatch(submitPaymentsForApproval(payment_id))
+                                            }}
+                                        >Submit for Approval</a>
+                                        <a className='read__payment__header--btn1'
+                                            onClick={() => {
+                                                dispatch(markPaymentsVoid(payment_id))
+                                            }}
+                                        >Mark as Void</a>
+                                        <a className='read__payment__header--btn1'
+                                            onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/payment/edit/${payment?.receipt_id}`)}
+                                        >Edit</a>
+                                    </>
                     }
                     <PdfDownload contents={contents} heading={"Payment"} />
                 </div>
@@ -154,8 +167,18 @@ const PaymentReadLayout = () => {
                             <img style={{ width: "9rem" }} src={logo} alt="logo" />
                             <h1 className='read__payment--head'>Receipt</h1>
                         </div>
-                        <PaymentHead styles={headStyles} address_line_1={user?.clientInfo?.company_data?.address_line_1} address_line_2={user?.clientInfo?.company_data?.address_line_2} address_line_3={user?.clientInfo?.company_data?.address_line_3} company_name={user?.clientInfo?.company_data?.company_name} country={user?.clientInfo?.company_data?.country} state={user?.clientInfo?.company_data?.state} trade_license_number={user?.clientInfo?.company_data?.trade_license_number} payment_number={payment?.receipt_number} payment_date={payment?.receipt_date} />
+                        <PaymentHead styles={headStyles}
+                            title="Receipt"
+                            address_line_1={user?.clientInfo?.company_data?.address_line_1}
+                            address_line_2={user?.clientInfo?.company_data?.address_line_2}
+                            address_line_3={user?.clientInfo?.company_data?.address_line_3}
+                            company_name={user?.clientInfo?.company_data?.company_name}
+                            country={user?.clientInfo?.company_data?.country} state={user?.clientInfo?.company_data?.state}
+                            trade_license_number={user?.clientInfo?.company_data?.trade_license_number}
+                            payment_number={payment?.receipt_number} payment_date={payment?.receipt_date}
+                        />
                         <PaymentFor styles={forStyles} customer_name={payment?.customer?.customer_name} billing_address_line_1={payment?.customer?.billing_address_line_1} billing_address_line_2={payment?.customer?.billing_address_line_2} billing_address_line_3={payment?.customer?.billing_address_line_3} billing_state={payment?.customer?.billing_state} billing_country={payment?.customer?.billing_country} trn={payment?.customer?.trn}
+                            title="Receipt"
                             invoice_mappings={payment?.invoice_mappings || []} total_amount={payment?.total_amount}
                             amount_in_words={toWords.convert(payment?.total_amount ?? 0)}
                             currency_abv={currencies?.find((currency) => currency.currency_id === payment?.currency_id)?.currency_abv}

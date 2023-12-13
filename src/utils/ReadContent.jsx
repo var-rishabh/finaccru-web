@@ -63,7 +63,7 @@ export default function ReadContent(title, mainData, user, currencies, taxRates,
             const taxItem = taxRates?.find((tax) => tax.tax_rate_id === item.tax_id);
             return {
                 component: LineItem,
-                height: item.description ? 45 : 30,
+                height: item.description ? 50 : 35,
                 props: {
                     styles: lineItemPdfStyles,
                     index: index,
@@ -97,7 +97,7 @@ export default function ReadContent(title, mainData, user, currencies, taxRates,
         },
         {
             component: ReadTax,
-            height: 120,
+            height: 200,
             props: {
                 styles: taxPdfStyles,
                 currency_abv: currencies?.find((currency) => currency.currency_id === mainData?.currency_id)?.currency_abv,

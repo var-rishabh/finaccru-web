@@ -1,11 +1,14 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+
 import { getEstimateList } from '../../../../Actions/Estimate';
 import { getProformaList } from '../../../../Actions/Proforma';
 import { getTaxInvoiceList } from '../../../../Actions/TaxInvoice';
 import { getPaymentsList } from '../../../../Actions/Payment';
 import { getCreditNoteList } from '../../../../Actions/CreditNote';
+
 import TableCard from '../../../../Shared/TableCard/TableCard';
+
 import creditNoteColumns from '../../../../Columns/CreditNote';
 import estimateColumns from '../../../../Columns/Estimate';
 import performaColumns from '../../../../Columns/Proforma';
@@ -16,14 +19,17 @@ import { Collapse } from 'antd';
 
 const CustomerTransactions = ({ customer_id }) => {
     const dispatch = useDispatch();
+    
     const { loading: loadingEstimate, estimates } = useSelector((state) => state.estimateReducer);
     const { loading: loadingProforma, proformas } = useSelector((state) => state.proformaReducer);
     const { loading: loadingInvoice, taxInvoices } = useSelector((state) => state.taxInvoiceReducer);
     const { loading: loadingPayment, payments } = useSelector((state) => state.paymentReducer);
     const { loading: loadingCreditNote, creditNotes } = useSelector((state) => state.creditNoteReducer);
+    
     useEffect(() => {
         dispatch(getEstimateList(1, "", customer_id));
     }, [dispatch, customer_id]);
+    
     const items = [
         {
             key: "1",

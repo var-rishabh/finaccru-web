@@ -40,13 +40,32 @@ export default function estimateColumns(showModal, showConvertModal, navigate) {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
+            width: 160,
         },
-        
     ];
-    
+
     if (!navigate || !showModal || !showConvertModal) {
         return columns;
-    } else { 
+    } else {
+        columns.push({
+            title: 'Reference',
+            key: 'related_document_number',
+            align: 'left',
+            width: 120,
+            render: (text, record) => (
+                <div className="action__button" onClick={() => {
+                    if (record?.related_document_number.startsWith("PI")) {
+                        navigate(`/proforma/view/${record.related_document_id}`)
+                    } else if (record?.related_document_number.startsWith("INV")) {
+                        navigate(`/tax-invoice/view/${record.related_document_id}`)
+                    }
+                }}>
+                    {
+                        record.related_document_number ? record.related_document_number : ""
+                    }
+                </div>
+            ),
+        });
         columns.push({
             title: 'Actions',
             key: 'actions',

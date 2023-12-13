@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import "../../Styles/MainPage.css"
-import { Modal, Input, Table } from 'antd';
+import { Modal, Input } from 'antd';
 import errorIcon from '../../assets/Icons/error.svg';
 
-// import { deletePurchaseOrder, downloadPurchaseOrderList, getPurchaseOrderList } from '../../Actions/PurchaseOrder';
+import { deletePurchaseOrder, getPurchaseOrderList, downloadPurchaseOrderList } from '../../Actions/PurchaseOrder';
 import purchaseOrderColumns from '../../Columns/PurchaseOrder';
 import TableCard from '../../Shared/TableCard/TableCard';
 
@@ -14,24 +14,24 @@ const PurchaseOrder = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    // const { loading, purchaseOrders } = useSelector(state => state.purchaseOrderReducer);
+    const { loading, purchaseOrders } = useSelector(state => state.purchaseOrderReducer);
 
     const [searchText, setSearchText] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [record, setRecord] = useState({});
 
-    // useEffect(() => {
-    //     dispatch(getPurchaseOrderList());
-    // }, [dispatch]);
+    useEffect(() => {
+        dispatch(getPurchaseOrderList());
+    }, [dispatch]);
 
-    // useEffect(() => {
-    //     if (searchText.length > 2) {
-    //         dispatch(getPurchaseOrderList(1, searchText));
-    //     }
-    //     if (searchText.length === 0) {
-    //         dispatch(getPurchaseOrderList());
-    //     }
-    // }, [dispatch, searchText]);
+    useEffect(() => {
+        if (searchText.length > 2) {
+            dispatch(getPurchaseOrderList(1, searchText));
+        }
+        if (searchText.length === 0) {
+            dispatch(getPurchaseOrderList());
+        }
+    }, [dispatch, searchText]);
 
     const showModal = (record) => {
         setIsModalOpen(true);
@@ -41,10 +41,10 @@ const PurchaseOrder = () => {
         setIsModalOpen(false);
     };
 
-    // const handleDelete = (id) => {
-    //     dispatch(deletePurchaseOrder(id));
-    //     setIsModalOpen(false);
-    // }
+    const handleDelete = (id) => {
+        dispatch(deletePurchaseOrder(id));
+        setIsModalOpen(false);
+    }
 
     const columns = purchaseOrderColumns(showModal, navigate)
     return (
@@ -62,7 +62,7 @@ const PurchaseOrder = () => {
                     <p>This action cannot be undone.</p>
                     <div className="delete__modal__buttons">
                         <button id='cancel' onClick={handleCancel}>Cancel</button>
-                        {/* <button id='confirm' onClick={() => handleDelete(record.po_id)}>Delete</button> */}
+                        <button id='confirm' onClick={() => handleDelete(record.po_id)}>Delete</button>
                     </div>
                 </div>
             </Modal>
@@ -72,14 +72,13 @@ const PurchaseOrder = () => {
                     <Input placeholder='Search' onChange={(e) => setSearchText(e.target.value)} value={searchText} />
                 </div>
                 <div className='mainPage__header--right'>
-                    {/* <a className='mainPage__header--btn1' onClick={() => dispatch(downloadPurchaseOrderList())}>Download</a> */}
-                    <a className='mainPage__header--btn1'>Download</a>
+                    <a className='mainPage__header--btn1' onClick={() => dispatch(downloadPurchaseOrderList())}>Download</a>
                     <a onClick={() => navigate("/purchase-order/create")} className='mainPage__header--btn2'>Create Purchase Order</a>
                 </div>
             </div>
             <div className="table">
                 <TableCard columns={columns} dispatch={dispatch}
-                    // loading={loading} items={vendors} getList={getVendorList}
+                    loading={loading} items={purchaseOrders} getList={getPurchaseOrderList}
                     searchText={searchText}
                 />
             </div>

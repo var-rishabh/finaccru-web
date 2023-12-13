@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getTaxInvoiceDetails, markTaxInvoiceVoid, submitTaxInvoiceForApproval } from '../../../Actions/TaxInvoice';
+import { getTaxInvoiceDetails, markTaxInvoiceVoid, submitTaxInvoiceForApproval, approveTaxInvoice } from '../../../Actions/TaxInvoice';
 import { getCurrency, getTaxRate } from '../../../Actions/Onboarding';
 import Loader from '../../Loader/Loader';
 
 import '../../../Styles/Read.css';
-import backButton from "../../../assets/Icons/back.svg"
-import DueAmountCard from '../../../Shared/DueAmountCard/DueAmountCard';
+import backButton from "../../../assets/Icons/back.svg";
 
+import DueAmountCard from '../../../Shared/DueAmountCard/DueAmountCard';
 import PdfDownload from '../../../Shared/PdfDownload/PdfDownload';
 
 // Read Parts
@@ -25,10 +25,13 @@ import ReadBank from '../../../Shared/ReadBank/ReadBank';
 import { styles as bankStyles } from '../../../Styles/ReadBank';
 import ReadTax from '../../../Shared/ReadTax/ReadTax';
 import { styles as taxStyles } from '../../../Styles/ReadTax';
+
 import calculateTotalAmounts from '../../../utils/calculateTotalAmounts';
 import ReadContent from '../../../utils/ReadContent';
+
 import ViewHeader from '../../../Shared/ViewHeader/ViewHeader';
 import ViewFooter from '../../../Shared/ViewFooter/ViewFooter';
+
 import { readAccountantClient } from '../../../Actions/Accountant';
 
 const TaxInvoiceReadLayout = () => {
@@ -114,33 +117,47 @@ const TaxInvoiceReadLayout = () => {
                 </div>
                 <div className='read__header--right'>
                     {
-                        taxInvoice?.ti_status === "Approved" || taxInvoice?.ti_status === "Void" ? "" :
-                            taxInvoice?.ti_status === "Pending Approval" ?
-                                <>
-                                    <a className='read__header--btn1'
-                                        onClick={() => {
-                                            dispatch(markTaxInvoiceVoid(ti_id))
-                                        }}
-                                    >Mark as Void</a>
-                                    <a className='read__header--btn1'
-                                        onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/tax-invoice/edit/${taxInvoice?.ti_id}`)}
-                                    >Edit</a>
-                                </> :
-                                <>
-                                    <a className='read__header--btn1'
-                                        onClick={() => {
-                                            dispatch(submitTaxInvoiceForApproval(ti_id))
-                                        }}
-                                    >Submit for Approval</a>
-                                    <a className='read__header--btn1'
-                                        onClick={() => {
-                                            dispatch(markTaxInvoiceVoid(ti_id))
-                                        }}
-                                    >Mark as Void</a>
-                                    <a className='read__header--btn1'
-                                        onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/tax-invoice/edit/${taxInvoice?.ti_id}`)}
-                                    >Edit</a>
-                                </>
+                        user?.localInfo?.role ?
+                            <>
+                                <a className='read__header--btn1'
+                                    onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/tax-invoice/edit/${taxInvoice?.ti_id}`)}
+                                >Edit</a>
+                                {
+                                    taxInvoice?.ti_status === "Pending Approval" ?
+                                        <a className='read__header--btn2'
+                                            onClick={() => {
+                                                dispatch(approveTaxInvoice(ti_id, user?.localInfo?.role, client_id))
+                                            }}
+                                        >Approve</a> : ""
+                                }
+                            </> :
+                            taxInvoice?.ti_status === "Approved" || taxInvoice?.ti_status === "Void" ? "" :
+                                taxInvoice?.ti_status === "Pending Approval" ?
+                                    <>
+                                        <a className='read__header--btn1'
+                                            onClick={() => {
+                                                dispatch(markTaxInvoiceVoid(ti_id))
+                                            }}
+                                        >Mark as Void</a>
+                                        <a className='read__header--btn1'
+                                            onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/tax-invoice/edit/${taxInvoice?.ti_id}`)}
+                                        >Edit</a>
+                                    </> :
+                                    <>
+                                        <a className='read__header--btn1'
+                                            onClick={() => {
+                                                dispatch(submitTaxInvoiceForApproval(ti_id))
+                                            }}
+                                        >Submit for Approval</a>
+                                        <a className='read__header--btn1'
+                                            onClick={() => {
+                                                dispatch(markTaxInvoiceVoid(ti_id))
+                                            }}
+                                        >Mark as Void</a>
+                                        <a className='read__header--btn1'
+                                            onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/tax-invoice/edit/${taxInvoice?.ti_id}`)}
+                                        >Edit</a>
+                                    </>
                     }
                     <PdfDownload contents={contents} heading={"Tax Invoice"} />
                 </div>

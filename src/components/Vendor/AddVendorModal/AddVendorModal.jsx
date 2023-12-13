@@ -1,17 +1,19 @@
 import { useState } from 'react'
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from 'react-redux';
+
 import { getCountries, getStates } from 'country-state-picker';
-import { createInSalesDocument } from '../../../Actions/Vendor';
+import { createInPurchaseDocument } from '../../../Actions/Vendor';
 import uaeStates from '../../../data/uaeStates';
 
+import './AddVendorModal.css'
 import { Modal, Select, Input } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 const { Option } = Select;
-import './AddVendorModal.css'
 
 const AddVendorModal = ({ isModalOpen, handleCancel, handleVendorSubmit }) => {
     const dispatch = useDispatch();
+
     const [vendorName, setVendorName] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
@@ -137,7 +139,7 @@ const AddVendorModal = ({ isModalOpen, handleCancel, handleVendorSubmit }) => {
             opening_balance: openingBalance === "" ? null : openingBalance,
             opening_balance_date: openingBalanceDate === "" ? null : openingBalanceDate,
         }
-        dispatch(createInSalesDocument(vendor, handleVendorSubmit));
+        dispatch(createInPurchaseDocument(vendor, handleVendorSubmit));
         setVendorName("");
         setEmail("");
         setPhone("");
@@ -232,22 +234,21 @@ const AddVendorModal = ({ isModalOpen, handleCancel, handleVendorSubmit }) => {
                         <span className='required__field'>Billing Address 1</span>
                         <input type="text" name='billingAddress1' value={billingAddress1}
                             onChange={(e) => setBillingAddress1(e.target.value)}
+                            maxLength="45"
                         />
                     </div>
                     <div className='add__vendor__modal--input'>
                         <span>Billing Address 2</span>
                         <input type="text" name='billingAddress2' value={billingAddress2}
-                            onChange={(e) => {
-                                setBillingAddress2(e.target.value)
-                            }}
+                            onChange={(e) => setBillingAddress2(e.target.value)}
+                            maxLength="45"
                         />
                     </div>
                     <div className='add__vendor__modal--input'>
                         <span>Billing Address 3</span>
                         <input type="text" name='billingAddress3' value={billingAddress3}
-                            onChange={(e) => {
-                                setBillingAddress3(e.target.value)
-                            }}
+                            onChange={(e) => setBillingAddress3(e.target.value)}
+                            maxLength="45"
                         />
                     </div>
                     <div className='add__vendor__modal--select'>
@@ -300,22 +301,23 @@ const AddVendorModal = ({ isModalOpen, handleCancel, handleVendorSubmit }) => {
                     </div>
                     <div className='add__vendor__modal--input'>
                         <span className='required__field'>Shipping Address 1</span>
-                        <input type="text" name='address1' value={address1} onChange={(e) => setAddress1(e.target.value)} />
+                        <input type="text" name='address1' value={address1}
+                            onChange={(e) => setAddress1(e.target.value)}
+                            maxLength="45"
+                        />
                     </div>
                     <div className='add__vendor__modal--input'>
                         <span>Shipping Address 2</span>
                         <input type="text" name='address2' value={address2}
-                            onChange={(e) => {
-                                setAddress2(e.target.value)
-                            }}
+                            onChange={(e) => setAddress2(e.target.value)}
+                            maxLength="45"
                         />
                     </div>
                     <div className='add__vendor__modal--input'>
                         <span>Shipping Address 3</span>
                         <input type="text" name='address3' value={address3}
-                            onChange={(e) => {
-                                setAddress3(e.target.value)
-                            }}
+                            onChange={(e) => setAddress3(e.target.value)}
+                            maxLength="45"
                         />
                     </div>
                     <div className='add__vendor__modal--select'>

@@ -47,6 +47,30 @@ export default function performaColumns(showModal, navigate) {
         return columns;
     } else {
         columns.push({
+            title: 'Reference',
+            key: 'related_document_1_number',
+            align: 'left',
+            width: 120,
+            render: (text, record) => (
+                <>
+                    <div className="action__button" onClick={() => {
+                        if (record?.related_document_1_number.startsWith("EST")) {
+                            navigate(`/estimate/view/${record.related_document_1_id}`)
+                        }
+                    }}>
+                        {record.related_document_1_number ? record.related_document_1_number : ""}
+                    </div>
+                    <div className="action__button" onClick={() => {
+                        if (record?.related_document_2_number.startsWith("INV")) {
+                            navigate(`/tax-invoice/view/${record.related_document_2_id}`)
+                        }
+                    }}>
+                        {record.related_document_2_number ? record.related_document_2_number : ""}
+                    </div>
+                </>
+            ),
+        });
+        columns.push({
             title: 'Actions',
             key: 'actions',
             width: 150,

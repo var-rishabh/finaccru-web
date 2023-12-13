@@ -1,7 +1,7 @@
 import { View, Text } from '@react-pdf/renderer'
 import moment from 'moment';
 
-const StatementSummary = ({ styles, start_date, end_date, opening_balance, invoiced_amount, amount_received, credit_notes, balance_due }) => {
+const StatementSummary = ({ styles, start_date, end_date, amount_received, balance_due, bill_amount, debit_notes, opening_balance }) => {
     return (
         <View style={styles.main}>
             <View style={styles.mainSummary}>
@@ -21,17 +21,17 @@ const StatementSummary = ({ styles, start_date, end_date, opening_balance, invoi
                     <Text style={styles.symbolStyle}> + </Text>
                 </View>
                 <View style={styles.summaryInfoBox}>
-                    <Text style={styles.summaryInfoHead}>Invoiced Amount</Text>
+                    <Text style={styles.summaryInfoHead}>Bill Amount</Text>
                     <Text style={styles.summaryInfoData}>
                         {new Intl.NumberFormat('en-US', {
-                        }).format(parseFloat(invoiced_amount).toFixed(2))}
+                        }).format(parseFloat(bill_amount).toFixed(2))}
                     </Text>
                 </View>
                 <View style={styles.summarySymbol}>
                     <Text style={styles.symbolStyle}> - </Text>
                 </View>
                 <View style={styles.summaryInfoBox}>
-                    <Text style={styles.summaryInfoHead}>Payment Received</Text>
+                    <Text style={styles.summaryInfoHead}>Amount Received</Text>
                     <Text style={styles.summaryInfoData}>
                     {new Intl.NumberFormat('en-US', {
                         }).format(parseFloat(amount_received).toFixed(2))}
@@ -41,10 +41,10 @@ const StatementSummary = ({ styles, start_date, end_date, opening_balance, invoi
                     <Text style={styles.symbolStyle}> - </Text>
                 </View>
                 <View style={styles.summaryInfoBox}>
-                    <Text style={styles.summaryInfoHead}>Credit Notes</Text>
+                    <Text style={styles.summaryInfoHead}>Debit Notes</Text>
                     <Text style={styles.summaryInfoData}>
                     {new Intl.NumberFormat('en-US', {
-                        }).format(parseFloat(credit_notes).toFixed(2))}
+                        }).format(parseFloat(debit_notes).toFixed(2))}
                     </Text>
                 </View>
                 <View style={styles.summarySymbol}>

@@ -5,6 +5,7 @@ import CustomerInfiniteScrollSelect from '../../../Customer/CustomerInfiniteScro
 import AddCustomerModal from '../../../Customer/AddCustomerModal/AddCustomerModal';
 import AddShippingAddress from '../../../Customer/AddShippingAddress/AddShippingAddress';
 
+import "../../../../Styles/Layout/LayoutP1.css";
 import { Select, Input } from 'antd';
 const { TextArea } = Input;
 const { Option } = Select;
@@ -70,7 +71,7 @@ const CreditNoteFormP1 = ({
         if (customerKeyword === null) return;
         dispatch(getCustomerInfiniteScroll(1, true, customerKeyword));
         setCurrentCustomerPage(1);
-    }, [customerKeyword]);
+    }, [customerKeyword, dispatch]);
 
     const onChangeCustomer = (value) => {
         if (value.customer_id === 'addCustomer') {
@@ -138,9 +139,9 @@ const CreditNoteFormP1 = ({
 
 
     return (
-        <div className='creditNote__form--part1'>
-            <div className='creditNote__form--part1-head'>
-                <div className='creditNote__form--head-info1'>
+        <div className='layout__form--part1'>
+            <div className='layout__form--part1-head'>
+                <div className='layout__form--head-info1'>
                     <h3>Credit Note From</h3>
                     <span style={{ fontWeight: 500 }}>{user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}</span>
                     <span>{user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1}</span>
@@ -149,8 +150,8 @@ const CreditNoteFormP1 = ({
                     <span>{user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state + ', ' + user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}</span>
                     <span>TRN: {user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}</span>
                 </div>
-                <div className='creditNote__form--head-info2'>
-                    <div className='creditNote__form--head-info2-data'>
+                <div className='layout__form--head-info2'>
+                    <div className='layout__form--head-info2-data'>
                         <span className='required__field'>Credit Note Number</span>
                         <input
                             name="creditNoteNumber"
@@ -163,7 +164,7 @@ const CreditNoteFormP1 = ({
                             {...user?.localInfo?.role && { disabled: true }}
                         />
                     </div>
-                    <div className='creditNote__form--head-info2-data'>
+                    <div className='layout__form--head-info2-data'>
                         <span className='required__field'>Credit Note Date</span>
                         <input type="date"
                             name='creditNoteDate'
@@ -172,7 +173,7 @@ const CreditNoteFormP1 = ({
                             onChange={(e) => setCreditNoteDate(e.target.value)}
                         />
                     </div>
-                    <div className='creditNote__form--head-info2-data'>
+                    <div className='layout__form--head-info2-data'>
                         <span className='required__field'>Due Date</span>
                         <input type="date"
                             name='validTill'
@@ -181,19 +182,19 @@ const CreditNoteFormP1 = ({
                             onChange={(e) => setValidTill(e.target.value)}
                         />
                     </div>
-                    <div className='creditNote__form--head-info2-data'>
+                    <div className='layout__form--head-info2-data'>
                         <span>Reference</span>
                         <input type="text" name='reference' value={reference} onChange={(e) => setReference(e.target.value)} />
                     </div>
                 </div>
             </div>
-            <div className='creditNote__form--part2-head'>
-                <div className='creditNote__form--part2-head-customer'>
+            <div className='layout__form--part2-head'>
+                <div className='layout__form--part2-head-customer'>
                     <h3 className='required__field'>Credit Note For</h3>
                     {
                         customerName ?
-                            <div className='creditNote__form--customer-data'>
-                                <div className='creditNote__form--customer-data-info'>
+                            <div className='layout__form--customer-data'>
+                                <div className='layout__form--customer-data-info'>
                                     <span style={{ fontWeight: 500 }}>{customerName}</span>
                                     {user?.localInfo?.role ?
                                         <>
@@ -213,7 +214,7 @@ const CreditNoteFormP1 = ({
                                         </>
                                     }
                                 </div>
-                                {!user?.localInfo?.role && <CloseOutlined className='creditNote__for--anticon-close'
+                                {!user?.localInfo?.role && <CloseOutlined className='layout__for--anticon-close'
                                     onClick={() => {
                                         setCustomerName(''); setCustomerId(null); setShippingId(null);
                                         setShippingAddress1(null);
@@ -227,15 +228,15 @@ const CreditNoteFormP1 = ({
                     }
                     <AddCustomerModal openingModal={true} isModalOpen={isModalOpen} handleCustomerSubmit={handleCustomerSubmit} handleCancel={handleCancel} />
                 </div>
-                <div className='creditNote__form--part2-head-customer second-select'>
+                <div className='layout__form--part2-head-customer second-select'>
                     {
                         customerId ?
                             <>
                                 <h3 className='required__field'>Shipping Address</h3>
                                 {
                                     shippingId || shippingAddress1 ?
-                                        <div className='creditNote__form--customer-data'>
-                                            <div className='creditNote__form--customer-data-info'>
+                                        <div className='layout__form--customer-data'>
+                                            <div className='layout__form--customer-data-info'>
                                                 {shippingLabel && <span style={{ fontWeight: 500 }}>{shippingLabel}</span>}
                                                 <span>{shippingAddress1}</span>
                                                 {shippingAddress2 && <span>{shippingAddress2}</span>}
@@ -244,7 +245,7 @@ const CreditNoteFormP1 = ({
 
                                             </div>
                                             {!user?.localInfo?.role && <CloseOutlined
-                                                className='creditNote__for--anticon-close'
+                                                className='layout__for--anticon-close'
                                                 onClick={() => {
                                                     setShippingId(null); setShippingAddress1(null);
                                                     setShippingAddress2(null); setShippingAddress3(null);
@@ -284,10 +285,10 @@ const CreditNoteFormP1 = ({
                     }
                 </div>
             </div>
-            <div className='creditNote__form--part3-head'>
+            <div className='layout__form--part3-head'>
                 <h3 className='required__field'>Select Currency</h3>
-                <div className='creditNote__form--currency'>
-                    <div className='creditNote__form--select-currency'>
+                <div className='layout__form--currency'>
+                    <div className='layout__form--select-currency'>
                         <Select
                             showSearch
                             defaultValue="AED"
@@ -299,7 +300,7 @@ const CreditNoteFormP1 = ({
                             loading={currencyLoading}
                         />
                     </div>
-                    <div className='creditNote__form--currency-conversion'>
+                    <div className='layout__form--currency-conversion'>
                         <span>1</span>
                         <span>{currency} =</span>
                         <input
@@ -316,7 +317,7 @@ const CreditNoteFormP1 = ({
                     </div>
                 </div>
             </div>
-            <div className='creditNote__form--part4-head'>
+            <div className='layout__form--part4-head'>
                 <h3>Subject</h3>
                 <TextArea
                     placeholder="Subject"

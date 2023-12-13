@@ -1,23 +1,27 @@
-import ProformaLayoutP1 from './ProformaLayoutP1/ProformaLayoutP1';
-import ProformaLayoutP2 from './ProformaLayoutP2/ProformaLayoutP2';
-import { useNavigate } from 'react-router-dom';
-import { createProforma, getProformaDetails, getNewProformaNumber, updateProforma } from '../../../Actions/Proforma';
-import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { getCurrency } from '../../../Actions/Onboarding';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import moment from 'moment';
 
-import "./ProformaLayout.css"
-import { LoadingOutlined } from '@ant-design/icons';
-import backButton from "../../../assets/Icons/back.svg"
-import logo from "../../../assets/Icons/cropped_logo.svg"
+import moment from 'moment';
+import { getCurrency } from '../../../Actions/Onboarding';
 import { getCustomerDetails } from '../../../Actions/Customer';
 import { getEstimateDetails } from '../../../Actions/Estimate';
+import { createProforma, getProformaDetails, getNewProformaNumber, updateProforma } from '../../../Actions/Proforma';
+
+import ProformaLayoutP1 from './ProformaLayoutP1/ProformaLayoutP1';
+import ProformaLayoutP2 from './ProformaLayoutP2/ProformaLayoutP2';
+
+import "../../../Styles/Layout/LayoutHeader.css";
+import "../../../Styles/Layout/LayoutContainer.css";
+import { LoadingOutlined } from '@ant-design/icons';
+import backButton from "../../../assets/Icons/back.svg";
+import logo from "../../../assets/Icons/cropped_logo.svg";
 
 const ProformaLayout = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
     const [proformaNumber, setProformaNumber] = useState('');
     const [proformaDate, setProformaDate] = useState(moment().format('YYYY-MM-DD'));
     const [validTill, setValidTill] = useState(moment().format('YYYY-MM-DD'));
@@ -48,6 +52,7 @@ const ProformaLayout = () => {
     const convert = searchParams.get('convert');
     const reference_id = searchParams.get('reference_id');
     const referenceName = searchParams.get('reference');
+
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
             dispatch(getCurrency());
@@ -63,7 +68,7 @@ const ProformaLayout = () => {
                 }
             }
         }
-    }, [dispatch]);
+    }, [dispatch, reference_id, referenceName, convert]);
 
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
@@ -74,7 +79,7 @@ const ProformaLayout = () => {
     useEffect(() => {
         if (customerId === null && !user?.clientInfo?.terms_and_conditions) { setTermsAndConditions(''); return; }
         setTermsAndConditions(customer?.terms_and_conditions ? customer?.terms_and_conditions : termsAndConditions);
-    }, [customer,customerId]);
+    }, [customer, customerId, user?.clientInfo?.terms_and_conditions]);
 
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
@@ -120,7 +125,7 @@ const ProformaLayout = () => {
                 }
             }
         }
-    }, [currencies, proforma, number, estimate]);
+    }, [currencies, proforma, number, estimate, convert, user?.clientInfo?.terms_and_conditions]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -183,21 +188,21 @@ const ProformaLayout = () => {
     }
     return (
         <>
-            <div className='create__proforma__header'>
-                <div className='create__proforma__header--left'>
-                    <img src={backButton} alt='back' className='create__proforma__header--back-btn' onClick={() => navigate("/proforma")} />
-                    <h1 className='create__proforma__header--title'> Proformas List </h1>
+            <div className='layout__header'>
+                <div className='layout__header--left'>
+                    <img src={backButton} alt='back' className='layout__header--back-btn' onClick={() => navigate("/proforma")} />
+                    <h1 className='layout__header--title'> Proformas List </h1>
                 </div>
-                <div className='create__proforma__header--right'>
-                    <a className='create__proforma__header--btn1'>Download</a>
-                    <a className='create__proforma__header--btn2'>Share</a>
-                </div>
+                {/* <div className='layout__header--right'>
+                    <a className='layout__header--btn1'>Download</a>
+                    <a className='layout__header--btn2'>Share</a>
+                </div> */}
             </div>
-            <div className="proforma__container">
-                <div className="create__proforma--main">
-                    <div className="create__proforma--top">
+            <div className="layout__container">
+                <div className="create__layout--main">
+                    <div className="create__layout--top">
                         <img style={{ width: "9rem" }} src={logo} alt="logo" />
-                        <h1 className='create__proforma--head'>Proforma</h1>
+                        <h1 className='create__layout--head'>Proforma</h1>
                     </div>
                     <form>
                         <ProformaLayoutP1 proformaNumber={proformaNumber} setProformaNumber={setProformaNumber}
@@ -221,7 +226,7 @@ const ProformaLayout = () => {
                             isSetDefaultTncCustomer={isSetDefaultTncCustomer} setIsSetDefaultTncCustomer={setIsSetDefaultTncCustomer}
                             isSetDefaultTncClient={isSetDefaultTncClient} setIsSetDefaultTncClient={setIsSetDefaultTncClient}
                         />
-                        <div className='proforma__form--submit-btn'>
+                        <div className='layout__form--submit-btn'>
                             <button type='submit' onClick={handleSubmit}>
                                 {
                                     proformaLoading ? <LoadingOutlined /> : "Submit"
@@ -229,9 +234,9 @@ const ProformaLayout = () => {
                             </button>
                         </div>
                     </form>
-                    <div className="proforma__footer">
+                    <div className="layout__footer">
                         <img style={{ width: "5rem" }} src={logo} alt="logo" />
-                        <div className='proforma__footer--text'>
+                        <div className='layout__footer--text'>
                             <p style={{ fontWeight: "400", fontSize: "0.8rem" }}> This is electronically generated document and does not require sign or stamp. </p>
                             <span style={{ marginTop: "0.2rem", fontWeight: "600", fontSize: "0.8rem" }}> powered by Finaccru </span>
                         </div>

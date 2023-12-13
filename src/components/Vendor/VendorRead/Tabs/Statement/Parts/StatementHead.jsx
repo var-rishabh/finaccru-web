@@ -1,6 +1,6 @@
 import { View, Text } from '@react-pdf/renderer'
 
-const StatementHead = ({ styles, customer, user }) => {
+const StatementHead = ({ styles, user, vendor }) => {
     return (
         <View style={styles.main}>
             <View style={styles.mainLeft}>
@@ -8,12 +8,12 @@ const StatementHead = ({ styles, customer, user }) => {
                     <Text>To</Text>
                 </View>
                 <View style={styles.mainLeftData}>
-                    <Text style={styles.mainLeftCustomer}>{customer?.customer_name}</Text>
-                    <Text>{customer?.billing_address_line_1}</Text>
-                    {customer?.billing_address_line_2 && <Text>{customer?.billing_address_line_2}</Text>}
-                    {customer?.billing_address_line_3 && <Text>{customer?.billing_address_line_3}</Text>}
-                    <Text>{customer?.billing_state + ', ' + customer?.billing_country}</Text>
-                    {customer?.trn && <Text>TRN: {customer?.trn}</Text>}
+                    <Text style={styles.mainLeftCustomer}>{vendor?.vendor_name}</Text>
+                    <Text>{vendor?.billing_address_line_1}</Text>
+                    {vendor?.billing_address_line_2 && <Text>{vendor?.billing_address_line_2}</Text>}
+                    {vendor?.billing_address_line_3 && <Text>{vendor?.billing_address_line_3}</Text>}
+                    <Text>{vendor?.billing_state + ', ' + vendor?.billing_country}</Text>
+                    {vendor?.trn && <Text>TRN: {vendor?.trn}</Text>}
                 </View>
             </View>
             <View style={styles.mainRight}>

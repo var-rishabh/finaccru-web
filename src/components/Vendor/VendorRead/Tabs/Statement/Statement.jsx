@@ -53,16 +53,16 @@ const VendorStatement = ({ vendor_id }) => {
                 styles: summaryPdfStyle,
                 start_date: startDate,
                 end_date: endDate,
-                opening_balance: vendorStatement?.opening_balance,
-                invoiced_amount: vendorStatement?.invoiced_amount,
                 amount_received: vendorStatement?.amount_received,
-                exchange_gain: vendorStatement?.exchange_gain,
                 balance_due: vendorStatement?.balance_due,
+                bill_amount: vendorStatement?.bill_amount,
+                debit_notes: vendorStatement?.debit_notes,
+                opening_balance: vendorStatement?.opening_balance,
             }
         },
         {
             component: StatementTable,
-            height: ((vendorStatement?.transactions || []).length * 50) + 100,
+            height: ((vendorStatement?.transactions || []).length * 40) + 100,
             props: {
                 styles: tablePdfStyle,
                 transactions: vendorStatement?.transactions
@@ -106,11 +106,11 @@ const VendorStatement = ({ vendor_id }) => {
                             <>
                                 <StatementSummary styles={summaryStyles}
                                     start_date={startDate} end_date={endDate}
-                                    opening_balance={vendorStatement?.opening_balance}
-                                    invoiced_amount={vendorStatement?.invoiced_amount}
                                     amount_received={vendorStatement?.amount_received}
-                                    credit_notes={vendorStatement?.credit_notes}
                                     balance_due={vendorStatement?.balance_due}
+                                    bill_amount={vendorStatement?.bill_amount}
+                                    debit_notes={vendorStatement?.debit_notes}
+                                    opening_balance={vendorStatement?.opening_balance}
                                 />
                                 <StatementTable styles={tableStyles} transactions={vendorStatement?.transactions} />
                             </>
