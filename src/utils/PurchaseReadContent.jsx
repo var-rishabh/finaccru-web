@@ -26,8 +26,6 @@ export default function PurchaseReadContent(title, mainData, user, currencies, t
                 country: user?.clientInfo?.company_data?.country,
                 state: user?.clientInfo?.company_data?.state,
                 trade_license_number: user?.clientInfo?.company_data?.trade_license_number,
-                number: mainData?.po_number,
-                date: mainData?.order_date,
                 expected_delivery_date: mainData?.expected_delivery_date
             }
         },
@@ -113,22 +111,15 @@ export default function PurchaseReadContent(title, mainData, user, currencies, t
         }
     ];
 
-    if (title === 'Tax Invoice') {
-        contents[0].props.number = mainData?.ti_number;
-        contents[0].props.date = mainData?.ti_date;
-        contents[0].props.due_date = mainData?.due_date;
-    } else if (title === 'Proforma') {
-        contents[0].props.number = mainData?.pi_number;
-        contents[0].props.date = mainData?.pi_date;
-        contents[0].props.due_date = mainData?.due_date;
-    } else if (title === 'Estimate') {
-        contents[0].props.number = mainData?.estimate_number;
-        contents[0].props.date = mainData?.estimate_date;
-        contents[0].props.valid_till = mainData?.valid_till;
-    } else if (title === 'Credit Note') {
-        contents[0].props.number = mainData?.cn_number;
-        contents[0].props.date = mainData?.cn_date;
-        contents[0].props.due_date = mainData?.due_date;
+    if (title === 'Purchase Order') {
+        contents[0].props.number = mainData?.po_number;
+        contents[0].props.date = mainData?.order_date;
+    } else if (title === 'Bill') {
+        contents[0].props.number = mainData?.bill_number;
+        contents[0].props.date = mainData?.bill_date;
+    } else if (title === 'Debit Note') {
+        contents[0].props.number = mainData?.dn_number;
+        contents[0].props.date = mainData?.dn_date;
     }
 
     return contents;

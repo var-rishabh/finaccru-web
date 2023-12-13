@@ -7,9 +7,9 @@ import { getCurrency, getTaxRate } from '../../../Actions/Onboarding';
 import Loader from '../../Loader/Loader';
 
 import '../../../Styles/Read.css';
-import backButton from "../../../assets/Icons/back.svg"
-import DueAmountCard from '../../../Shared/DueAmountCard/DueAmountCard';
+import backButton from "../../../assets/Icons/back.svg";
 
+import DueAmountCard from '../../../Shared/DueAmountCard/DueAmountCard';
 import PdfDownload from '../../../Shared/PdfDownload/PdfDownload';
 
 // Read Parts
@@ -25,10 +25,13 @@ import ReadBank from '../../../Shared/ReadBank/ReadBank';
 import { styles as bankStyles } from '../../../Styles/ReadBank';
 import ReadTax from '../../../Shared/ReadTax/ReadTax';
 import { styles as taxStyles } from '../../../Styles/ReadTax';
+
 import calculateTotalAmounts from '../../../utils/calculateTotalAmounts';
 import ReadContent from '../../../utils/ReadContent';
+
 import ViewHeader from '../../../Shared/ViewHeader/ViewHeader';
 import ViewFooter from '../../../Shared/ViewFooter/ViewFooter';
+
 import { readAccountantClient } from '../../../Actions/Accountant';
 
 const TaxInvoiceReadLayout = () => {

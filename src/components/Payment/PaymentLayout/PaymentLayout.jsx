@@ -50,7 +50,6 @@ const PaymentLayout = () => {
     const { loading: customerLoading, customersInf, totalCustomers, customer } = useSelector(state => state.customerReducer);
     const { loading: taxLoading, openTaxInvoices } = useSelector(state => state.taxInvoiceReducer);
 
-
     const type =  user?.localInfo?.role === 2 ? window.location.pathname.split('/')[6] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[4] : window.location.pathname.split('/')[2];
     const receipt_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
     const client_id =  user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getPurchaseOrderDetails } from '../../../Actions/PurchaseOrder';
+import { getPurchaseOrderDetails, markPurchaseOrderVoid, markPurchaseOrderSent } from '../../../Actions/PurchaseOrder';
 import { getCurrency, getTaxRate } from '../../../Actions/Onboarding';
 import { readAccountantClient } from '../../../Actions/Accountant';
 
@@ -103,7 +103,7 @@ const PurchaseOrderRead = () => {
             setClientData(user);
         }
     }, [user, client]);
-    const contents = PurchaseReadContent("Puchase Order", purchaseOrder, clientData, currencies, taxRates, itemTax, itemTotal, subTotal, discount, tax, total, groupedItems);
+    const contents = PurchaseReadContent("Purchase Order", purchaseOrder, clientData, currencies, taxRates, itemTax, itemTotal, subTotal, discount, tax, total, groupedItems);
 
     return (
         <>
@@ -111,23 +111,44 @@ const PurchaseOrderRead = () => {
                 <div className='read__header--left'>
                     <img src={backButton} alt='back' className='read__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : "/purchase-order"}`)} />
                     <h1 className='read__header--title'>
-                        {user?.localInfo?.role ? 'Go Back' : 'Puchase Orders List'}
+                        {user?.localInfo?.role ? 'Go Back' : 'Purchase Orders List'}
                     </h1>
                 </div>
                 <div className='read__header--right'>
-                    <a className='read__header--btn1'
-                        onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/purchase-order/edit/${purchaseOrder?.po_id}`)}
-                    >Edit
-                    </a>
-                    <PdfDownload contents={contents} heading={"Puchase Order"} />
+                    {
+                        purchaseOrder?.po_status === "Draft" ?
+                            <a className='read__header--btn1'
+                                onClick={() => {
+                                    dispatch(markPurchaseOrderSent(po_id))
+                                }}
+                            >
+                                Mark as Sent
+                            </a>
+                            : purchaseOrder?.po_status === "Sent" ?
+                                <a className='read__header--btn1'
+                                    onClick={() => {
+                                        dispatch(markPurchaseOrderVoid(po_id))
+                                    }}
+                                >
+                                    Mark as Void
+                                </a>
+                                :
+                                ""
+                    }
+                    {
+                        purchaseOrder?.po_status === "Converted" ? "" :
+                            purchaseOrder?.po_status === "Void" ? "" :
+                                <a className='read__header--btn1' onClick={() => navigate(`/purchase-order/edit/${purchaseOrder?.po_id}`)}>Edit</a>
+                    }
+                    <PdfDownload contents={contents} heading={"Purchase Order"} />
                 </div>
             </div>
             <div className="read__container">
                 {loading ? <Loader /> :
                     <div className="read--main" id="read--main">
-                        <ViewHeader title={"Puchase Order"} />
+                        <ViewHeader title={"Purchase Order"} />
                         <ReadFrom
-                            title={"Puchase Order"}
+                            title={"Purchase Order"}
                             styles={headStyles}
                             address_line_1={user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1}
                             address_line_2={user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2}
@@ -141,7 +162,7 @@ const PurchaseOrderRead = () => {
                             expected_delivery_date={purchaseOrder?.expected_delivery_date}
                         />
                         <ReadFor
-                            title={"Puchase Order"}
+                            title={"Purchase Order"}
                             styles={forStyles}
                             vendor_name={purchaseOrder?.vendor?.vendor_name}
                             billing_address_line_1={purchaseOrder?.vendor?.billing_address_line_1}

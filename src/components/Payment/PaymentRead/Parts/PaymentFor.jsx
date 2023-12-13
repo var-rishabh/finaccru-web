@@ -1,12 +1,12 @@
 import { View, Text } from '@react-pdf/renderer'
 
-const PaymentFor = ({ styles, currency_abv, customer_name, billing_address_line_1, billing_address_line_2, billing_address_line_3, billing_state, billing_country, trn, invoice_mappings, total_amount, amount_in_words }) => {
+const PaymentFor = ({ styles, title, currency_abv, customer_name, billing_address_line_1, billing_address_line_2, billing_address_line_3, billing_state, billing_country, trn, invoice_mappings, total_amount, amount_in_words }) => {
     return (
         <View style={styles.main}>
             <View style={styles.mainLeft}>
                 <View style={styles.mainLeftHeading}>
                     <Text>
-                        Receipt For
+                        {title} For
                     </Text>
                 </View>
                 <View style={styles.mainLeftData}>
@@ -20,17 +20,25 @@ const PaymentFor = ({ styles, currency_abv, customer_name, billing_address_line_
             </View>
             <View style={styles.mainMiddle}>
                 <View style={styles.mainMiddleHeading}>
-                    <Text style={styles.textLeftAlign}>Invoices</Text>
+                    <Text style={styles.textLeftAlign}>
+                        {title === "Receipt" ? "Invoices" : "Bills"}
+                    </Text>
                 </View>
                 <View style={styles.mainMiddleData}>
                     <View style={styles.mainMiddleDataHeading}>
-                        <Text style={styles.mainMiddleDataHeadingtext}>Invoice</Text>
+                        <Text style={styles.mainMiddleDataHeadingtext}>
+                            {title === "Receipt" ? "Invoice" : "Bill"}
+                        </Text>
                         <Text style={styles.mainMiddleDataHeadingtext}>Amount Received</Text>
                     </View>
                     <View style={styles.mainMiddleDataValue}>
                         {invoice_mappings?.map((item, index) => (
                             <View key={index} style={styles.mainMiddleDataValueItem}>
-                                <Text style={styles.mainMiddleDataValueItemtext}>{item.invoice_number}</Text>
+                                <Text style={styles.mainMiddleDataValueItemtext}>
+                                    {
+                                        title === "Receipt" ? item.invoice_number : item.bill_number
+                                    }
+                                </Text>
                                 <Text style={styles.mainMiddleDataValueItemtext}>
                                     {currency_abv} {new Intl.NumberFormat('en-US', {}).format(parseFloat(item.amount || 0.00).toFixed(2))}
                                 </Text>

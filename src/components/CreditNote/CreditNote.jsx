@@ -44,6 +44,11 @@ const CreditNote = () => {
         setRecord({});
     };
 
+    const handleDelete = (id) => {
+        dispatch(deleteCreditNote(id));
+        setIsModalOpen(false);
+    }
+
     const showAdjustModal = (record) => {
         setRecord(record);
         setIsAsjustModalOpen(true);
@@ -60,11 +65,6 @@ const CreditNote = () => {
         dispatch(adjustCreditNoteAgainstInvoice(id, { invoice_list: invoiceList }));
         setIsAsjustModalOpen(false);
         setInvoiceList([]);
-    }
-
-    const handleDelete = (id) => {
-        dispatch(deleteCreditNote(id));
-        setIsModalOpen(false);
     }
 
     useEffect(() => {

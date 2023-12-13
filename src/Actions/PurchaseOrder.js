@@ -53,7 +53,7 @@ export const getPurchaseOrderDetails = (id) => async (dispatch) => {
     }
 }
 
-export const getPurchaseOrderList = (page = 1, keyword = "", customer_id = 0) => async (dispatch) => {
+export const getPurchaseOrderList = (page = 1, keyword = "", vendor_id = 0) => async (dispatch) => {
     try {
         dispatch({ type: "PurchaseOrderListRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -62,7 +62,7 @@ export const getPurchaseOrderList = (page = 1, keyword = "", customer_id = 0) =>
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/purchase-orders/read-list/${page}?keyword=${keyword}${customer_id !== 0 ? `&customer_id=${customer_id}` : ""}`, config);
+        const response = await axios.get(`${url}/private/client/purchase-orders/read-list/${page}?keyword=${keyword}${vendor_id !== 0 ? `&vendor_id=${vendor_id}` : ""}`, config);
         dispatch({ type: "PurchaseOrderListSuccess", payload: response.data });
     } catch (error) {
         console.log(error);
@@ -70,7 +70,6 @@ export const getPurchaseOrderList = (page = 1, keyword = "", customer_id = 0) =>
         toast.error(error.response?.data || error.message);
     }
 }
-
 
 export const deletePurchaseOrder = (id) => async (dispatch) => {
     try {
@@ -83,7 +82,7 @@ export const deletePurchaseOrder = (id) => async (dispatch) => {
         };
         const response = await axios.delete(`${url}/private/client/purchase-orders/delete/${id}`, config);
         dispatch({ type: "PurchaseOrderDeleteSuccess", payload: response.data });
-        toast.success("PurchaseOrder deleted successfully");
+        toast.success("Purchase Order deleted successfully");
         dispatch(getPurchaseOrderList());
     } catch (error) {
         console.log(error);
@@ -104,7 +103,7 @@ export const updatePurchaseOrder = (id, data, navigate) => async (dispatch) => {
         const response = await axios.put(`${url}/private/client/purchase-orders/update/${id}`, data, config);
         dispatch({ type: "PurchaseOrderUpdateSuccess", payload: response.data });
         navigate("/purchase-order/view/" + id);
-        toast.success("PurchaseOrder updated successfully");
+        toast.success("Purchase Order updated successfully");
     }
     catch (err) {
         console.log(err);
@@ -137,6 +136,74 @@ export const getNewPurchaseOrderNumber = () => async (dispatch) => {
     } catch (error) {
         console.log(error);
         dispatch({ type: "GetNewPurchaseOrderNumberFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+export const markPurchaseOrderSent = (id) => async (dispatch) => {
+    try {
+        dispatch({ type: "PurchaseOrderMarkSentRequest" });
+        const token = await auth.currentUser.getIdToken(true);
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        const response = await axios.put(`${url}/private/client/purchase-orders/mark-sent/${id}`, {}, config);
+        dispatch({ type: "PurchaseOrderMarkSentSuccess", payload: response.data });
+        toast.success("PurchaseOrder marked as sent successfully");
+        dispatch(getPurchaseOrderDetails(id));
+    }
+    catch (err) {
+        console.log(err);
+        dispatch({ type: "PurchaseOrderMarkSentFailure", payload: err.response?.data || err.message });
+        toast.error(err.response?.data || err.message);
+    }
+}
+
+export const markPurchaseOrderVoid = (id) => async (dispatch) => {
+    try {
+        dispatch({ type: "PurchaseOrderMarkVoidRequest" });
+        const token = await auth.currentUser.getIdToken(true);
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        const response = await axios.put(`${url}/private/client/purchase-orders/mark-void/${id}`, {}, config);
+        dispatch({ type: "PurchaseOrderMarkVoidSuccess", payload: response.data });
+        toast.success("Purchase Order marked as void successfully");
+        dispatch(getPurchaseOrderDetails(id));
+    }
+    catch (err) {
+        console.log(err);
+        dispatch({ type: "PurchaseOrderMarkVoidFailure", payload: err.response?.data || err.message });
+        toast.error(err.response?.data || err.message);
+    }
+}
+
+export const downloadPurchaseOrderList = () => async (dispatch) => {
+    try {
+        dispatch({ type: "DownloadPurchaseOrderListRequest" });
+        const token = await auth.currentUser.getIdToken(true);
+        // Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+        const config = {
+            headers: {
+                token: token,
+            },
+            responseType: 'blob'
+        };
+        const response = await axios.get(`${url}/private/client/purchase-orders/download`, config);
+        const url2 = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+        const link = document.createElement('a');
+        link.href = url2;
+        link.setAttribute('download', 'PurchaseOrderList.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        dispatch({ type: "DownloadPurchaseOrderListSuccess", payload: response.data });
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "DownloadPurchaseOrderListFailure", payload: error.response?.data || error.message });
         toast.error(error.response?.data || error.message);
     }
 }

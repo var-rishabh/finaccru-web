@@ -44,13 +44,17 @@ import DebitNote from './components/DebitNote/DebitNote';
 import DebitNoteLayout from './components/DebitNote/DebitNoteLayout/DebitNoteLayout';
 import DebitNoteRead from './components/DebitNote/DebitNoteRead/DebitNoteRead';
 
-import Banking from './components/Banking/Banking';
-import BankingLayout from './components/Banking/BankingLayout/BankingLayout';
-import BankingRead from './components/Banking/BankingRead/BankingRead';
+import Bank from './components/Bank/Bank';
+import BankLayout from './components/Bank/BankLayout/BankLayout';
+import BankRead from './components/Bank/BankRead/BankRead';
 
 import Expense from './components/Expense/Expense';
 import ExpenseLayout from './components/Expense/ExpenseLayout/ExpenseLayout';
 import ExpenseRead from './components/Expense/ExpenseRead/ExpenseRead';
+
+import BillPayment from './components/BillPayment/BillPayment';
+import BillPaymentLayout from './components/BillPayment/BillPaymentLayout/BillPaymentLayout';
+import BillPaymentRead from './components/BillPayment/BillPaymentRead/BillPaymentRead';
 
 function getItem(label, icon, component, changecomponent, viewcomponent) {
     return {
@@ -73,10 +77,11 @@ const items = [
     getItem('Payment', <img src={estimate} />, <Payment />, <PaymentLayout />, <PaymentRead />),
     getItem('Vendor', <img src={estimate} />, <Vendor />, <VendorLayout />, <VendorRead />),
     getItem('Purchase Order', <img src={estimate} />, <PurchaseOrder />, <PurchaseOrderLayout />, <PurchaseOrderRead />),
-    getItem('Bill', <img src={estimate} />, <Bill />, <BillLayout />, <BillRead />),
-    getItem('Debit Note', <img src={estimate} />, <DebitNote />, <DebitNoteLayout />, <DebitNoteRead />),
     getItem('Expense', <img src={estimate} />, <Expense />, <ExpenseLayout />, <ExpenseRead />),
-    getItem('Banking', <img src={estimate} />, <Banking />, <BankingLayout />, <BankingRead />),
+    getItem('Bill', <img src={estimate} />, <Bill />, <BillLayout />, <BillRead />),
+    getItem('Bill Payment', <img src={estimate} />, <BillPayment />, <BillPaymentLayout />, <BillPaymentRead />),
+    getItem('Bank', <img src={estimate} />, <Bank />, <BankLayout />, <BankRead />),
+    getItem('Debit Note', <img src={estimate} />, <DebitNote />, <DebitNoteLayout />, <DebitNoteRead />),
     getItem('VAT', <img src={estimate} />, <Dashboard />, <Dashboard />, <Dashboard />),
     getItem('SOA', <img src={estimate} />, <Dashboard />, <Dashboard />, <Dashboard />),
 ];

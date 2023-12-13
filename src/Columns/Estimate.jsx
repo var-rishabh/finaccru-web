@@ -40,6 +40,7 @@ export default function estimateColumns(showModal, showConvertModal, navigate) {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
+            width: 160,
         },
     ];
 

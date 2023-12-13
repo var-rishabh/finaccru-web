@@ -6,7 +6,7 @@ import "../../Styles/MainPage.css"
 import { Modal, Input } from 'antd';
 import errorIcon from '../../assets/Icons/error.svg';
 
-import { deletePurchaseOrder, getPurchaseOrderList } from '../../Actions/PurchaseOrder';
+import { deletePurchaseOrder, getPurchaseOrderList, downloadPurchaseOrderList } from '../../Actions/PurchaseOrder';
 import purchaseOrderColumns from '../../Columns/PurchaseOrder';
 import TableCard from '../../Shared/TableCard/TableCard';
 
@@ -72,7 +72,7 @@ const PurchaseOrder = () => {
                     <Input placeholder='Search' onChange={(e) => setSearchText(e.target.value)} value={searchText} />
                 </div>
                 <div className='mainPage__header--right'>
-                    {/* <a className='mainPage__header--btn1' onClick={() => dispatch(downloadPurchaseOrderList())}>Download</a> */}
+                    <a className='mainPage__header--btn1' onClick={() => dispatch(downloadPurchaseOrderList())}>Download</a>
                     <a onClick={() => navigate("/purchase-order/create")} className='mainPage__header--btn2'>Create Purchase Order</a>
                 </div>
             </div>

@@ -12,6 +12,10 @@ import { accountantReducer } from './Reducers/Accountant';
 import { vendorReducer } from './Reducers/Vendor';
 import { expenseReducer } from './Reducers/Expense';
 import { purchaseOrderReducer } from './Reducers/PurchaseOrder';
+import { billReducer } from './Reducers/Bill';
+import { debitNoteReducer } from './Reducers/DebitNote';
+import { billPaymentReducer } from './Reducers/BillPayment';
+import { bankReducer } from './Reducers/Bank';
 
 const store = configureStore({
     reducer: {
@@ -29,6 +33,10 @@ const store = configureStore({
         vendorReducer: vendorReducer,
         expenseReducer: expenseReducer,
         purchaseOrderReducer: purchaseOrderReducer,
+        billReducer: billReducer,
+        debitNoteReducer: debitNoteReducer,
+        billPaymentReducer: billPaymentReducer,
+        bankReducer: bankReducer,
     },
 });
 

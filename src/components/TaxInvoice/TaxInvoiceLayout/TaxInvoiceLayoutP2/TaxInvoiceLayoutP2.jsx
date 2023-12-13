@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
+
 import { getUnit } from '../../../../Actions/Unit';
 import { getTaxRate } from '../../../../Actions/Onboarding';
+
 import calculateTotalAmounts from '../../../../utils/calculateTotalAmounts';
 
 import "../../../../Styles/Layout/LayoutListItems.css";
 import "../../../../Styles/Layout/LayoutP2.css";
 import "../../../../Styles/Layout/LayoutPayment.css";
+
 import { PlusOutlined } from '@ant-design/icons';
 import MinusIcon from '../../../../assets/Icons/minus.svg'
 import { Input, Select, AutoComplete, Radio } from 'antd';
@@ -20,8 +23,10 @@ const TaxInvoiceFormP2 = ({
 }) => {
     const { units, loading: unitLoading } = useSelector(state => state.unitReducer);
     const { taxRates, taxRateLoading } = useSelector(state => state.onboardingReducer);
+
     const { openPayments } = useSelector(state => state.paymentReducer);
     const { openCreditNotes } = useSelector(state => state.creditNoteReducer);
+
     const { client_id } = useParams();
     const { user } = useSelector(state => state.userReducer);
     const { client } = useSelector(state => state.accountantReducer);
@@ -48,7 +53,7 @@ const TaxInvoiceFormP2 = ({
     useEffect(() => {
         dispatch(getUnit(user?.localInfo?.role, client_id));
         dispatch(getTaxRate());
-    }, [dispatch, customerId]);
+    }, [dispatch, customerId, client_id, user?.localInfo?.role]);
 
     useEffect(() => {
         setAllUnits(units);

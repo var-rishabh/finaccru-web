@@ -52,7 +52,7 @@ const TaxInvoiceLayout = () => {
     const [creditNoteList, setCreditNoteList] = useState([]);
 
     const setPaymentOptionsNull = () => {
-        setPaymentReceivedValue(2);
+        setPaymentReceivedValue(null);
         setBankId(null);
         setPaymentList([]);
         setCreditNoteList([]);
@@ -311,7 +311,8 @@ const TaxInvoiceLayout = () => {
                             termsAndConditions={termsAndConditions} setTermsAndConditions={setTermsAndConditions}
                             isSetDefaultTncCustomer={isSetDefaultTncCustomer} setIsSetDefaultTncCustomer={setIsSetDefaultTncCustomer}
                             isSetDefaultTncClient={isSetDefaultTncClient} setIsSetDefaultTncClient={setIsSetDefaultTncClient}
-                            bankId={bankId} setBankId={setBankId} paymentList={paymentList} setPaymentList={setPaymentList}
+                            bankId={bankId} setBankId={setBankId} 
+                            paymentList={paymentList} setPaymentList={setPaymentList}
                             creditNoteList={creditNoteList} setCreditNoteList={setCreditNoteList}
                             customerId={customerId} paymentReceivedValue={paymentReceivedValue} setPaymentReceivedValue={setPaymentReceivedValue}
                             setPaymentOptionsNull={setPaymentOptionsNull}

@@ -1,11 +1,11 @@
 import { View, Text } from '@react-pdf/renderer'
 
-const PaymentHead = ({ styles, address_line_1, address_line_2, address_line_3, company_name, country, state, trade_license_number, payment_number, payment_date }) => {
+const PaymentHead = ({ styles, title, address_line_1, address_line_2, address_line_3, company_name, country, state, trade_license_number, payment_number, payment_date }) => {
     return (
         <View style={styles.main}>
             <View style={styles.mainLeft}>
                 <Text style={styles.mainLeftHeading}>
-                    Receipt From
+                    {title} From
                 </Text>
                 <Text style={styles.mainLeftCompany}>
                     {company_name}
@@ -18,8 +18,8 @@ const PaymentHead = ({ styles, address_line_1, address_line_2, address_line_3, c
             </View>
             <View style={styles.mainRight}>
                 <View style={styles.mainRightData}>
-                    <Text>Receipt Number</Text>
-                    <Text>Receipt Date</Text>
+                    <Text>{title} Number</Text>
+                    <Text>{title} Date</Text>
                 </View>
                 <View style={styles.mainRightData2}>
                     <Text>{payment_number}</Text>

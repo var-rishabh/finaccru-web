@@ -19,8 +19,9 @@ import { getVendorDetails, calculateExpectedDeliveryDate, readPaymentTerms } fro
 const PurchaseOrderLayout = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
-    dispatch({ type: "ClearExpectedDeliveryDate" }); // Clearing the expected delivery date from the store
+    useEffect(() => {
+        dispatch({ type: "ClearExpectedDeliveryDate" });
+    }, [dispatch]); // Clearing the expected delivery date from the store
 
     const [purchaseOrderNumber, setPurchaseOrderNumber] = useState('');
     const [orderDate, setOrderDate] = useState(moment().format('YYYY-MM-DD'));
@@ -92,7 +93,7 @@ const PurchaseOrderLayout = () => {
         if (window.location.pathname.split('/')[2] === 'create') {
             setPurchaseOrderNumber(number);
         }
-    }, [dispatch, currencies, purchaseOrder, number, currencyId, orderDate, paymentTermId]);
+    }, [dispatch, currencies, purchaseOrder, number]);
 
     const handleSubmit = (e) => {
         e.preventDefault();

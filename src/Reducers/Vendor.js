@@ -219,4 +219,16 @@ export const vendorReducer = createReducer(initialState, (builder) => {
         .addCase("ClearExpectedDeliveryDate", (state) => {
             state.expectedDeliveryDate = null;
         })
+        .addCase("ReadVendorStatementRequest", (state) => {
+            state.loading = true;
+        })
+        .addCase("ReadVendorStatementFailure", (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+        .addCase("ReadVendorStatementSuccess", (state, action) => {
+            state.loading = false;
+            state.vendorStatement = action.payload;
+            state.error = null;
+        })
 })

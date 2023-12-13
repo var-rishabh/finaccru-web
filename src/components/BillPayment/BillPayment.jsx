@@ -2,36 +2,27 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import "../../Styles/MainPage.css"
+import "../../Styles/MainPage.css";
 import { Modal, Input } from 'antd';
 import errorIcon from '../../assets/Icons/error.svg';
 
-// import { deleteBanking, downloadBankingList, getBankingList } from '../../Actions/Banking';
-import bankingColumns from '../../Columns/Banking';
+import { deleteBillPayment, downloadBillPaymentList, getBillPaymentList } from '../../Actions/BillPayment';
+import billPaymentColumns from '../../Columns/BillPayment';
 import TableCard from '../../Shared/TableCard/TableCard';
 
-const Banking = () => {
+const BillPayment = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    // const { loading, bankings } = useSelector(state => state.bankingReducer);
-
+    const { loading, billPayments } = useSelector(state => state.billPaymentReducer);
+    
+    useEffect(() => {
+        dispatch(getBillPaymentList());
+    }, [dispatch]);
+    
     const [searchText, setSearchText] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [record, setRecord] = useState({});
-
-    // useEffect(() => {
-    //     dispatch(getBankingList());
-    // }, [dispatch]);
-
-    // useEffect(() => {
-    //     if (searchText.length > 2) {
-    //         dispatch(getBankingList(1, searchText));
-    //     }
-    //     if (searchText.length === 0) {
-    //         dispatch(getBankingList());
-    //     }
-    // }, [dispatch, searchText]);
 
     const showModal = (record) => {
         setIsModalOpen(true);
@@ -41,12 +32,21 @@ const Banking = () => {
         setIsModalOpen(false);
     };
 
-    // const handleDelete = (id) => {
-    //     dispatch(deleteBanking(id));
-    //     setIsModalOpen(false);
-    // }
+    const handleDelete = (id) => {
+        dispatch(deleteBillPayment(id));
+        setIsModalOpen(false);
+    }
 
-    const columns = bankingColumns(showModal, navigate)
+    useEffect(() => {
+        if (searchText.length > 2) {
+            dispatch(getBillPaymentList(1, searchText));
+        }
+        if (searchText.length === 0) {
+            dispatch(getBillPaymentList());
+        }
+    }, [searchText, dispatch]);
+
+    const columns = billPaymentColumns(showModal, navigate);
     return (
         <>
             <Modal
@@ -62,29 +62,25 @@ const Banking = () => {
                     <p>This action cannot be undone.</p>
                     <div className="delete__modal__buttons">
                         <button id='cancel' onClick={handleCancel}>Cancel</button>
-                        {/* <button id='confirm' onClick={() => handleDelete(record.banking_id)}>Delete</button> */}
+                        <button id='confirm' onClick={() => handleDelete(record.payment_id)}>Delete</button>
                     </div>
                 </div>
             </Modal>
             <div className='mainPage__header'>
                 <div className='mainPage__header--left'>
-                    <h1 className='mainPage__header--title'> Bankings </h1>
+                    <h1 className='mainPage__header--title'> Bill Payments </h1>
                     <Input placeholder='Search' onChange={(e) => setSearchText(e.target.value)} value={searchText} />
                 </div>
                 <div className='mainPage__header--right'>
-                    {/* <a className='mainPage__header--btn1' onClick={() => dispatch(downloadBankingList())}>Download</a> */}
-                    <a className='mainPage__header--btn1'>Download</a>
-                    <a onClick={() => navigate("/banking/create")} className='mainPage__header--btn2'>Create Banking </a>
+                    <a className='mainPage__header--btn1' onClick={() => dispatch(downloadBillPaymentList())}>Download</a>
+                    <a onClick={() => navigate("/bill-payment/create")} className='mainPage__header--btn2'>Create Bill Payment</a>
                 </div>
             </div>
             <div className="table">
-                <TableCard columns={columns} dispatch={dispatch}
-                    // loading={loading} items={vendors} getList={getVendorList}
-                    searchText={searchText}
-                />
+                <TableCard columns={columns} dispatch={dispatch} loading={loading} items={billPayments} getList={getBillPaymentList} searchText={searchText} />
             </div>
         </>
     )
 }
 
-export default Banking;
+export default BillPayment;

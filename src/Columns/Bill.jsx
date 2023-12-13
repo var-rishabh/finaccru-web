@@ -1,7 +1,6 @@
 import { Tooltip } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
 
-import convertIcon from '../assets/Icons/convertIcon.svg';
 import editIcon from '../assets/Icons/editIcon.svg';
 import deleteIcon from '../assets/Icons/deleteIcon.svg';
 
@@ -11,6 +10,12 @@ export default function billColumns(showModal, navigate) {
             title: 'Bill Date',
             dataIndex: 'bill_date',
             key: 'bill_date',
+            width: 120
+        },
+        {
+            title: 'Expected Date',
+            dataIndex: 'expected_delivery_date',
+            key: 'expected_delivery_date',
             width: 120
         },
         {
@@ -25,27 +30,39 @@ export default function billColumns(showModal, navigate) {
             key: 'vendor_name',
         },
         {
-            title: 'Due Date',
-            dataIndex: 'due_date',
-            key: 'due_date',
-            width: 120
-        },
-        {
-            title: 'Amount',
-            dataIndex: 'amount',
-            key: 'amount',
+            title: 'Total',
+            dataIndex: 'total',
+            key: 'total',
             align: 'right'
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
+            width: 160
         },
     ];
-    
+
     if (!navigate || !showModal) {
         return columns;
     } else {
+        columns.push({
+            title: 'Reference',
+            key: 'related_document_number',
+            align: 'left',
+            width: 120,
+            render: (text, record) => (
+                <div className="action__button" onClick={() => {
+                    if (record?.related_document_number.startsWith("PO")) {
+                        navigate(`/purchase-order/view/${record.related_document_id}`)
+                    }
+                }}>
+                    {
+                        record.related_document_number ? record.related_document_number : ""
+                    }
+                </div>
+            ),
+        });
         columns.push({
             title: 'Actions',
             key: 'actions',
@@ -59,7 +76,7 @@ export default function billColumns(showModal, navigate) {
                         </Tooltip>
                     </div>
                     {
-                        record?.status === "Converted" ? "" :
+                        record?.status === "Approved" ? "" :
                             record?.status === "Void" ?
                                 <div className="action__button" onClick={() => showModal(record)}>
                                     <Tooltip title="Delete" color='red' placement="bottom">
@@ -68,11 +85,6 @@ export default function billColumns(showModal, navigate) {
                                 </div>
                                 :
                                 <>
-                                    <div className="action__button">
-                                        <Tooltip title="Convert" color='green' placement="bottom" onClick={() => navigate(`/bill/create?convert=true&reference=bill&reference_id=${record.bill_id}`)}>
-                                            <img src={convertIcon} alt="convertIcon" />
-                                        </Tooltip>
-                                    </div>
                                     <div className="action__button" onClick={() => navigate(`/bill/edit/${record.bill_id}`)} >
                                         <Tooltip title="Edit" color='blue' placement="bottom">
                                             <img src={editIcon} alt="editIcon" />

@@ -391,3 +391,22 @@ export const calculateExpectedDeliveryDate = (order_date, payment_term_id) => as
         toast.error(error.response?.data || error.message);
     }
 }
+
+export const readVendorStatment = (id, data) => async (dispatch) => {
+    try {
+        dispatch({ type: "ReadVendorStatementRequest" });
+        const token = await auth.currentUser.getIdToken();
+        const config = {
+            headers: {
+                token: token,
+                "Content-Type": "application/json",
+            },
+        };
+        const response = await axios.post(`${url}/private/client/vendors/read-statement/${id}`, data, config);
+        dispatch({ type: "ReadVendorStatementSuccess", payload: response.data });
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ReadVendorStatementFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}

@@ -5,7 +5,7 @@ import { getVendorDetails } from "../../../Actions/Vendor";
 
 import VendorDetails from "./Tabs/VendorDetails";
 import VendorTransactions from "./Tabs/VendorTransactions";
-// import VendorStatement from "./Tabs/Statement/Statement";
+import VendorStatement from "./Tabs/Statement/Statement";
 
 import { Tabs } from 'antd';
 import backButton from "../../../assets/Icons/back.svg";
@@ -32,11 +32,11 @@ const VendorRead = () => {
             label: 'Transactions',
             children: <VendorTransactions vendor_id={vendor_id} />,
         },
-        // {
-        //     key: '3',
-        //     label: 'Statement',
-        //     children: <VendorStatement vendor_id={vendor_id} />,
-        // },
+        {
+            key: '3',
+            label: 'Statement',
+            children: <VendorStatement vendor_id={vendor_id} />,
+        },
     ];
 
     return (

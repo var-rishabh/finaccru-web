@@ -32,6 +32,7 @@ const TaxInvoiceFormP1 = ({
     //     }
     //     return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
     // }
+    
     const { user } = useSelector(state => state.userReducer);
     const { client } = useSelector(state => state.accountantReducer);
     const { taxInvoice } = useSelector(state => state.taxInvoiceReducer);

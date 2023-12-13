@@ -69,11 +69,11 @@ export default function purchaseOrderColumns(showModal, navigate) {
                                 </div>
                                 :
                                 <>
-                                    {/* <div className="action__button">
-                                        <Tooltip title="Convert" color='green' placement="bottom" onClick={() => navigate(`/purchase-order/create?convert=true&reference=purchase-order&reference_id=${record.po_id}`)}>
+                                    <div className="action__button">
+                                        <Tooltip title="Convert" color='green' placement="bottom" onClick={() => navigate(`/bill/create?convert=true&reference=purchase-order&reference_id=${record.po_id}`)}>
                                             <img src={convertIcon} alt="convertIcon" />
                                         </Tooltip>
-                                    </div> */}
+                                    </div>
                                     <div className="action__button" onClick={() => navigate(`/purchase-order/edit/${record.po_id}`)} >
                                         <Tooltip title="Edit" color='blue' placement="bottom">
                                             <img src={editIcon} alt="editIcon" />

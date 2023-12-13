@@ -79,7 +79,7 @@ const ProformaLayout = () => {
     useEffect(() => {
         if (customerId === null && !user?.clientInfo?.terms_and_conditions) { setTermsAndConditions(''); return; }
         setTermsAndConditions(customer?.terms_and_conditions ? customer?.terms_and_conditions : termsAndConditions);
-    }, [customer, customerId, user?.clientInfo?.terms_and_conditions, termsAndConditions]);
+    }, [customer, customerId, user?.clientInfo?.terms_and_conditions]);
 
     useEffect(() => {
         if (window.location.pathname.split('/')[2] === 'edit') {
@@ -125,7 +125,7 @@ const ProformaLayout = () => {
                 }
             }
         }
-    }, [currencies, proforma, number, estimate, convert, referenceName, currencyId, user?.clientInfo?.terms_and_conditions]);
+    }, [currencies, proforma, number, estimate, convert, user?.clientInfo?.terms_and_conditions]);
 
     const handleSubmit = (e) => {
         e.preventDefault();

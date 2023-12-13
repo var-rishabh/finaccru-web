@@ -17,17 +17,18 @@ const TaxInvoice = () => {
     const navigate = useNavigate();
 
     const {loading, taxInvoices } = useSelector(state => state.taxInvoiceReducer);
+    
+    const [searchText, setSearchText] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [record, setRecord] = useState({});
+
     useEffect(() => {
         dispatch(getTaxInvoiceList());
     }, [dispatch]);
 
-    const [searchText, setSearchText] = useState('');
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
     const [isCreateTaxModalOpen, setIsCreateTaxModalOpen] = useState(false);
     const [createTaxByFile, setCreateTaxByFile] = useState([]);
     const [createTaxByFileError, setCreateTaxByFileError] = useState([false, ""]);
-    const [record, setRecord] = useState({});
 
     const handleFileUpload = (e) => {
         if (e.target.files[0].size > 5 * 1000 * 1024) {
@@ -69,7 +70,7 @@ const TaxInvoice = () => {
         if (searchText.length === 0) {
             dispatch(getTaxInvoiceList());
         }
-    }, [searchText]);
+    }, [dispatch, searchText]);
 
     const columns = taxInvoiceColumns(showModal, navigate);
     return (
@@ -137,7 +138,6 @@ const TaxInvoice = () => {
                     </form>
                 </div>
             </Modal>
-
             <div className="table">
                 <TableCard columns={columns} dispatch={dispatch} loading={loading} items={taxInvoices} getList={getTaxInvoiceList} searchText={searchText} />
             </div>

@@ -56,7 +56,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 0 0;
+    padding: 0.5rem 0 0.5rem;
 }
 
 .layout__payment-table--checkdata {

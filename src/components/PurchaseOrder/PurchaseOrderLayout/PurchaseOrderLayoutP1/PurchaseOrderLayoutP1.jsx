@@ -62,6 +62,11 @@ const PurchaseOrderLayoutP1 = ({
         dispatch(calculateExpectedDeliveryDate(orderDate, value));
     }
 
+    useEffect(() => {
+        if (paymentTermId === null) return;
+        dispatch(calculateExpectedDeliveryDate(orderDate, paymentTermId));
+    }, [orderDate, dispatch]);
+
     const { shippingAddresses } = useSelector(state => state.vendorReducer);
 
     const { currencies, currencyLoading } = useSelector(state => state.onboardingReducer);

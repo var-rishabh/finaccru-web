@@ -78,4 +78,40 @@ export const purchaseOrderReducer = createReducer(initialState, (builder) => {
         state.number = action.payload;
         state.error = null;
     })
+    .addCase("PurchaseOrderMarkSentRequest", (state) => {
+        state.loading = true;
+    })
+    .addCase("PurchaseOrderMarkSentFailure", (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+    })
+    .addCase("PurchaseOrderMarkSentSuccess", (state, action) => {
+        state.loading = false;
+        state.success = action.payload;
+        state.error = null;
+    })
+    .addCase("PurchaseOrderMarkVoidRequest", (state) => {
+        state.loading = true;
+    })
+    .addCase("PurchaseOrderMarkVoidFailure", (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+    })
+    .addCase("PurchaseOrderMarkVoidSuccess", (state, action) => {
+        state.loading = false;
+        state.success = action.payload;
+        state.error = null;
+    })
+    .addCase("DownloadPurchaseOrderListRequest", (state) => {
+        state.loading = true;
+    })
+    .addCase("DownloadPurchaseOrderListFailure", (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+    })
+    .addCase("DownloadPurchaseOrderListSuccess", (state, action) => {
+        state.loading = false;
+        state.success = action.payload;
+        state.error = null;
+    })
 })
