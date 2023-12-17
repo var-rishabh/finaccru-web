@@ -4,30 +4,50 @@ import { EyeOutlined } from '@ant-design/icons';
 import editIcon from '../assets/Icons/editIcon.svg';
 import deleteIcon from '../assets/Icons/deleteIcon.svg';
 
-export default function bankingColumns(showModal, navigate) {
+export default function bankPDCColumns(showModal, navigate) {
     const columns = [
         {
-            title: 'Bank ID',
-            dataIndex: 'bank_id',
-            key: 'bank_id',
-            width: 150
+            title: 'Cheque Number',
+            dataIndex: 'cheque_number',
+            key: 'cheque_number',
         },
         {
-            title: 'Bank',
+            title: 'Issue Date',
+            dataIndex: 'issue_date',
+            key: 'issue_date',
+            width: 120
+        },
+        {
+            title: 'Due Date',
+            dataIndex: 'due_date',
+            key: 'due_date',
+            width: 120
+        },
+        {
+            title: 'In Favour Of',
+            dataIndex: 'in_favour_of',
+            key: 'in_favour_of',
+        },
+        {
+            title: 'Recipient Name',
+            dataIndex: 'recipient_name',
+            key: 'recipient_name',
+        },
+        {
+            title: 'Amount',
+            dataIndex: 'amount',
+            key: 'amount',
+            align: 'right',
+        },
+        {
+            title: 'Status',
+            dataIndex: 'pdc_status',
+            key: 'pdc_status',
+        },
+        {
+            title: 'Bank Name',
             dataIndex: 'bank_name',
             key: 'bank_name',
-        },
-        {
-            title: 'Account Number',
-            dataIndex: 'account_number',
-            key: 'account_number',
-        },
-        {
-            title: 'Balance',
-            dataIndex: 'balance',
-            key: 'balance',
-            align: 'right',
-            width: 300,
         },
     ];
 
@@ -37,16 +57,16 @@ export default function bankingColumns(showModal, navigate) {
         columns.push({
             title: 'Actions',
             key: 'actions',
-            width: 150,
+            width: 120,
             align: 'right',
             render: (text, record) => (
                 <div className="action__buttons">
-                    <div className="action__button" onClick={() => navigate(`/bank/view/${record.bank_id}?type=bank`)}>
+                    <div className="action__button" onClick={() => navigate(`/bank/view/${record.pdc_id}?type=pdc`)}>
                         <Tooltip title="View" color='gray' placement="bottom">
                             <EyeOutlined />
                         </Tooltip>
                     </div>
-                    <div className="action__button" onClick={() => navigate(`/bank/edit/${record.bank_id}?type=bank`)} >
+                    <div className="action__button" onClick={() => navigate(`/bank/edit/${record.pdc_id}?type=pdc`)} >
                         <Tooltip title="Edit" color='blue' placement="bottom">
                             <img src={editIcon} alt="editIcon" />
                         </Tooltip>

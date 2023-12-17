@@ -16,6 +16,7 @@ import { billReducer } from './Reducers/Bill';
 import { debitNoteReducer } from './Reducers/DebitNote';
 import { billPaymentReducer } from './Reducers/BillPayment';
 import { bankReducer } from './Reducers/Bank';
+import { pdcReducer } from './Reducers/PDC';
 
 const store = configureStore({
     reducer: {
@@ -37,6 +38,7 @@ const store = configureStore({
         debitNoteReducer: debitNoteReducer,
         billPaymentReducer: billPaymentReducer,
         bankReducer: bankReducer,
+        pdcReducer: pdcReducer,
     },
 });
 

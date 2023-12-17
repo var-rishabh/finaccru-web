@@ -72,7 +72,7 @@ export const updateBank = (data, id, handleBankSubmit, navigate) => async (dispa
         if (handleBankSubmit) {
             handleBankSubmit(data);
         } else {
-            navigate("/bank/view/" + id);
+            navigate("/bank/view/" + id + "?type=bank");
         }
     }
     catch (error) {
