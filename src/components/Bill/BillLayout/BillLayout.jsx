@@ -60,7 +60,6 @@ const BillLayout = () => {
     const { user } = useSelector(state => state.userReducer);
     const { currencies } = useSelector(state => state.onboardingReducer);
     const { loading: billLoading, bill, number } = useSelector(state => state.billReducer);
-    console.log("🚀 ~ bill:", bill);
 
     const type = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[6] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[4] : window.location.pathname.split('/')[2];
     const bill_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];

@@ -3,11 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import "../../Styles/MainPage.css"
-import { Modal, Input } from 'antd';
+import { Modal, Input, Tabs } from 'antd';
 import errorIcon from '../../assets/Icons/error.svg';
 
 import { deleteBank, downloadBankList, getBankList } from '../../Actions/Bank';
+import { deletePDC, downloadPDCList, getPDCList } from '../../Actions/PDC';
+
 import bankColumns from '../../Columns/Bank';
+import bankPDCColumns from '../../Columns/BankPDC';
 import TableCard from '../../Shared/TableCard/TableCard';
 
 const Bank = () => {
@@ -15,21 +18,26 @@ const Bank = () => {
     const navigate = useNavigate();
 
     const { loading, banks } = useSelector(state => state.bankReducer);
+    const { loading: pdcLoading, pdcs } = useSelector(state => state.pdcReducer);
 
     const [searchText, setSearchText] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [record, setRecord] = useState({});
+    const [tab, setTab] = useState(1);
 
     useEffect(() => {
         dispatch(getBankList());
+        dispatch(getPDCList());
     }, [dispatch]);
 
     useEffect(() => {
         if (searchText.length > 2) {
             dispatch(getBankList(1, searchText));
+            dispatch(getPDCList(1, searchText));
         }
         if (searchText.length === 0) {
             dispatch(getBankList());
+            dispatch(getPDCList());
         }
     }, [dispatch, searchText]);
 
@@ -46,7 +54,41 @@ const Bank = () => {
         setIsModalOpen(false);
     }
 
+    const handleDeletePDC = (id) => {
+        dispatch(deletePDC(id));
+        setIsModalOpen(false);
+    }
+
     const columns = bankColumns(showModal, navigate)
+    const pdcColumns = bankPDCColumns(showModal, navigate)
+
+    const items = [
+        {
+            key: '1',
+            label: 'Banking',
+            children:
+                <TableCard columns={columns} dispatch={dispatch}
+                    loading={loading} items={banks} getList={getBankList}
+                    searchText={searchText}
+                />,
+        },
+        {
+            key: '2',
+            label: 'PDC',
+            children:
+                <TableCard columns={pdcColumns} dispatch={dispatch}
+                    loading={pdcLoading} items={pdcs} getList={getPDCList}
+                    searchText={searchText}
+                />
+            ,
+        },
+    ];
+
+    const handleChangeTab = (key) => {
+        setTab(key);
+        setSearchText('');
+    }
+
     return (
         <>
             <Modal
@@ -62,7 +104,10 @@ const Bank = () => {
                     <p>This action cannot be undone.</p>
                     <div className="delete__modal__buttons">
                         <button id='cancel' onClick={handleCancel}>Cancel</button>
-                        <button id='confirm' onClick={() => handleDelete(record.bank_id)}>Delete</button>
+                        <button id='confirm' onClick={() => {
+                            tab == 1 ? handleDelete(record.bank_id) : handleDeletePDC(record.pdc_id)
+                        }}
+                        >Delete</button>
                     </div>
                 </div>
             </Modal>
@@ -72,15 +117,20 @@ const Bank = () => {
                     <Input placeholder='Search' onChange={(e) => setSearchText(e.target.value)} value={searchText} />
                 </div>
                 <div className='mainPage__header--right'>
-                    <a className='mainPage__header--btn1' onClick={() => dispatch(downloadBankList())}>Download</a>
-                    <a onClick={() => navigate("/bank/create")} className='mainPage__header--btn2'>Add Bank </a>
+                    <a className='mainPage__header--btn1' onClick={() => {
+                        tab == 1 ? dispatch(downloadBankList()) : dispatch(downloadPDCList())
+                    }}
+                    >Download</a>
+                    <a onClick={() => {
+                        navigate(`/bank/create?type=${tab == 1 ? "bank" : "pdc"}`)
+                    }}
+                        className='mainPage__header--btn2'>
+                        Add {tab == 1 ? "Bank" : "PDC"}
+                    </a>
                 </div>
             </div>
             <div className="table">
-                <TableCard columns={columns} dispatch={dispatch}
-                    loading={loading} items={banks} getList={getBankList}
-                    searchText={searchText}
-                />
+                <Tabs defaultActiveKey="1" items={items} onChange={handleChangeTab} />
             </div>
         </>
     )
