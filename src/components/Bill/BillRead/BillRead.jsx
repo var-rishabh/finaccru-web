@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { getBillDetails, markBillVoid, submitBillForApproval, approveBill } from '../../../Actions/Bill';
 import { getCurrency, getTaxRate } from '../../../Actions/Onboarding';
 import { readAccountantClient } from '../../../Actions/Accountant';
-import {  getBillDetails, markBillVoid, submitBillForApproval, approveBill } from '../../../Actions/Bill';
 
 import Loader from '../../Loader/Loader';
 
@@ -120,44 +120,57 @@ const BillRead = () => {
                         user?.localInfo?.role ?
                             <>
                                 <a className='read__header--btn1'
-                                    onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/bill/edit/${bill?.bill_id}`)}
-                                >Edit</a>
-                                {
-                                    bill?.bill_status === "Pending Approval" ?
-                                        <a className='read__header--btn2'
-                                            onClick={() => {
-                                                dispatch(approveBill(bill_id, user?.localInfo?.role, client_id))
-                                            }}
-                                        >Approve</a> : ""
-                                }
+                                    onClick={() => {
+                                        navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/bill/edit/${bill?.bill_id}`)
+                                    }}
+                                >
+                                    Edit
+                                </a>
+                                <a className='read__header--btn2'
+                                    onClick={() => {
+                                        dispatch(approveBill(bill_id, user?.localInfo?.role, client_id))
+                                    }}
+                                >
+                                    Approve
+                                </a>
                             </> :
-                            bill?.bill_status === "Approved" || bill?.bill_status === "Void" ? "" :
-                                bill?.bill_status === "Pending Approval" ?
-                                    <>
-                                        <a className='read__header--btn1'
-                                            onClick={() => {
-                                                dispatch(markBillVoid(bill_id))
-                                            }}
-                                        >Mark as Void</a>
-                                        <a className='read__header--btn1'
-                                            onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/bill/edit/${bill?.bill_id}`)}
-                                        >Edit</a>
-                                    </> :
-                                    <>
-                                        <a className='read__header--btn1'
-                                            onClick={() => {
-                                                dispatch(submitBillForApproval(bill_id))
-                                            }}
-                                        >Submit for Approval</a>
-                                        <a className='read__header--btn1'
-                                            onClick={() => {
-                                                dispatch(markBillVoid(bill_id))
-                                            }}
-                                        >Mark as Void</a>
-                                        <a className='read__header--btn1'
-                                            onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/bill/edit/${bill?.bill_id}`)}
-                                        >Edit</a>
-                                    </>
+                            bill?.status === "Draft" ?
+                                <>
+                                    <a className='read__header--btn1'
+                                        onClick={() => {
+                                            dispatch(submitBillForApproval(bill_id))
+                                        }}
+                                    >
+                                        Submit for Approval
+                                    </a>
+                                    <a className='read__header--btn1'
+                                        onClick={() => {
+                                            dispatch(markBillVoid(bill_id))
+                                        }}
+                                    >
+                                        Mark as Void
+                                    </a>
+                                </>
+                                : bill?.status === "Pending Approval" ?
+                                    <a className='read__header--btn1'
+                                        onClick={() => {
+                                            dispatch(markBillVoid(bill_id))
+                                        }}
+                                    >
+                                        Mark as Void
+                                    </a> : ""
+                    }
+                    {
+                        user?.localInfo?.role ? "" :
+                            bill?.status === "Void" ? "" :
+                                bill?.status === "Approved" ? "" :
+                                    <a className='read__header--btn1'
+                                        onClick={() => {
+                                            navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/bill/edit/${bill?.bill_id}`)
+                                        }}
+                                    >
+                                        Edit
+                                    </a>
                     }
                     <PdfDownload contents={contents} heading={"Bill"} />
                 </div>

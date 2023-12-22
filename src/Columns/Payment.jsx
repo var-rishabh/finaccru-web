@@ -85,7 +85,6 @@ export default function paymentColumns(showModal, navigate, role = 0, client_id 
                     </div>
                 ),
             });
-
             return columns;
         }
     } else if (role === 1 || role === 2) {

@@ -22,6 +22,9 @@ import PaymentMeta from './Parts/PaymentMeta';
 import { pdfStyle as metaPdfStyles, styles as metaStyles } from '../../../Styles/ReadMetaPayment';
 
 const PaymentReadLayout = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const { user } = useSelector(state => state.userReducer);
     const { client } = useSelector(state => state.accountantReducer);
     const { loading, payment } = useSelector(state => state.paymentReducer);
@@ -29,9 +32,6 @@ const PaymentReadLayout = () => {
     const payment_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
     const client_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
     const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-
 
     const { currencies } = useSelector(state => state.onboardingReducer);
 
@@ -65,8 +65,8 @@ const PaymentReadLayout = () => {
                 address_line_1: user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1,
                 address_line_2: user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2,
                 address_line_3: user?.localInfo?.role ? client?.company_data?.address_line_3 : user?.clientInfo?.company_data?.address_line_3,
-                company_name: user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country,
-                country: user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name,
+                company_name: user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name,
+                country: user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country,
                 state: user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state,
                 trade_license_number: user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number,
                 payment_number: payment?.receipt_number,
@@ -100,9 +100,11 @@ const PaymentReadLayout = () => {
                 currency_abv: currencies?.find((currency) => currency.currency_id === payment?.currency_id)?.currency_abv,
                 currency_conversion_rate: payment?.currency_conversion_rate,
                 subject: payment?.subject,
-                bank_id: payment?.bank_id === 0 ? "Cash" :
-                    payment?.bank_id === user?.clientInfo?.primary_bank?.bank_id ? user?.clientInfo?.primary_bank?.bank_name :
-                        user?.clientInfo?.other_bank_accounts?.find((bank) => bank.bank_id === payment?.bank_id)?.bank_name,
+                bank_id: payment?.bank_id === 0 ? "Cash"
+                    : payment?.bank_id === (user?.localInfo?.role === 0 ? user?.clientInfo?.primary_bank?.bank_id : client.primary_bank?.bank_id) ?
+                        (user?.localInfo?.role === 0 ? user?.clientInfo?.primary_bank?.bank_name : client?.primary_bank?.bank_name) :
+                        (user?.localInfo?.role === 0 ? user?.clientInfo?.other_bank_accounts?.find((bank) => bank.bank_id === payment?.bank_id)?.bank_name
+                            : client?.other_bank_accounts?.find((bank) => bank.bank_id === payment?.bank_id)?.bank_name)
             }
         }
     ];
@@ -169,12 +171,13 @@ const PaymentReadLayout = () => {
                         </div>
                         <PaymentHead styles={headStyles}
                             title="Receipt"
-                            address_line_1={user?.clientInfo?.company_data?.address_line_1}
-                            address_line_2={user?.clientInfo?.company_data?.address_line_2}
-                            address_line_3={user?.clientInfo?.company_data?.address_line_3}
-                            company_name={user?.clientInfo?.company_data?.company_name}
-                            country={user?.clientInfo?.company_data?.country} state={user?.clientInfo?.company_data?.state}
-                            trade_license_number={user?.clientInfo?.company_data?.trade_license_number}
+                            address_line_1={user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1}
+                            address_line_2={user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2}
+                            address_line_3={user?.localInfo?.role ? client?.company_data?.address_line_3 : user?.clientInfo?.company_data?.address_line_3}
+                            company_name={user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}
+                            country={user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country} 
+                            state={user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state}
+                            trade_license_number={user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}
                             payment_number={payment?.receipt_number} payment_date={payment?.receipt_date}
                         />
                         <PaymentFor styles={forStyles} customer_name={payment?.customer?.customer_name} billing_address_line_1={payment?.customer?.billing_address_line_1} billing_address_line_2={payment?.customer?.billing_address_line_2} billing_address_line_3={payment?.customer?.billing_address_line_3} billing_state={payment?.customer?.billing_state} billing_country={payment?.customer?.billing_country} trn={payment?.customer?.trn}
@@ -185,11 +188,11 @@ const PaymentReadLayout = () => {
                         />
                         <PaymentMeta styles={metaStyles} currency_abv={currencies?.find((currency) => currency.currency_id === payment?.currency_id)?.currency_abv} currency_conversion_rate={payment?.currency_conversion_rate} subject={payment?.subject}
                             bank_id={
-                                payment?.bank_id === 0 ?
-                                    "Cash" :
-                                    payment?.bank_id === user?.clientInfo?.primary_bank?.bank_id ?
-                                        user?.clientInfo?.primary_bank?.bank_name :
-                                        user?.clientInfo?.other_bank_accounts?.find((bank) => bank.bank_id === payment?.bank_id)?.bank_name
+                                payment?.bank_id === 0 ? "Cash"
+                                    : payment?.bank_id === (user?.localInfo?.role === 0 ? user?.clientInfo?.primary_bank?.bank_id : client.primary_bank?.bank_id) ?
+                                        (user?.localInfo?.role === 0 ? user?.clientInfo?.primary_bank?.bank_name : client?.primary_bank?.bank_name) :
+                                        (user?.localInfo?.role === 0 ? user?.clientInfo?.other_bank_accounts?.find((bank) => bank.bank_id === payment?.bank_id)?.bank_name
+                                            : client?.other_bank_accounts?.find((bank) => bank.bank_id === payment?.bank_id)?.bank_name)
                             }
                         />
                         <div className="read__payment__footer">

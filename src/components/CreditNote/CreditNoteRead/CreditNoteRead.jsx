@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 // Actions
 import { getCreditNoteDetails, markCreditNoteVoid, submitCreditNoteForApproval, approveCreditNote } from '../../../Actions/CreditNote';
 import { getCurrency, getTaxRate } from '../../../Actions/Onboarding';
+import { readAccountantClient } from '../../../Actions/Accountant';
 
 import Loader from '../../Loader/Loader';
 
@@ -37,8 +38,6 @@ import ViewFooter from '../../../Shared/ViewFooter/ViewFooter';
 import calculateTotalAmounts from '../../../utils/calculateTotalAmounts';
 import ReadContent from '../../../utils/ReadContent';
 import DueAmountCard from '../../../Shared/DueAmountCard/DueAmountCard';
-import { readAccountantClient } from '../../../Actions/Accountant';
-
 
 const CreditNoteReadLayout = () => {
     const navigate = useNavigate();
@@ -52,6 +51,7 @@ const CreditNoteReadLayout = () => {
     const cn_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
     const client_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
     const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;
+    
     const [itemTotal, setItemTotal] = useState([]);
     const [itemTax, setItemTax] = useState([]);
     const [groupedItems, setGroupedItems] = useState([]);

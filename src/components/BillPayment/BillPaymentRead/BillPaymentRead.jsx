@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getBillPaymentDetails, submitBillPaymentForApproval, markBillPaymentVoid } from '../../../Actions/BillPayment';
+import { getBillPaymentDetails, submitBillPaymentForApproval, markBillPaymentVoid, approveBillPayment } from '../../../Actions/BillPayment';
 import { getCurrency, getTaxRate } from '../../../Actions/Onboarding';
 import { readAccountantClient } from '../../../Actions/Accountant';
 import Loader from '../../Loader/Loader';
@@ -65,8 +65,8 @@ const BillPaymentReadLayout = () => {
                 address_line_1: user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1,
                 address_line_2: user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2,
                 address_line_3: user?.localInfo?.role ? client?.company_data?.address_line_3 : user?.clientInfo?.company_data?.address_line_3,
-                company_name: user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country,
-                country: user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name,
+                company_name: user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name,
+                country: user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country,
                 state: user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state,
                 trade_license_number: user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number,
                 payment_number: billPayment?.payment_number,
@@ -100,9 +100,11 @@ const BillPaymentReadLayout = () => {
                 currency_abv: currencies?.find((currency) => currency.currency_id === billPayment?.currency_id)?.currency_abv,
                 currency_conversion_rate: billPayment?.currency_conversion_rate,
                 subject: billPayment?.subject,
-                bank_id: billPayment?.bank_id === 0 ? "Cash" :
-                    billPayment?.bank_id === user?.clientInfo?.primary_bank?.bank_id ? user?.clientInfo?.primary_bank?.bank_name :
-                        user?.clientInfo?.other_bank_accounts?.find((bank) => bank.bank_id === billPayment?.bank_id)?.bank_name,
+                bank_id: billPayment?.bank_id === 0 ? "Cash"
+                    : billPayment?.bank_id === (user?.localInfo?.role === 0 ? user?.clientInfo?.primary_bank?.bank_id : client.primary_bank?.bank_id) ?
+                        (user?.localInfo?.role === 0 ? user?.clientInfo?.primary_bank?.bank_name : client?.primary_bank?.bank_name) :
+                        (user?.localInfo?.role === 0 ? user?.clientInfo?.other_bank_accounts?.find((bank) => bank.bank_id === billPayment?.bank_id)?.bank_name
+                            : client?.other_bank_accounts?.find((bank) => bank.bank_id === billPayment?.bank_id)?.bank_name)
             }
         }
     ];
@@ -123,11 +125,11 @@ const BillPaymentReadLayout = () => {
                                 <a className='read__payment__header--btn1'
                                     onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/bill-payment/edit/${billPayment?.payment_id}`)}
                                 >Edit</a>
-                                {/* <a className='read__payment__header--btn2'
+                                <a className='read__payment__header--btn2'
                                     onClick={() => {
-                                        dispatch(approvePayments(payment_id, user?.localInfo?.role, client_id));
+                                        dispatch(approveBillPayment(payment_id, user?.localInfo?.role, client_id));
                                     }}
-                                >Approve</a> */}
+                                >Approve</a>
                             </> :
                             billPayment?.payment_status === "Approved" || billPayment?.payment_status === "Void" ? "" :
                                 billPayment?.payment_status === "Pending Approval" ?
@@ -157,7 +159,7 @@ const BillPaymentReadLayout = () => {
                                         >Edit</a>
                                     </>
                     }
-                    <PdfDownload contents={contents} heading={"Payment"} />
+                    <PdfDownload contents={contents} heading={"Bill Payment"} />
                 </div>
             </div>
             <div className="read__payment__container">
@@ -168,12 +170,13 @@ const BillPaymentReadLayout = () => {
                             <h1 className='read__payment--head'>Bill Payment</h1>
                         </div>
                         <PaymentHead styles={headStyles} title="Bill Payment"
-                            address_line_1={user?.clientInfo?.company_data?.address_line_1}
-                            address_line_2={user?.clientInfo?.company_data?.address_line_2}
-                            address_line_3={user?.clientInfo?.company_data?.address_line_3}
-                            company_name={user?.clientInfo?.company_data?.company_name}
-                            country={user?.clientInfo?.company_data?.country} state={user?.clientInfo?.company_data?.state}
-                            trade_license_number={user?.clientInfo?.company_data?.trade_license_number}
+                            address_line_1={user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1}
+                            address_line_2={user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2}
+                            address_line_3={user?.localInfo?.role ? client?.company_data?.address_line_3 : user?.clientInfo?.company_data?.address_line_3}
+                            company_name={user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}
+                            country={user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}
+                            state={user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state}
+                            trade_license_number={user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}
                             payment_number={billPayment?.payment_number} payment_date={billPayment?.payment_date}
                         />
                         <PaymentFor styles={forStyles} title="Bill Payment" customer_name={billPayment?.vendor?.vendor_name} billing_address_line_1={billPayment?.vendor?.billing_address_line_1} billing_address_line_2={billPayment?.vendor?.billing_address_line_2} billing_address_line_3={billPayment?.vendor?.billing_address_line_3} billing_state={billPayment?.vendor?.billing_state} billing_country={billPayment?.vendor?.billing_country} trn={billPayment?.vendor?.trn}
@@ -183,11 +186,11 @@ const BillPaymentReadLayout = () => {
                         />
                         <PaymentMeta styles={metaStyles} currency_abv={currencies?.find((currency) => currency.currency_id === billPayment?.currency_id)?.currency_abv} currency_conversion_rate={billPayment?.currency_conversion_rate} subject={billPayment?.subject}
                             bank_id={
-                                billPayment?.bank_id === 0 ?
-                                    "Cash" :
-                                    billPayment?.bank_id === user?.clientInfo?.primary_bank?.bank_id ?
-                                        user?.clientInfo?.primary_bank?.bank_name :
-                                        user?.clientInfo?.other_bank_accounts?.find((bank) => bank.bank_id === billPayment?.bank_id)?.bank_name
+                                billPayment?.bank_id === 0 ? "Cash"
+                                    : billPayment?.bank_id === (user?.localInfo?.role === 0 ? user?.clientInfo?.primary_bank?.bank_id : client.primary_bank?.bank_id) ?
+                                        (user?.localInfo?.role === 0 ? user?.clientInfo?.primary_bank?.bank_name : client?.primary_bank?.bank_name) :
+                                        (user?.localInfo?.role === 0 ? user?.clientInfo?.other_bank_accounts?.find((bank) => bank.bank_id === billPayment?.bank_id)?.bank_name
+                                            : client?.other_bank_accounts?.find((bank) => bank.bank_id === billPayment?.bank_id)?.bank_name)
                             }
                         />
                         <div className="read__payment__footer">

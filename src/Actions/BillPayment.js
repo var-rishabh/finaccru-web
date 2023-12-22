@@ -47,7 +47,7 @@ export const getBillPaymentDetails = (id, role = 0) => async (dispatch) => {
             const response = await axios.get(`${url}/private/client/bill-payments/read/${id}`, config);
             dispatch({ type: "BillPaymentDetailsSuccess", payload: response.data });
         } else {
-            const response = await axios.get(`${url}/private/accountant/read-bill/${id}`, config);
+            const response = await axios.get(`${url}/private/accountant/read-bill-payment/${id}`, config);
             dispatch({ type: "BillPaymentDetailsSuccess", payload: response.data });
         }
     } catch (error) {
@@ -113,7 +113,7 @@ export const updateBillPayment = (id, data, navigate, role = 0) => async (dispat
             const response = await axios.put(`${url}/private/client/bill-payments/update/${id}`, data, config);
             dispatch({ type: "BillPaymentUpdateSuccess", payload: response.data });
         } else {
-            const response = await axios.put(`${url}/private/accountant/update-bill/${id}`, data, config);
+            const response = await axios.put(`${url}/private/accountant/update-bill-payment/${id}`, data, config);
             dispatch({ type: "BillPaymentUpdateSuccess", payload: response.data });
         }
         if (role === 0) navigate("/bill-payment/view/" + id);
@@ -276,7 +276,7 @@ export const approveBillPayment = (id, role = 1, client_id) => async (dispatch) 
             },
         };
 
-        const response = await axios.put(`${url}/private/accountant/${role === 1 ? 'jr' : 'sr'}/approve-bill/${id}`, {}, config);
+        const response = await axios.put(`${url}/private/accountant/${role === 1 ? 'jr' : 'sr'}/approve-bill-payment/${id}`, {}, config);
         dispatch({ type: "ApproveBillPaymentSuccess", payload: response.data });
         toast.success("Bill Payment approved successfully");
         dispatch(getBillPaymentList(1, "", 0, role, client_id));

@@ -5,16 +5,18 @@ import { toast } from 'react-toastify';
 
 import moment from 'moment';
 import { getCurrency } from '../../../Actions/Onboarding';
+import { readAccountantClient } from '../../../Actions/Accountant';
 import { getVendorDetails, calculateExpectedDeliveryDate, readPaymentTerms } from '../../../Actions/Vendor';
-import { LoadingOutlined } from "@ant-design/icons";
+import { createDebitNote, getDebitNoteDetails, getNewDebitNoteNumber, updateDebitNote } from '../../../Actions/DebitNote';
+
 import DebitNoteLayoutP1 from './DebitNoteLayoutP1/DebitNoteLayoutP1';
 import DebitNoteLayoutP2 from './DebitNoteLayoutP2/DebitNoteLayoutP2';
 
 import "../../../Styles/Layout/LayoutHeader.css";
 import "../../../Styles/Layout/LayoutContainer.css";
+import { LoadingOutlined } from "@ant-design/icons";
 import backButton from "../../../assets/Icons/back.svg";
 import logo from "../../../assets/Icons/cropped_logo.svg";
-import { createDebitNote, getDebitNoteDetails, getNewDebitNoteNumber, updateDebitNote } from '../../../Actions/DebitNote';
 
 const DebitNoteLayout = () => {
     const navigate = useNavigate();
@@ -50,34 +52,38 @@ const DebitNoteLayout = () => {
     const { currencies } = useSelector(state => state.onboardingReducer);
     const { loading: debitNoteLoading, debitNote, number } = useSelector(state => state.debitNoteReducer);
 
-    // const type = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[6] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[4] : window.location.pathname.split('/')[2];
+    const type = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[6] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[4] : window.location.pathname.split('/')[2];
     const dn_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
-    // const client_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
-    // const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;
+    const client_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
+    const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;
 
-    const isAdd = window.location.pathname.split('/')[2] === 'create';
+    const isAdd = type === 'create';
 
     useEffect(() => {
-        if (window.location.pathname.split('/')[2] === 'edit') {
+        if (type === 'edit') {
             dispatch(getCurrency());
             dispatch(readPaymentTerms());
-            dispatch(getDebitNoteDetails(window.location.pathname.split('/')[3]));
+            dispatch(getDebitNoteDetails(dn_id, user?.localInfo?.role));
+            if (user?.localInfo?.role) {
+                dispatch(readAccountantClient(client_id));
+            }
         }
-        if (window.location.pathname.split('/')[2] === 'create') {
+        if (type === 'create') {
             dispatch(getCurrency());
             dispatch(readPaymentTerms());
             dispatch(getNewDebitNoteNumber());
+            setDebitNoteNumber(number);
         }
     }, [dispatch]);
 
     useEffect(() => {
-        if (window.location.pathname.split('/')[2] === 'edit') {
+        if (type === 'edit') {
             dispatch(getVendorDetails(debitNote?.vendor?.vendor_id));
         }
     }, [dispatch, debitNote?.vendor?.vendor_id]);
 
     useEffect(() => {
-        if (window.location.pathname.split('/')[2] === 'edit') {
+        if (type === 'edit') {
             setDebitNoteNumber(debitNote?.dn_number);
             setDebitNoteDate(moment(debitNote?.dn_date).format('YYYY-MM-DD'));
             setReference(debitNote?.reference);
@@ -165,8 +171,10 @@ const DebitNoteLayout = () => {
         <>
             <div className='layout__header'>
                 <div className='layout__header--left'>
-                    <img src={backButton} alt='back' className='layout__header--back-btn' onClick={() => navigate("/debit-note")} />
-                    <h1 className='layout__header--title'> Debit Notes List </h1>
+                    <img src={backButton} alt='back' className='layout__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : "/debit-note"}`)} />
+                    <h1 className='layout__header--title'>
+                        {user?.localInfo?.role ? 'Go Back' : 'Debit Notes List'}
+                    </h1>
                 </div>
             </div>
             <div className="layout__container">
