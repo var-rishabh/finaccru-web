@@ -21,7 +21,7 @@ const BillLayoutP1 = ({
     vendorName, setVendorName, vendorId, setVendorId,
     currency, setCurrency, currencyId, setCurrencyId,
     currencyConversionRate, setCurrencyConversionRate,
-    subject, setSubject, shippingAddress1, setShippingAddress1, 
+    subject, setSubject, shippingAddress1, setShippingAddress1,
     shippingAddress2, setShippingAddress2, shippingAddress3, setShippingAddress3,
     shippingState, setShippingState, shippingCountry, setShippingCountry,
 }) => {
@@ -29,6 +29,8 @@ const BillLayoutP1 = ({
         return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
     }
     const { user } = useSelector(state => state.userReducer);
+    const { client } = useSelector(state => state.accountantReducer);
+    const { bill } = useSelector(state => state.billReducer)
     const { loading: vendorLoading, vendorsInf, totalVendors, vendor, paymentTerms, paymentTermsLoading, expectedDeliveryDate } = useSelector(state => state.vendorReducer);
 
     const [currentVendorPage, setCurrentVendorPage] = useState(1);
@@ -42,6 +44,13 @@ const BillLayoutP1 = ({
         dispatch(getVendorInfiniteScroll(1, true));
         setCurrentVendorPage(1);
     }, [dispatch]);
+
+    useEffect(() => {
+        if (vendorId) {
+            dispatch(getVendorDetails(vendorId));
+            dispatch(getVendorShippingAddressList(vendorId));
+        }
+    }, [vendorId, dispatch]);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -60,7 +69,6 @@ const BillLayoutP1 = ({
     const handlePaymentTermChange = (value) => {
         setPaymentTermId(value);
         dispatch(calculateExpectedDeliveryDate(billDate, value));
-        console.log(expectedDeliveryDate);
     }
 
     useEffect(() => {
@@ -148,12 +156,12 @@ const BillLayoutP1 = ({
             <div className='layout__form--part1-head'>
                 <div className='layout__form--head-info1'>
                     <h3>Bill From</h3>
-                    <span style={{ fontWeight: 500 }}>{user?.clientInfo?.company_data?.company_name}</span>
-                    <span>{user?.clientInfo?.company_data?.address_line_1}</span>
-                    <span>{user?.clientInfo?.company_data?.address_line_2}</span>
-                    <span>{user?.clientInfo?.company_data?.address_line_3}</span>
-                    <span>{user?.clientInfo?.company_data?.state + ', ' + user?.clientInfo?.company_data?.country}</span>
-                    <span>TRN: {user?.clientInfo?.company_data?.trade_license_number}</span>
+                    <span style={{ fontWeight: 500 }}>{user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}</span>
+                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1}</span>
+                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2}</span>
+                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_3 : user?.clientInfo?.company_data?.address_line_3}</span>
+                    <span>{user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state + ', ' + user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}</span>
+                    <span>TRN: {user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}</span>
                 </div>
                 <div className='layout__form--head-info2'>
                     <div className='layout__form--head-info2-data'>
@@ -218,19 +226,31 @@ const BillLayoutP1 = ({
                             <div className='layout__form--customer-data'>
                                 <div className='layout__form--customer-data-info'>
                                     <span style={{ fontWeight: 500 }}>{vendorName}</span>
-                                    <span>{vendor?.billing_address_line_1}</span>
-                                    {vendor?.billing_address_line_2 && <span>{vendor?.billing_address_line_2}</span>}
-                                    {vendor?.billing_address_line_3 && <span>{vendor?.billing_address_line_3}</span>}
-                                    <span>{vendor?.billing_state + ', ' + vendor?.billing_country}</span>
-                                    {vendor?.trn && <span>TRN: {vendor?.trn}</span>}
+                                    {user?.localInfo?.role ?
+                                        <>
+                                            <span>{bill?.vendor?.billing_address_line_1}</span>
+                                            {bill?.vendor?.billing_address_line_2 && <span>{bill?.vendor?.billing_address_line_2}</span>}
+                                            {bill?.vendor?.billing_address_line_3 && <span>{bill?.vendor?.billing_address_line_3}</span>}
+                                            {bill?.vendor?.billing_state && <span>{bill?.vendor?.billing_state + ', ' + bill?.vendor?.billing_country}</span>}
+                                            {bill?.vendor?.trn && <span>TRN: {bill?.vendor?.trn}</span>}
+                                        </>
+                                        :
+                                        <>
+                                            <span>{vendor?.billing_address_line_1}</span>
+                                            {vendor?.billing_address_line_2 && <span>{vendor?.billing_address_line_2}</span>}
+                                            {vendor?.billing_address_line_3 && <span>{vendor?.billing_address_line_3}</span>}
+                                            {vendor?.billing_state && <span>{vendor?.billing_state + ', ' + vendor?.billing_country}</span>}
+                                            {vendor?.trn && <span>TRN: {vendor?.trn}</span>}
+                                        </>
+                                    }
                                 </div>
-                                <CloseOutlined className='layout__for--anticon-close'
+                                {!user?.localInfo?.role && <CloseOutlined className='layout__for--anticon-close'
                                     onClick={() => {
                                         setVendorName(''); setVendorId(null); setShippingId(null);
                                         setShippingAddress1(null);
                                         setVendorKeyword("");
                                     }}
-                                />
+                                />}
                             </div>
                             : <VendorInfiniteScrollSelect loadMoreOptions={addPage} onChange={onChangeVendor} vendorKeyword={vendorKeyword} setVendorKeyword={setVendorKeyword} scrollFor="createPO" />
 
@@ -253,8 +273,7 @@ const BillLayoutP1 = ({
                                                 <span>{shippingState + ', ' + shippingCountry}</span>
 
                                             </div>
-                                            <CloseOutlined
-                                                className='layout__for--anticon-close'
+                                            {!user?.localInfo?.role && <CloseOutlined className='layout__for--anticon-close'
                                                 onClick={() => {
                                                     setShippingId(null); setShippingAddress1(null);
                                                     setShippingAddress2(null); setShippingAddress3(null);
@@ -262,7 +281,7 @@ const BillLayoutP1 = ({
                                                     setShippingLabel(null);
                                                     dispatch(getVendorShippingAddressList(vendorId))
                                                 }}
-                                            />
+                                            />}
                                         </div>
                                         : <Select
                                             // showSearch

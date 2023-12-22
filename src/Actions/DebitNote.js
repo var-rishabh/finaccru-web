@@ -14,7 +14,7 @@ export const createDebitNote = (data, navigate) => async (dispatch) => {
         };
         const response = await axios.post(`${url}/private/client/debit-notes/create`, data, config);
         dispatch({ type: "CreateDebitNoteSuccess", payload: response.data });
-        toast.success("Credit Note created successfully");
+        toast.success("Debit Note created successfully");
         navigate("/debit-note");
     }
     catch (err) {
@@ -147,7 +147,7 @@ export const markDebitNoteVoid = (id) => async (dispatch) => {
         };
         const response = await axios.put(`${url}/private/client/debit-notes/mark-void/${id}`, {}, config);
         dispatch({ type: "DebitNoteMarkVoidSuccess", payload: response.data });
-        toast.success("Credit Note marked as void successfully");
+        toast.success("Debit Note marked as void successfully");
         dispatch(getDebitNoteDetails(id));
     }
     catch (err) {
@@ -213,7 +213,7 @@ export const submitDebitNoteForApproval = (id) => async (dispatch) => {
 
         const response = await axios.put(`${url}/private/client/debit-notes/submit-for-approval/${id}`, {}, config);
         dispatch({ type: "SubmitDebitNoteForApprovalSuccess", payload: response.data });
-        toast.success("Credit Note submitted for approval successfully");
+        toast.success("Debit Note submitted for approval successfully");
         dispatch(getDebitNoteDetails(id));
     } catch (error) {
         console.log(error);
@@ -257,7 +257,7 @@ export const adjustDebitNoteAgainstInvoice = (id, data) => async (dispatch) => {
 
         const response = await axios.post(`${url}/private/client/debit-notes/adjust-against-bills/${id}`, data, config);
         dispatch({ type: "AdjustDebitNoteAgainstInvoiceSuccess", payload: response.data });
-        toast.success("Credit Note adjusted against bills successfully");
+        toast.success("Debit Note adjusted against bills successfully");
         dispatch(getDebitNoteDetails(id));
     } catch (error) {
         console.log(error);
@@ -278,7 +278,7 @@ export const approveDebitNote = (id, role = 1, client_id) => async (dispatch) =>
 
         const response = await axios.put(`${url}/private/accountant/${role === 1 ? 'jr' : 'sr'}/approve-debit-note/${id}`, {}, config);
         dispatch({ type: "ApproveDebitNoteSuccess", payload: response.data });
-        toast.success("Credit Note approved successfully");
+        toast.success("Debit Note approved successfully");
         dispatch(getDebitNoteList(1, "", 0, role, client_id));
     } catch (error) {
         console.log(error);

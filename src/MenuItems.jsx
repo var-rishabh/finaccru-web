@@ -80,8 +80,8 @@ const items = [
     getItem('Expense', <img src={estimate} />, <Expense />, <ExpenseLayout />, <ExpenseRead />),
     getItem('Bill', <img src={estimate} />, <Bill />, <BillLayout />, <BillRead />),
     getItem('Bill Payment', <img src={estimate} />, <BillPayment />, <BillPaymentLayout />, <BillPaymentRead />),
-    getItem('Bank', <img src={estimate} />, <Bank />, <BankLayout />, <BankRead />),
     getItem('Debit Note', <img src={estimate} />, <DebitNote />, <DebitNoteLayout />, <DebitNoteRead />),
+    getItem('Bank', <img src={estimate} />, <Bank />, <BankLayout />, <BankRead />),
     getItem('VAT', <img src={estimate} />, <Dashboard />, <Dashboard />, <Dashboard />),
     getItem('SOA', <img src={estimate} />, <Dashboard />, <Dashboard />, <Dashboard />),
 ];

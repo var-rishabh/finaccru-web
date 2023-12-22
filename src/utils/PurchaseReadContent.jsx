@@ -83,7 +83,7 @@ export default function PurchaseReadContent(title, mainData, user, currencies, t
         }),
         {
             component: ReadNote,
-            height: ((user?.clientInfo?.other_bank_accounts || []).length) * 55 + 80,
+            height: 120,
             props: {
                 styles: bankPdfStyles,
                 notes: mainData?.notes,

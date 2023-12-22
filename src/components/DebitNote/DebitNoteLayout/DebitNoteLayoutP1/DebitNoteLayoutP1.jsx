@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { calculateExpectedDeliveryDate, getVendorDetails, getVendorInfiniteScroll } from '../../../../Actions/Vendor';
 import { getVendorShippingAddressList } from '../../../../Actions/Vendor';
 
@@ -9,10 +10,11 @@ import AddVendorShippingAddress from '../../../Vendor/AddVendorShippingAddress/A
 
 import "../../../../Styles/Layout/LayoutP1.css";
 import "../../../../Styles/PurchaseLayoutSelectP1.css";
+import { CloseOutlined } from '@ant-design/icons';
 import { Select, Input } from 'antd';
 const { TextArea } = Input;
 const { Option } = Select;
-import { CloseOutlined } from '@ant-design/icons';
+
 import moment from 'moment/moment';
 
 const DebitNoteLayoutP1 = ({
@@ -29,6 +31,7 @@ const DebitNoteLayoutP1 = ({
         return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
     }
     const { user } = useSelector(state => state.userReducer);
+    const { client } = useSelector(state => state.accountantReducer);
     const { loading: vendorLoading, vendorsInf, totalVendors, vendor, paymentTerms, paymentTermsLoading, expectedDeliveryDate } = useSelector(state => state.vendorReducer);
 
     const [currentVendorPage, setCurrentVendorPage] = useState(1);
@@ -69,7 +72,7 @@ const DebitNoteLayoutP1 = ({
     }, [dispatch, debitNoteDate]);
 
     const { shippingAddresses } = useSelector(state => state.vendorReducer);
-
+    const { debitNote } = useSelector(state => state.debitNoteReducer);
     const { currencies, currencyLoading } = useSelector(state => state.onboardingReducer);
     const [vendorKeyword, setVendorKeyword] = useState(null);
 
@@ -148,12 +151,12 @@ const DebitNoteLayoutP1 = ({
             <div className='layout__form--part1-head'>
                 <div className='layout__form--head-info1'>
                     <h3>Debit Note From</h3>
-                    <span style={{ fontWeight: 500 }}>{user?.clientInfo?.company_data?.company_name}</span>
-                    <span>{user?.clientInfo?.company_data?.address_line_1}</span>
-                    <span>{user?.clientInfo?.company_data?.address_line_2}</span>
-                    <span>{user?.clientInfo?.company_data?.address_line_3}</span>
-                    <span>{user?.clientInfo?.company_data?.state + ', ' + user?.clientInfo?.company_data?.country}</span>
-                    <span>TRN: {user?.clientInfo?.company_data?.trade_license_number}</span>
+                    <span style={{ fontWeight: 500 }}>{user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}</span>
+                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1}</span>
+                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2}</span>
+                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_3 : user?.clientInfo?.company_data?.address_line_3}</span>
+                    <span>{user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state + ', ' + user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}</span>
+                    <span>TRN: {user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}</span>
                 </div>
                 <div className='layout__form--head-info2'>
                     <div className='layout__form--head-info2-data'>
@@ -165,7 +168,7 @@ const DebitNoteLayoutP1 = ({
                             value={debitNoteNumber}
                             onChange={(e) => {
                                 const input = e.target.value
-                                setDebitNoteNumber("BILL-" + input.substr("BILL-".length))
+                                setDebitNoteNumber("DN-" + input.substr("DN-".length))
                             }}
                         />
                     </div>
@@ -218,19 +221,31 @@ const DebitNoteLayoutP1 = ({
                             <div className='layout__form--customer-data'>
                                 <div className='layout__form--customer-data-info'>
                                     <span style={{ fontWeight: 500 }}>{vendorName}</span>
-                                    <span>{vendor?.billing_address_line_1}</span>
-                                    {vendor?.billing_address_line_2 && <span>{vendor?.billing_address_line_2}</span>}
-                                    {vendor?.billing_address_line_3 && <span>{vendor?.billing_address_line_3}</span>}
-                                    <span>{vendor?.billing_state + ', ' + vendor?.billing_country}</span>
-                                    {vendor?.trn && <span>TRN: {vendor?.trn}</span>}
+                                    {user?.localInfo?.role ?
+                                        <>
+                                            <span>{debitNote?.vendor?.billing_address_line_1}</span>
+                                            {debitNote?.vendor?.billing_address_line_2 && <span>{debitNote?.vendor?.billing_address_line_2}</span>}
+                                            {debitNote?.vendor?.billing_address_line_3 && <span>{debitNote?.vendor?.billing_address_line_3}</span>}
+                                            {debitNote?.vendor?.billing_state && <span>{debitNote?.vendor?.billing_state + ', ' + debitNote?.vendor?.billing_country}</span>}
+                                            {debitNote?.vendor?.trn && <span>TRN: {debitNote?.vendor?.trn}</span>}
+                                        </>
+                                        :
+                                        <>
+                                            <span>{vendor?.billing_address_line_1}</span>
+                                            {vendor?.billing_address_line_2 && <span>{vendor?.billing_address_line_2}</span>}
+                                            {vendor?.billing_address_line_3 && <span>{vendor?.billing_address_line_3}</span>}
+                                            {vendor?.billing_state && <span>{vendor?.billing_state + ', ' + vendor?.billing_country}</span>}
+                                            {vendor?.trn && <span>TRN: {vendor?.trn}</span>}
+                                        </>
+                                    }
                                 </div>
-                                <CloseOutlined className='layout__for--anticon-close'
+                                {!user?.localInfo?.role && <CloseOutlined className='layout__for--anticon-close'
                                     onClick={() => {
                                         setVendorName(''); setVendorId(null); setShippingId(null);
                                         setShippingAddress1(null);
                                         setVendorKeyword("");
                                     }}
-                                />
+                                />}
                             </div>
                             : <VendorInfiniteScrollSelect loadMoreOptions={addPage} onChange={onChangeVendor} vendorKeyword={vendorKeyword} setVendorKeyword={setVendorKeyword} scrollFor="createPO" />
 
@@ -253,16 +268,15 @@ const DebitNoteLayoutP1 = ({
                                                 <span>{shippingState + ', ' + shippingCountry}</span>
 
                                             </div>
-                                            <CloseOutlined
-                                                className='layout__for--anticon-close'
+                                            {!user?.localInfo?.role && <CloseOutlined className='layout__for--anticon-close'
                                                 onClick={() => {
-                                                    setShippingId(null); setShippingAddress1(null);
-                                                    setShippingAddress2(null); setShippingAddress3(null);
-                                                    setShippingState(null); setShippingCountry(null);
-                                                    setShippingLabel(null);
-                                                    dispatch(getVendorShippingAddressList(vendorId))
+                                                        setShippingId(null); setShippingAddress1(null);
+                                                        setShippingAddress2(null); setShippingAddress3(null);
+                                                        setShippingState(null); setShippingCountry(null);
+                                                        setShippingLabel(null);
+                                                        dispatch(getVendorShippingAddressList(vendorId))
                                                 }}
-                                            />
+                                            />}
                                         </div>
                                         : <Select
                                             // showSearch

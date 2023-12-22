@@ -83,7 +83,6 @@ function App() {
                         }
                       </Route>
                       <Route path="*" element={<NotFound />} />
-
                     </>
                   ) : user?.localInfo?.role === 1 ? (
                     <>
@@ -91,7 +90,7 @@ function App() {
                       <Route path="/clients/:id" element={<Client />} />
                       <Route path="*" element={<NotFound />} />
                       {
-                        menuItems.slice(4, 8).map((item) => {
+                        menuItems.slice(4, 13).map((item) => {
                           return (
                             <>
                               <Route key={`${item.key}-edit`} path={"/clients/:client_id" + item.key + "/edit/:id"} element={item.changecomponent} />
@@ -108,7 +107,7 @@ function App() {
                       <Route path="/jr/:jr_id/clients/:id" element={<Client />} />
                       <Route path="*" element={<NotFound />} />
                       {
-                        menuItems.slice(4, 8).map((item) => {
+                        menuItems.slice(4, 13).map((item) => {
                           return (
                             <>
                               <Route key={`${item.key}-edit`} path={"/jr/:jr_id/clients/:client_id" + item.key + "/edit/:id"} element={item.changecomponent} />

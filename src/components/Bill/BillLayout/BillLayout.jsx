@@ -10,6 +10,7 @@ import { createBill, getBillDetails, getNewBillNumber, updateBill } from '../../
 import { readOpenDebitNotesForVendor } from '../../../Actions/DebitNote';
 import { readOpenBillPaymentsForVendor } from '../../../Actions/BillPayment';
 import { getPurchaseOrderDetails } from '../../../Actions/PurchaseOrder';
+import { readAccountantClient } from '../../../Actions/Accountant';
 
 import BillLayoutP1 from './BillLayoutP1/BillLayoutP1';
 import BillLayoutP2 from './BillLayoutP2/BillLayoutP2';
@@ -60,15 +61,14 @@ const BillLayout = () => {
     const { user } = useSelector(state => state.userReducer);
     const { currencies } = useSelector(state => state.onboardingReducer);
     const { loading: billLoading, bill, number } = useSelector(state => state.billReducer);
+    const { purchaseOrder } = useSelector(state => state.purchaseOrderReducer);
 
     const type = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[6] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[4] : window.location.pathname.split('/')[2];
     const bill_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
     const client_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
     const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;
 
-    const isAdd = window.location.pathname.split('/')[2] === 'create';
-
-    const { purchaseOrder } = useSelector(state => state.purchaseOrderReducer);
+    const isAdd = type === 'create';
 
     const searchParams = new URLSearchParams(window.location.search);
     const file = searchParams.get('file');
@@ -85,13 +85,16 @@ const BillLayout = () => {
     }
 
     useEffect(() => {
-        if (window.location.pathname.split('/')[2] === 'edit') {
+        if (type === 'edit') {
             dispatch(getCurrency());
             dispatch(readPaymentTerms());
-            dispatch(getBillDetails(window.location.pathname.split('/')[3]));
+            dispatch(getBillDetails(bill_id, user?.localInfo?.role));
+            if (user?.localInfo?.role) {
+                dispatch(readAccountantClient(client_id));
+            }
         }
 
-        if (window.location.pathname.split('/')[2] === 'create') {
+        if (type === 'create') {
             dispatch(getCurrency());
             dispatch(readPaymentTerms());
             dispatch(getNewBillNumber());
@@ -112,7 +115,7 @@ const BillLayout = () => {
     }, [dispatch, vendorId, currencyId, user?.localInfo?.role]);
     
     useEffect(() => {
-        if (window.location.pathname.split('/')[2] === 'edit') {
+        if (type === 'edit') {
             dispatch(getVendorDetails(bill?.vendor?.vendor_id));
             dispatch(readOpenDebitNotesForVendor(bill?.vendor?.vendor_id, bill?.currency_id, user?.localInfo?.role, client_id));
             dispatch(readOpenBillPaymentsForVendor(bill?.vendor?.vendor_id, bill?.currency_id, user?.localInfo?.role, client_id));
@@ -120,7 +123,7 @@ const BillLayout = () => {
     }, [dispatch, bill?.vendor?.vendor_id, bill?.currency_id, user?.localInfo?.role, client_id]);
 
     useEffect(() => {
-        if (window.location.pathname.split('/')[2] === 'edit') {
+        if (type === 'edit') {
             setBillNumber(bill?.bill_number);
             setBillDate(moment(bill?.bill_date).format('YYYY-MM-DD'));
             setReference(bill?.reference);
@@ -139,18 +142,18 @@ const BillLayout = () => {
             setSubject(bill?.subject);
             setNotes(bill?.notes);
 
-            if (bill?.linked_payments.length > 0 || bill?.linked_debit_notes.length > 0) {
+            if (bill?.linked_payments != [] || bill?.linked_debit_notes != [] > 0) {
                 setPaymentReceivedValue(1);
+                setPaymentList(bill?.linked_payments != [] > 0 ? bill?.linked_payments?.map((payment) => (payment.payment_id)) : []);
+                setDebitNoteList(bill?.linked_debit_notes != [] > 0 ? bill?.linked_debit_notes?.map((debitNote) => (debitNote.dn_id)) : []);
             } else {
                 setPaymentReceivedValue(null);
             }
-            setBankId(bill?.payment !== null ? bill?.payment?.bank_id : null);
-            setPaymentList(bill?.payment !== null ? bill?.linked_payments?.map((receipt) => (receipt.receipt_id)) : []);
-            setDebitNoteList(bill?.payment !== null ? bill?.linked_debit_notes?.map((debitNote) => (debitNote.cn_id)) : []);
+            // setBankId(bill?.payment !== null ? bill?.payment?.bank_id : null);
             
             dispatch(calculateExpectedDeliveryDate(billDate, paymentTermId))
         }
-        if (window.location.pathname.split('/')[2] === 'create') {
+        if (type === 'create') {
             setBillNumber(number);
             if (file) {
                 setCurrencyConversionRate(location.state?.currency_conversion_rate);
@@ -257,7 +260,7 @@ const BillLayout = () => {
             dispatch(createBill(data, navigate));
         }
         else {
-            dispatch(updateBill(bill_id, data, navigate));
+            dispatch(updateBill(bill_id, data, navigate, user?.localInfo?.role));
         }
     }
 
@@ -265,8 +268,10 @@ const BillLayout = () => {
         <>
             <div className='layout__header'>
                 <div className='layout__header--left'>
-                    <img src={backButton} alt='back' className='layout__header--back-btn' onClick={() => navigate("/bill")} />
-                    <h1 className='layout__header--title'> Bills List </h1>
+                    <img src={backButton} alt='back' className='layout__header--back-btn' onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : "/bill"}`)} />
+                    <h1 className='layout__header--title'>
+                        {user?.localInfo?.role ? 'Go Back' : 'Bills List'}
+                    </h1>
                 </div>
             </div>
             <div className="layout__container">

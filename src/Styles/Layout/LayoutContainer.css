@@ -10,6 +10,7 @@
     max-width: 60rem;
     margin-top: 4rem;
     background-color: var(--white);
+    border: 1px solid #C9EFD8;
 }
 
 .create__layout--top {
