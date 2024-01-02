@@ -3,11 +3,13 @@ import { useSelector } from 'react-redux';
 
 import '../../../Styles/Read.css';
 import backButton from "../../../assets/Icons/back.svg"
+import { Tabs } from 'antd';
 
 import ViewHeader from '../../../Shared/ViewHeader/ViewHeader';
 import ViewFooter from '../../../Shared/ViewFooter/ViewFooter';
 import BankingRead from './BankingRead/BankingRead';
 import PDCRead from './PDCRead/PDCRead';
+import Statement from './Statement/Statement';
 
 const BankRead = () => {
     const navigate = useNavigate();
@@ -20,6 +22,31 @@ const BankRead = () => {
     const bank_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
     const client_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
     const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;
+
+    const items = [
+        {
+            key: '1',
+            label: 'Details',
+            children: <>
+                <div className="read__container">
+                    <div className="read--main2" id="read--main">
+                        <ViewHeader title={type} />
+                        {
+                            type == "bank" ?
+                                <BankingRead /> : <PDCRead />
+                        }
+                        <ViewFooter />
+                    </div>
+                </div>
+            </>,
+        },
+        {
+            key: '2',
+            label: type === "pdc" ? "" : "Statement",
+            children: <Statement bank_id={bank_id} />,
+            disabled: type === "pdc" ? true : false,
+        },
+    ];
 
     return (
         <>
@@ -44,14 +71,9 @@ const BankRead = () => {
                     </a>
                 </div>
             </div>
-            <div className="read__container">
-                <div className="read--main" id="read--main">
-                    <ViewHeader title={type} />
-                    {
-                        type == "bank" ?
-                            <BankingRead /> : <PDCRead />
-                    }
-                    <ViewFooter />
+            <div className='read__customer--main2'>
+                <div className="read__customer--tabs2">
+                    <Tabs defaultActiveKey="1" items={items} />
                 </div>
             </div>
         </>

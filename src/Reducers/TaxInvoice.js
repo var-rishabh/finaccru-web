@@ -162,5 +162,17 @@ export const taxInvoiceReducer = createReducer(initialState, (builder) => {
         state.success = action.payload;
         state.error = null;
     })
+    .addCase("ExtractedTaxInvoiceListRequest", (state, action) => {
+        state.loading = true;
+    })
+    .addCase("ExtractedTaxInvoiceListFailure", (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+    })
+    .addCase("ExtractedTaxInvoiceListSuccess", (state, action) => {
+        state.loading = false;
+        state.extractedTaxInvoices = action.payload;
+        state.error = null;
+    })
 })
 

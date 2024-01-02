@@ -38,6 +38,10 @@
     -o-border-radius: 1rem;
 }
 
+.create--modal-label {
+    padding: 2rem 4rem !important;
+}
+
 #create-tax-file-chosen {
     margin: 0.5rem 0 0 0;
     font-family: sans-serif;
@@ -58,4 +62,10 @@
 
 .taxInvoice__modal--btn2:hover{
     color: #69b1ff;
+}
+
+.table--pending__tasks {
+    color: red;
+    padding: 0 0 0.5rem 0.2rem;
+    cursor: pointer;
 }

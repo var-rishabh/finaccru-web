@@ -82,8 +82,6 @@ const items = [
     getItem('Bill Payment', <img src={estimate} />, <BillPayment />, <BillPaymentLayout />, <BillPaymentRead />),
     getItem('Debit Note', <img src={estimate} />, <DebitNote />, <DebitNoteLayout />, <DebitNoteRead />),
     getItem('Bank', <img src={estimate} />, <Bank />, <BankLayout />, <BankRead />),
-    getItem('VAT', <img src={estimate} />, <Dashboard />, <Dashboard />, <Dashboard />),
-    getItem('SOA', <img src={estimate} />, <Dashboard />, <Dashboard />, <Dashboard />),
 ];
 
 export default items;

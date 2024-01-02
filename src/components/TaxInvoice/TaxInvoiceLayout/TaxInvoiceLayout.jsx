@@ -73,7 +73,6 @@ const TaxInvoiceLayout = () => {
     const { customer } = useSelector(state => state.customerReducer);
 
     const searchParams = new URLSearchParams(window.location.search);
-    const file = searchParams.get('file');
     const convert = searchParams.get('convert');
     const reference_id = searchParams.get('reference_id');
     const referenceName = searchParams.get('reference');
@@ -99,7 +98,7 @@ const TaxInvoiceLayout = () => {
                 }
             }
         }
-    }, [dispatch, file, convert, reference_id, referenceName, ti_id, type, user?.localInfo?.role, client_id]);
+    }, [dispatch, convert, reference_id, referenceName, ti_id, type, user?.localInfo?.role, client_id]);
 
     useEffect(() => {
         if (type === 'edit') {
@@ -153,25 +152,6 @@ const TaxInvoiceLayout = () => {
         if (type === 'create') {
             setTaxInvoiceNumber(number);
             setTermsAndConditions(user?.clientInfo?.terms_and_conditions);
-            if (file) {
-                setCurrencyConversionRate(location.state?.currency_conversion_rate);
-                setCurrencyId(location.state?.currency_id);
-                setCurrency(currencyId !== 1 ? currencies?.find((currency) => currency.currency_id === location.state?.currency_id)?.currency_abv : 'AED');
-                setItems(location.state?.line_items || [{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
-                setReference(location.state?.reference);
-                setSubject(location.state?.subject);
-                setTermsAndConditions(location.state?.terms_and_conditions);
-                setTaxInvoiceDate(location.state?.ti_date);
-                setValidTill(location.state?.due_date);
-                setTaxInvoiceNumber(location.state?.ti_number);
-                setCustomerId(location.state?.customer?.customer_id);
-                setCustomerName(location.state?.customer?.customer_name);
-                setShippingAddress1(location.state?.customer?.shipping_address_line_1);
-                setShippingAddress2(location.state?.customer?.shipping_address_line_2);
-                setShippingAddress3(location.state?.customer?.shipping_address_line_3);
-                setShippingCountry(location.state?.customer?.shipping_country);
-                setShippingState(location.state?.customer?.shipping_state);
-            }
             if (convert) {
                 if (referenceName == 'estimate') {
                     setCurrencyConversionRate(estimate?.currency_conversion_rate);

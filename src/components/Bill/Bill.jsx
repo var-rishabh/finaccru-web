@@ -5,19 +5,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import "../TaxInvoice/TaxInvoice.css";
 import "../../Styles/MainPage.css";
 import { Modal, Input, Divider } from 'antd';
-import { ArrowRightOutlined, InboxOutlined } from '@ant-design/icons';
+import { ArrowRightOutlined, InboxOutlined, EyeOutlined } from '@ant-design/icons';
 import errorIcon from '../../assets/Icons/error.svg';
 
-import { deleteBill, downloadBillList, getBillList, extractDataFromBill } from '../../Actions/Bill';
+import { deleteBill, downloadBillList, extractDataFromBill, getBillList, getExtractedBillList } from '../../Actions/Bill';
 import billColumns from '../../Columns/Bill';
 import TableCard from '../../Shared/TableCard/TableCard';
-import { toast } from 'react-toastify';
 
 const Bill = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { loading, bills } = useSelector(state => state.billReducer);
+    const { loading, bills, extractedBills } = useSelector(state => state.billReducer);
 
     const [searchText, setSearchText] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,6 +24,7 @@ const Bill = () => {
 
     useEffect(() => {
         dispatch(getBillList());
+        dispatch(getExtractedBillList());
     }, [dispatch]);
 
     const [isCreateBillModalOpen, setIsCreateBillModalOpen] = useState(false);
@@ -49,6 +49,8 @@ const Bill = () => {
     };
     const handleCancelCreateBill = () => {
         setIsCreateBillModalOpen(false);
+        setCreateBillByFile([]);
+        setCreateBillByFileError([false, ""])
     };
 
     const showModal = (record) => {
@@ -57,6 +59,16 @@ const Bill = () => {
     };
     const handleCancel = () => {
         setIsModalOpen(false);
+    };
+
+    const [isPendingModalOpen, setIsPendingModalOpen] = useState(false);
+    const showPendingModal = () => {
+        dispatch(getExtractedBillList());
+        setIsPendingModalOpen(true);
+    };
+    const handleCancelPending = () => {
+        setIsPendingModalOpen(false);
+        dispatch(getExtractedBillList());
     };
 
     const handleDelete = (id) => {
@@ -74,6 +86,36 @@ const Bill = () => {
     }, [dispatch, searchText]);
 
     const columns = billColumns(showModal, navigate)
+
+    const pendingColumns = [
+        {
+            title: 'Bill Date',
+            dataIndex: 'bill_date',
+            key: 'bill_date',
+        },
+        {
+            title: 'Bill Number',
+            dataIndex: 'bill_number',
+            key: 'bill_number',
+            render: (text, record) => (
+                <div>
+                    {record.bill_number === null ? record.staging_bill_id : record.bill_number}
+                </div>
+            ),
+        },
+        {
+            title: 'Document',
+            dataIndex: 'attachment_url',
+            key: 'attachment_url',
+            align: 'center',
+            render: (text, record) => (
+                <div className="action__button" onClick={() => window.open(record.attachment_url)}>
+                    <EyeOutlined />
+                </div>
+            ),
+        },
+    ];
+
     return (
         <>
             <Modal
@@ -110,21 +152,12 @@ const Bill = () => {
                 width={400}
             >
                 <div className='taxInvoice__create--modal'>
-                    <a className="taxInvoice__modal--btn1"
-                        onClick={() => navigate("/bill/create")}
-                    >
-                        Create Manually &nbsp;
-                        <ArrowRightOutlined />
-                    </a>
-                    <Divider
-                        style={{ borderColor: "black", opacity: "0.2", borderWidth: "1px" }}
-                    />
                     <form className='taxInvoice__modal--form'>
                         <input id="createBillByFile" type='file' name='createBillByFile'
                             onChange={(e) => handleFileUpload(e)}
                             hidden
                         />
-                        <label htmlFor="createBillByFile"><InboxOutlined /> UPLOAD</label>
+                        <label className='create--modal-label' htmlFor="createBillByFile"><InboxOutlined /> UPLOAD</label>
                         <p id="create-tax-file-chosen">{createBillByFile.name || "No File Chosen"}</p>
                         {createBillByFileError[0] ?
                             <p style={{ fontSize: "0.8rem" }} className="phone__error--span">
@@ -134,18 +167,42 @@ const Bill = () => {
                         }
                         <button className="taxInvoice__modal--btn2" onClick={(e) => {
                             e.preventDefault();
-                            if (createBillByFileError[0] || createBillByFile.length === 0) {
-                                toast.error("Please upload a valid file");
-                            }
                             !createBillByFileError[0] && dispatch(extractDataFromBill(createBillByFile, navigate))
+                            handleCancelCreateBill();
+                            dispatch(getExtractedBillList());
                         }}>
                             Create By File &nbsp;
                             <ArrowRightOutlined />
                         </button>
                     </form>
+                    <Divider
+                        style={{ borderColor: "black", opacity: "0.2", borderWidth: "1px" }}
+                    />
+                    <a className="taxInvoice__modal--btn1"
+                        onClick={() => navigate("/bill/create")}
+                    >
+                        Create Manually &nbsp;
+                        <ArrowRightOutlined />
+                    </a>
                 </div>
             </Modal>
+            <Modal
+                open={isPendingModalOpen}
+                onCancel={handleCancelPending}
+                footer={null}
+                width={800}
+                className='mainPage__list--delete--modal'
+            >
+                <h1>Pending Bills</h1>
+                <br />
+                <TableCard columns={pendingColumns} items={extractedBills} />
+            </Modal>
             <div className="table">
+                <div className='table--pending__tasks' onClick={showPendingModal}>
+                    {
+                        bills?.total_pending_items > 0 ? `${bills?.total_pending_items} Bills Pending` : ""
+                    }
+                </div>
                 <TableCard columns={columns} dispatch={dispatch}
                     loading={loading} items={bills} getList={getBillList}
                     searchText={searchText}

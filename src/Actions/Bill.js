@@ -227,15 +227,16 @@ export const extractDataFromBill = (file, navigate) => async (dispatch) => {
         dispatch({ type: "ExtractDataFromBillRequest" });
         const token = await auth.currentUser.getIdToken(true);
         const form = new FormData();
-        form.append("invoice_file", file);
+        form.append("bill_file", file);
         const config = {
             headers: {
                 token: token,
             },
         };
-        const response = await axios.post(`${url}/private/client/bills/extract-data-from-invoice`, form, config);
-        navigate("/bill/create?file=true", { state: response.data });
+        const response = await axios.post(`${url}/private/client/bills/extract-data-from-bill`, form, config);
+        dispatch(getBillList());
         dispatch({ type: "ExtractDataFromBillSuccess", payload: response.data });
+        toast.success("BIll uploaded successfully");
     } catch (error) {
         console.log(error);
         dispatch({ type: "ExtractDataFromBillFailure", payload: error.response?.data || error.message });
@@ -283,6 +284,49 @@ export const approveBill = (id, role = 1, client_id) => async (dispatch) => {
     } catch (error) {
         console.log(error);
         dispatch({ type: "ApproveBillFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+
+export const extractDataFromTaxInvoice = (file, navigate) => async (dispatch) => {
+    try {
+        dispatch({ type: "ExtractDataFromBillRequest" });
+        const token = await auth.currentUser.getIdToken(true);
+        const form = new FormData();
+        form.append("invoice_file", file);
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        const response = await axios.post(`${url}/private/client/bills/extract-data-from-bill`, form, config);
+        dispatch(getBillList());
+        dispatch({ type: "ExtractDataFromBillSuccess", payload: response.data });
+        toast.success("BIll uploaded successfully");
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ExtractDataFromBillFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+
+export const getExtractedBillList = () => async (dispatch) => {
+    try {
+        dispatch({ type: "ExtractedBillListRequest" });
+        const token = await auth.currentUser.getIdToken(true);
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        const response = await axios.get(`${url}/private/client/bills/extracted/read-list`, config);
+        dispatch({ type: "ExtractedBillListSuccess", payload: response.data });
+
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ExtractedBillListFailure", payload: error.response?.data || error.message });
         toast.error(error.response?.data || error.message);
     }
 }

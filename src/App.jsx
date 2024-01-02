@@ -34,6 +34,7 @@ import JuniorAccountant from './components/JuniorAccountant/JuniorAccountant';
 import SeniorAccountant from './components/SeniorAccountant/SeniorAccountant';
 import Client from './components/Client/Client';
 import JrAccountants from './components/SeniorAccountant/JrAccountants/JrAccountants';
+import Chat from './components/Chat/Chat';
 
 function App() {
   const dispatch = useDispatch();
@@ -87,6 +88,7 @@ function App() {
                   ) : user?.localInfo?.role === 1 ? (
                     <>
                       <Route path="/" element={<JuniorAccountant />} />
+                      <Route path="/chat" element={<Chat />} />
                       <Route path="/clients/:id" element={<Client />} />
                       <Route path="*" element={<NotFound />} />
                       {
@@ -103,6 +105,7 @@ function App() {
                   ) : user?.localInfo?.role === 2 ? (
                     <>
                       <Route path="/" element={<SeniorAccountant />} />
+                      <Route path="/chat" element={<Chat />} />
                       <Route path="/jr/:id" element={<JrAccountants />} />
                       <Route path="/jr/:jr_id/clients/:id" element={<Client />} />
                       <Route path="*" element={<NotFound />} />

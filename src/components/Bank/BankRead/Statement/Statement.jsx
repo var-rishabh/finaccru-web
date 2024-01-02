@@ -1,40 +1,41 @@
 import { useEffect, useState } from 'react';
-import PdfDownload from "../../../../../Shared/PdfDownload/PdfDownload";
+import { useDispatch, useSelector } from 'react-redux';
+
 import moment from 'moment';
+import { readBankStatment, getBankDetails } from '../../../../Actions/Bank';
 
 import { ArrowRightOutlined } from '@ant-design/icons';
-import logo from "../../../../../assets/Icons/cropped_logo.svg";
-import { useDispatch, useSelector } from 'react-redux';
-import { readCustomerStatment, getCustomerDetails } from '../../../../../Actions/Customer';
+import logo from "../../../../assets/Icons/cropped_logo.svg";
 
+import PdfDownload from "../../../../Shared/PdfDownload/PdfDownload";
 import StatementHead from './Parts/StatementHead';
-import { pdfStyle as headPdfStyle, styles as headStyles } from '../../../../../Styles/ReadStatementHead';
+import { pdfStyle as headPdfStyle, styles as headStyles } from '../../../../Styles/ReadStatementHead';
 import StatementSummary from './Parts/StatementSummary';
-import { pdfStyle as summaryPdfStyle, styles as summaryStyles } from '../../../../../Styles/ReadStatementSummary';
+import { pdfStyle as summaryPdfStyle, styles as summaryStyles } from '../../../../Styles/ReadStatementSummary';
 import StatementTable from './Parts/StatementTable';
-import { pdfStyle as tablePdfStyle, styles as tableStyles } from '../../../../../Styles/ReadStatementTable';
+import { pdfStyle as tablePdfStyle, styles as tableStyles } from '../../../../Styles/ReadStatementTable';
 
-const CustomerStatement = ({ customer_id }) => {
+const BankStatement = ({ bank_id }) => {
     const dispatch = useDispatch();
 
-    const { customerStatement, loading, error } = useSelector(state => state.customerReducer);
+    const { bankStatement, loading, error } = useSelector(state => state.bankReducer);
     const { user } = useSelector(state => state.userReducer);
-    const { customer } = useSelector(state => state.customerReducer);
+    const { bank } = useSelector(state => state.bankReducer);
     const [startDate, setStartDate] = useState(moment().startOf('month').format('YYYY-MM-DD'));
     const [endDate, setEndDate] = useState( moment().endOf('month').format("YYYY-MM-DD"));
 
     useEffect(() => {
-        dispatch(getCustomerDetails(customer_id));
-    }, [dispatch, customer_id])
+        dispatch(getBankDetails(bank_id));
+    }, [dispatch, bank_id])
 
     useEffect(() => {
         if (startDate && endDate) {
-            dispatch(readCustomerStatment(customer_id, {
+            dispatch(readBankStatment(bank_id, {
                 from_date: startDate,
                 to_date: endDate
             }));
         }
-    }, [dispatch, customer_id, startDate, endDate]);
+    }, [dispatch, bank_id, startDate, endDate]);
 
     const contents = [
         {
@@ -43,7 +44,7 @@ const CustomerStatement = ({ customer_id }) => {
             props: {
                 styles: headPdfStyle,
                 user: user?.clientInfo,
-                customer: customer
+                bank: bank
             }
         },
         {
@@ -53,26 +54,25 @@ const CustomerStatement = ({ customer_id }) => {
                 styles: summaryPdfStyle,
                 start_date: startDate,
                 end_date: endDate,
-                opening_balance: customerStatement?.opening_balance,
-                invoiced_amount: customerStatement?.invoiced_amount,
-                amount_received: customerStatement?.amount_received,
-                exchange_gain: customerStatement?.exchange_gain,
-                balance_due: customerStatement?.balance_due,
+                opening_balance: bankStatement?.opening_balance,
+                additions: bankStatement?.additions,
+                withdrawals: bankStatement?.withdrawals,
+                closing_balance: bankStatement?.closing_balance,
             }
         },
         {
             component: StatementTable,
-            height: ((customerStatement?.transactions || []).length * 50) + 100,
+            height: ((bankStatement?.transactions || []).length * 50) + 100,
             props: {
                 styles: tablePdfStyle,
-                transactions: customerStatement?.transactions
+                transactions: bankStatement?.transactions
             }
         }
     ];
 
 
     return (
-        <div className="read__customer--statements">
+        <div className="read__bank--statements">
             <div className='read__customer--statements-header'>
                 <div className='read__customer--statements--header-dates'>
                     <input type="date"
@@ -99,20 +99,19 @@ const CustomerStatement = ({ customer_id }) => {
                         <img style={{ width: "9rem" }} src={logo} alt="logo" />
                     </div>
                     <StatementHead styles={headStyles}
-                        customer={customer} user={user?.clientInfo}
+                        bank={bank} user={user?.clientInfo}
                     />
                     {
                         startDate && endDate && (
                             <>
                                 <StatementSummary styles={summaryStyles}
                                     start_date={startDate} end_date={endDate}
-                                    opening_balance={customerStatement?.opening_balance}
-                                    invoiced_amount={customerStatement?.invoiced_amount}
-                                    amount_received={customerStatement?.amount_received}
-                                    credit_notes={customerStatement?.credit_notes}
-                                    balance_due={customerStatement?.balance_due}
+                                    opening_balance={bankStatement?.opening_balance}
+                                    additions={bankStatement?.additions}
+                                    withdrawals={bankStatement?.withdrawals}
+                                    closing_balance={bankStatement?.closing_balance}
                                 />
-                                <StatementTable styles={tableStyles} transactions={customerStatement?.transactions} />
+                                <StatementTable styles={tableStyles} transactions={bankStatement?.transactions} />
                             </>
                         )
                     }
@@ -129,4 +128,4 @@ const CustomerStatement = ({ customer_id }) => {
     )
 }
 
-export default CustomerStatement;
+export default BankStatement;

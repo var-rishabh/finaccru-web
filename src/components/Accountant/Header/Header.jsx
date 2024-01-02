@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from '../../../Actions/User';
@@ -12,24 +12,13 @@ import profileIcon from "../../../assets/dashboardIcons/profile.svg";
 
 import { Tooltip } from "antd";
 
-const Header = ({ headerFor, backNeeded, backFor, backId }) => {
+const Header = ({ headerFor, backNeeded }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const [companyModalOpen, setCompanyModalOpen] = useState(false);
 
     const { user } = useSelector(state => state.userReducer);
-
-    // const [searchText, setSearchText] = useState("");
-
-    // useEffect(() => {
-    //     if (searchText.length > 2) {
-    // dispatch(getPaymentsList(1, searchText));
-    //     }
-    //     if (searchText.length === 0) {
-    // dispatch(getPaymentsList());
-    //     }
-    // }, [searchText, dispatch]);
 
     return (
         <>
@@ -38,7 +27,7 @@ const Header = ({ headerFor, backNeeded, backFor, backId }) => {
                     <div className='read__header--left back__btn'>
                         <img src={backButton} alt='back' className='read__header--back-btn' onClick={() => {
                             // remove the last part of the url
-                            console.log(window.location.pathname.split('/').slice(0, -2).join('/'));
+                            // console.log(window.location.pathname.split('/').slice(0, -2).join('/'));
                             navigate(window.location.pathname.split('/').slice(0, -2).join('/') === "" ? "/" : window.location.pathname.split('/').slice(0, -2).join('/'));
                         }} />
                         <h1 className='read__header--title'> Go Back </h1>
@@ -49,13 +38,17 @@ const Header = ({ headerFor, backNeeded, backFor, backId }) => {
                 <div className="header__accountant--left">
                     <span className="header__accountant--title">
                         {
-                            headerFor ?
+                            headerFor === "Chat" ?
                                 <>
-                                    <h1> {headerFor?.full_name} </h1>
-                                    <InfoCircleTwoTone onClick={() => setCompanyModalOpen(true)} />
+                                    <h1> Chat </h1>
                                 </>
-                                :
-                                <h1> Dashboard </h1>
+                                : headerFor ?
+                                    <>
+                                        <h1> {headerFor?.full_name} </h1>
+                                        <InfoCircleTwoTone onClick={() => setCompanyModalOpen(true)} />
+                                    </>
+                                    :
+                                    <h1> Dashboard </h1>
                         }
                     </span>
                     {/* <Input placeholder="Search" onChange={(e) => setSearchText(e.target.value)} value={searchText} /> */}

@@ -155,3 +155,23 @@ export const downloadBankList = () => async (dispatch) => {
         toast.error(error.response?.data || error.message);
     }
 }
+
+
+export const readBankStatment = (id, data) => async (dispatch) => {
+    try {
+        dispatch({ type: "ReadBankStatementRequest" });
+        const token = await auth.currentUser.getIdToken();
+        const config = {
+            headers: {
+                token: token,
+                "Content-Type": "application/json",
+            },
+        };
+        const response = await axios.post(`${url}/private/client/banks/read-statement/${id}`, data, config);
+        dispatch({ type: "ReadBankStatementSuccess", payload: response.data });
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ReadBankStatementFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}

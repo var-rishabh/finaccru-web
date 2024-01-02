@@ -93,6 +93,14 @@
     border: 2px solid var(--bg-gray);
 }
 
+.read--main2 {
+    width: 70%;
+    max-width: 60rem;
+    margin-top: 1rem;
+    background-color: var(--white);
+    border: 2px solid var(--bg-gray);
+}
+
 .read__items {
     background-color: #ECF1F3;
     width: 100%;

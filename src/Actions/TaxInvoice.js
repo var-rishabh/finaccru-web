@@ -234,8 +234,9 @@ export const extractDataFromTaxInvoice = (file, navigate) => async (dispatch) =>
             },
         };
         const response = await axios.post(`${url}/private/client/tax-invoices/extract-data-from-invoice`, form, config);
-        navigate("/tax-invoice/create?file=true", { state: response.data });
+        dispatch(getTaxInvoiceList());
         dispatch({ type: "ExtractDataFromTaxInvoiceSuccess", payload: response.data });
+        toast.success("Tax Invoice uploaded successfully");
     } catch (error) {
         console.log(error);
         dispatch({ type: "ExtractDataFromTaxInvoiceFailure", payload: error.response?.data || error.message });
@@ -283,6 +284,25 @@ export const approveTaxInvoice = (id, role = 1, client_id) => async (dispatch) =
     } catch (error) {
         console.log(error);
         dispatch({ type: "ApproveTaxInvoiceFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+export const getExtractedTaxInvoiceList = () => async (dispatch) => {
+    try {
+        dispatch({ type: "ExtractedTaxInvoiceListRequest" });
+        const token = await auth.currentUser.getIdToken(true);
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        const response = await axios.get(`${url}/private/client/tax-invoices/extracted/read-list`, config);
+        dispatch({ type: "ExtractedTaxInvoiceListSuccess", payload: response.data });
+
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ExtractedTaxInvoiceListFailure", payload: error.response?.data || error.message });
         toast.error(error.response?.data || error.message);
     }
 }

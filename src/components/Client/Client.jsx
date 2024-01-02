@@ -195,7 +195,7 @@ const Client = () => {
                     </div>
                 </div>
             </Modal>
-            <Header headerFor={client} backNeeded={true} backFor={user?.localInfo?.role} backId={id} backJrId={jr_id} />
+            <Header headerFor={client} backNeeded={true} />
             <div className='clients__tabs'>
                 <div className='client__switch'>
                     <Switch checkedChildren="All" unCheckedChildren="Pending" onChange={(e) => setShowAll(e)} />

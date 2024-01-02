@@ -81,7 +81,7 @@ const Bank = () => {
                     searchText={searchText}
                 />
             ,
-        },
+        }
     ];
 
     const handleChangeTab = (key) => {

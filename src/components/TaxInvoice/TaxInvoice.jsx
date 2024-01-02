@@ -5,10 +5,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import "./TaxInvoice.css";
 import "../../Styles/MainPage.css";
 import { Modal, Input, Divider } from 'antd';
-import { ArrowRightOutlined, InboxOutlined } from '@ant-design/icons';
+import { ArrowRightOutlined, InboxOutlined, EyeOutlined } from '@ant-design/icons';
 import errorIcon from '../../assets/Icons/error.svg';
 
-import { deleteTaxInvoice, downloadTaxInvoiceList, extractDataFromTaxInvoice, getTaxInvoiceList } from '../../Actions/TaxInvoice';
+import { deleteTaxInvoice, downloadTaxInvoiceList, extractDataFromTaxInvoice, getExtractedTaxInvoiceList, getTaxInvoiceList } from '../../Actions/TaxInvoice';
 import taxInvoiceColumns from '../../Columns/TaxInvoice';
 import TableCard from '../../Shared/TableCard/TableCard';
 
@@ -16,14 +16,15 @@ const TaxInvoice = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const {loading, taxInvoices } = useSelector(state => state.taxInvoiceReducer);
-    
+    const { loading, taxInvoices, extractedTaxInvoices } = useSelector(state => state.taxInvoiceReducer);
+
     const [searchText, setSearchText] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [record, setRecord] = useState({});
 
     useEffect(() => {
         dispatch(getTaxInvoiceList());
+        dispatch(getExtractedTaxInvoiceList());
     }, [dispatch]);
 
     const [isCreateTaxModalOpen, setIsCreateTaxModalOpen] = useState(false);
@@ -48,6 +49,7 @@ const TaxInvoice = () => {
     };
     const handleCancelCreateTax = () => {
         setIsCreateTaxModalOpen(false);
+        setCreateTaxByFile([]);
     };
 
     const showModal = (record) => {
@@ -56,6 +58,15 @@ const TaxInvoice = () => {
     };
     const handleCancel = () => {
         setIsModalOpen(false);
+    };
+
+    const [isPendingModalOpen, setIsPendingModalOpen] = useState(false);
+    const showPendingModal = () => {
+        setIsPendingModalOpen(true);
+    };
+    const handleCancelPending = () => {
+        setIsPendingModalOpen(false);
+        dispatch(getExtractedTaxInvoiceList());
     };
 
     const handleDelete = (id) => {
@@ -73,6 +84,36 @@ const TaxInvoice = () => {
     }, [dispatch, searchText]);
 
     const columns = taxInvoiceColumns(showModal, navigate);
+
+    const pendingColumns = [
+        {
+            title: 'TI Date',
+            dataIndex: 'ti_date',
+            key: 'ti_date',
+        },
+        {
+            title: 'TI Number',
+            dataIndex: 'ti_number',
+            key: 'ti_number',
+            render: (text, record) => (
+                <div>
+                    {record.ti_number === null ? record.staging_id : record.ti_number}
+                </div>
+            ),
+        },
+        {
+            title: 'Document',
+            dataIndex: 'attachment_url',
+            key: 'attachment_url',
+            align: 'center',
+            render: (text, record) => (
+                <div className="action__button" onClick={() => window.open(record.attachment_url)}>
+                    <EyeOutlined />
+                </div>
+            ),
+        },
+    ];
+
     return (
         <>
             <Modal
@@ -131,14 +172,35 @@ const TaxInvoice = () => {
                             </p>
                             : <></>
                         }
-                        <button className="taxInvoice__modal--btn2" onClick={(e) => { e.preventDefault(); !createTaxByFileError[0] && dispatch(extractDataFromTaxInvoice(createTaxByFile, navigate)) }}>
+                        <button className="taxInvoice__modal--btn2" onClick={(e) => {
+                            e.preventDefault(); 
+                            !createTaxByFileError[0] && dispatch(extractDataFromTaxInvoice(createTaxByFile, navigate));
+                            handleCancelCreateTax();
+                            dispatch(getExtractedTaxInvoiceList());
+                        }}>
                             Create By File &nbsp;
                             <ArrowRightOutlined />
                         </button>
                     </form>
                 </div>
             </Modal>
+            <Modal
+                open={isPendingModalOpen}
+                onCancel={handleCancelPending}
+                footer={null}
+                width={800}
+                className='mainPage__list--delete--modal'
+            >
+                <h1>Pending Tax Invoices</h1>
+                <br />
+                <TableCard columns={pendingColumns} items={extractedTaxInvoices} />
+            </Modal>
             <div className="table">
+                <div className='table--pending__tasks' onClick={showPendingModal}>
+                    {
+                        taxInvoices?.total_pending_items > 0 ? `${taxInvoices?.total_pending_items} Tax Invoices Pending` : ""
+                    }
+                </div>
                 <TableCard columns={columns} dispatch={dispatch} loading={loading} items={taxInvoices} getList={getTaxInvoiceList} searchText={searchText} />
             </div>
         </>

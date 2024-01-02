@@ -5,8 +5,14 @@
     gap: 1.5rem;
 }
 
-.accountant__table--heading {
+.accountant__table--head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin: 0 2rem;
+}
+
+.accountant__table--heading {
     width: max-content;
     padding: 0.6rem 1rem;
     border: 1px solid #4EB7F2;
@@ -21,6 +27,17 @@
     -o-border-radius: 0.5rem;
 }
 
+.accountant_chat {
+    color: white;
+    background: var(--main-color);
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    -webkit-border-radius: 0.5rem;
+    -moz-border-radius: 0.5rem;
+    -ms-border-radius: 0.5rem;
+    -o-border-radius: 0.5rem;
+}
 
 .accountant__action__buttons {
     display: flex;
