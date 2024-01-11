@@ -1,7 +1,6 @@
 .chatList--main {
     display: flex;
     flex-direction: column;
-    overflow: scroll;
     gap: 0.3rem;
 }
 
@@ -45,5 +44,9 @@
 }
 
 .chatList--item:hover {
+    background-color: white;
+}
+
+.chatList--item.active {
     background-color: white;
 }

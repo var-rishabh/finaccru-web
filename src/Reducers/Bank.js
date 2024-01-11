@@ -78,17 +78,5 @@ export const bankReducer = createReducer(initialState, (builder) => {
         state.success = action.payload;
         state.error = null;
     })
-    .addCase("ReadBankStatementRequest", (state, action) => {
-        state.loading = true;
-    })
-    .addCase("ReadBankStatementFailure", (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-    })
-    .addCase("ReadBankStatementSuccess", (state, action) => {
-        state.loading = false;
-        state.bankStatement = action.payload;
-        state.error = null;
-    })
 })
 

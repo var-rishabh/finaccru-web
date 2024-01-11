@@ -8,105 +8,27 @@ import { Tabs } from 'antd';
 import Header from '../Accountant/Header/Header';
 import ChatList from './ChatList/ChatList';
 import ChatPart from './ChatPart/ChatPart';
+import useChatList from '../../CustomHooks/useChatList';
 
 const Chat = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    const [chatId, setChatId] = useState("");
-
-    const chatList = [
-        {
-            name: "Rishabh Varshney",
-            unread: 0,
-        },
-        {
-            name: "John Songate",
-            unread: 4,
-        },
-        {
-            name: "Keeper",
-            unread: 2,
-        },
-        {
-            name: "Cena Songer",
-            unread: 0,
-        },
-        {
-            name: "Long Sion",
-            unread: 45,
-        },
-        {
-            name: "Keeper",
-            unread: 2,
-        },
-        {
-            name: "Cena Songer",
-            unread: 0,
-        },
-        {
-            name: "Long Sion",
-            unread: 45,
-        },
-        {
-            name: "Cena Songer",
-            unread: 0,
-        },
-        {
-            name: "Long Sion",
-            unread: 45,
-        },
-        {
-            name: "Shubham",
-            unread: 0,
-        },
-        {
-            name: "Randome Guy",
-            unread: 17,
-        },
-        {
-            name: "John Songate",
-            unread: 4,
-        },
-        {
-            name: "Long Sion",
-            unread: 45,
-        },
-        {
-            name: "Shubham",
-            unread: 0,
-        },
-        {
-            name: "Randome Guy",
-            unread: 17,
-        },
-        {
-            name: "John Songate",
-            unread: 4,
-        },
-        {
-            name: "Rishabh Varshney",
-            unread: 0,
-        },
-        {
-            name: "John Songate",
-            unread: 4,
-        }
-    ]
-
+    const [tab, setTab] = useState("1");
     const { user } = useSelector(state => state.userReducer);
-
+    const { users, loading } = useChatList(user.localId, tab);
+    const [chatId, setChatId] = useState();
+    const [chatItem, setChatItem] = useState();
     const items = [
         {
             key: '1',
             label: 'Internal',
-            children: <ChatList chatList={chatList} />,
+            children: <ChatList chatList={users} loading={loading} setChatId={setChatId} chatId={chatId} setChatItem={setChatItem} tab={tab} />,
         },
         {
             key: '2',
             label: user?.localInfo?.role === 2 ? "" : "Clients",
-            children: <ChatList chatList={chatList.slice(10, 20)} />,
-            disabled: user?.localInfo?.role === 2 ? true : false,
+            children: <ChatList chatList={users} loading={loading} setChatId={setChatId} chatId={chatId} setChatItem={setChatItem} tab={tab} />,
+            disabled: user?.localInfo?.role === 2
         },
     ];
 
@@ -115,10 +37,10 @@ const Chat = () => {
             <Header headerFor="Chat" backNeeded={true} />
             <div className='chat--main'>
                 <div className='chat--left'>
-                    <Tabs defaultActiveKey="1" items={items} />
+                    <Tabs defaultActiveKey="1" items={items} onChange={(key) => {setTab(key); setChatId(); setChatItem()}} />
                 </div>
                 <div className='chat--right'>
-                    <ChatPart chatId={chatId} />
+                    <ChatPart chatId={chatId} tab={tab} user={chatItem} users={users} />
                 </div>
             </div>
         </div>

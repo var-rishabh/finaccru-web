@@ -102,6 +102,18 @@ export const billReducer = createReducer(initialState, (builder) => {
         state.success = action.payload;
         state.error = null;
     })
+    .addCase("ExtractDataFromBillRequest", (state) => {
+        state.loading = true;
+    })
+    .addCase("ExtractDataFromBillFailure", (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+    })
+    .addCase("ExtractDataFromBillSuccess", (state, action) => {
+        state.loading = false;
+        state.success = action.payload;
+        state.error = null;
+    })
     .addCase("SubmitBillForApprovalRequest", (state) => {
         state.loading = true;
     })
@@ -136,31 +148,6 @@ export const billReducer = createReducer(initialState, (builder) => {
     .addCase("ApproveBillSuccess", (state, action) => {
         state.loading = false;
         state.success = action.payload;
-        state.error = null;
-    })
-    .addCase("ExtractDataFromBillRequest", (state) => {
-        state.loading = true;
-    })
-    .addCase("ExtractDataFromBillFailure", (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-    })
-    .addCase("ExtractDataFromBillSuccess", (state, action) => {
-        state.loading = false;
-        state.success = action.payload;
-        state.error = null;
-    })
-
-    .addCase("ExtractedBillListRequest", (state, action) => {
-        state.loading = true;
-    })
-    .addCase("ExtractedBillListFailure", (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-    })
-    .addCase("ExtractedBillListSuccess", (state, action) => {
-        state.loading = false;
-        state.extractedBills = action.payload;
         state.error = null;
     })
 })
