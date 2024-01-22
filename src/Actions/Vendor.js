@@ -124,7 +124,7 @@ export const updateVendor = (data, id, handleVendorSubmit, navigate) => async (d
     }
 }
 
-export const getVendorDetails = (id) => async (dispatch) => {
+export const getVendorDetails = (id, role = 0) => async (dispatch) => {
     try {
         dispatch({ type: "VendorDetailsRequest" });
         const token = await auth.currentUser.getIdToken();
@@ -133,8 +133,13 @@ export const getVendorDetails = (id) => async (dispatch) => {
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/vendors/read/${id}`, config);
-        dispatch({ type: "VendorDetailsSuccess", payload: response.data });
+        if (role === 0) {
+            const response = await axios.get(`${url}/private/client/vendors/read/${id}`, config);
+            dispatch({ type: "VendorDetailsSuccess", payload: response.data });
+        } else {
+            const response = await axios.get(`${url}/private/accountant/read-vendor/${id}`, config);
+            dispatch({ type: "VendorDetailsSuccess", payload: response.data });
+        }
     } catch (error) {
         console.log(error);
         dispatch({ type: "VendorDetailsFailure", payload: error.response?.data || error.message });
@@ -142,7 +147,7 @@ export const getVendorDetails = (id) => async (dispatch) => {
     }
 }
 
-export const getVendorInfiniteScroll = (page = 1, refresh = false, keyword = "") => async (dispatch) => {
+export const getVendorInfiniteScroll = (page = 1, refresh = false, keyword = "", role = 0, client_id = 0) => async (dispatch) => {
     try {
         dispatch({ type: "VendorInfiniteScrollRequest" });
         const token = await auth.currentUser.getIdToken();
@@ -151,8 +156,13 @@ export const getVendorInfiniteScroll = (page = 1, refresh = false, keyword = "")
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/vendors/read-vendors-list/${page}?keyword=${keyword}`, config);
-        dispatch({ type: "VendorInfiniteScrollSuccess", payload: { data: response.data, refresh: refresh } });
+        if (role === 0) {
+            const response = await axios.get(`${url}/private/client/vendors/read-vendors-list/${page}?keyword=${keyword}`, config);
+            dispatch({ type: "VendorInfiniteScrollSuccess", payload: { data: response.data, refresh: refresh } });
+        } else {
+            const response = await axios.get(`${url}/private/accountant/${role === 1 ? 'jr' : 'sr'}/read-vendors-list/${page}?keyword=${keyword}&client_id=${client_id}`, config);
+            dispatch({ type: "VendorInfiniteScrollSuccess", payload: { data: response.data, refresh: refresh } });
+        }
     }
     catch (error) {
         console.log(error);
@@ -161,7 +171,7 @@ export const getVendorInfiniteScroll = (page = 1, refresh = false, keyword = "")
     }
 }
 
-export const createVendorShippingAddress = (data, vendor_id, handleVendorShippingAddressSubmit) => async (dispatch) => {
+export const createVendorShippingAddress = (data, vendor_id, handleVendorShippingAddressSubmit, role = 0, client_id = 0) => async (dispatch) => {
     try {
         dispatch({ type: "CreateVendorShippingAddressRequest" });
         const token = await auth.currentUser.getIdToken();
@@ -170,8 +180,13 @@ export const createVendorShippingAddress = (data, vendor_id, handleVendorShippin
                 token: token,
             },
         };
-        const response = await axios.post(`${url}/private/client/vendors/${vendor_id}/create-shipping-address`, data, config);
-        dispatch({ type: "CreateVendorShippingAddressSuccess", payload: response.data });
+        if (role === 0) {
+            const response = await axios.post(`${url}/private/client/vendors/${vendor_id}/create-shipping-address`, data, config);
+            dispatch({ type: "CreateVendorShippingAddressSuccess", payload: response.data });;
+        } else {
+            const response = await axios.post(`${url}/private/accountant/${role === 1 ? 'jr' : 'sr'}/vendor/${vendor_id}/create-shipping-address?client_id=${client_id}`, data, config);
+            dispatch({ type: "CreateVendorShippingAddressSuccess", payload: response.data });;
+        }
         toast.success("Vendor Shipping Address created successfully");
         if (handleVendorShippingAddressSubmit) {
             handleVendorShippingAddressSubmit(response.data);
@@ -194,7 +209,7 @@ export const createVendorShippingAddress = (data, vendor_id, handleVendorShippin
     }
 }
 
-export const getVendorShippingAddressList = (vendor_id) => async (dispatch) => {
+export const getVendorShippingAddressList = (vendor_id, role = 0, client_id = 0) => async (dispatch) => {
     try {
         dispatch({ type: "VendorShippingAddressListRequest" });
         const token = await auth.currentUser.getIdToken();
@@ -203,8 +218,13 @@ export const getVendorShippingAddressList = (vendor_id) => async (dispatch) => {
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/vendors/${vendor_id}/read-shipping-address-list`, config);
-        dispatch({ type: "VendorShippingAddressListSuccess", payload: response.data });
+        if (role === 0) {
+            const response = await axios.get(`${url}/private/client/vendors/${vendor_id}/read-shipping-address-list`, config);
+            dispatch({ type: "VendorShippingAddressListSuccess", payload: response.data });
+        } else {
+            const response = await axios.get(`${url}/private/accountant/${role === 1 ? 'jr' : 'sr'}/vendor/${vendor_id}/read-shipping-address-list?client_id=${client_id}`, config);
+            dispatch({ type: "VendorShippingAddressListSuccess", payload: response.data });
+        }
     } catch (error) {
         console.log(error);
         dispatch({ type: "VendorShippingAddressListFailure", payload: error.response?.data || error.message });

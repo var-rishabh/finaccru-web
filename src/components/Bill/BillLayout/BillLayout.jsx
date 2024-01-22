@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import moment from 'moment';
 import { getCurrency } from '../../../Actions/Onboarding';
 import { getVendorDetails, calculateExpectedDeliveryDate, readPaymentTerms } from '../../../Actions/Vendor';
-import { createBill, getBillDetails, getNewBillNumber, updateBill } from '../../../Actions/Bill';
+import { createBill, getBillDetails, getNewBillNumber, updateBill, convertStagingToBill, getExtractedBillDetails } from '../../../Actions/Bill';
 import { readOpenDebitNotesForVendor } from '../../../Actions/DebitNote';
 import { readOpenBillPaymentsForVendor } from '../../../Actions/BillPayment';
 import { getPurchaseOrderDetails } from '../../../Actions/PurchaseOrder';
@@ -20,13 +20,20 @@ import "../../../Styles/Layout/LayoutContainer.css";
 import { LoadingOutlined } from '@ant-design/icons';
 import backButton from "../../../assets/Icons/back.svg";
 import logo from "../../../assets/Icons/cropped_logo.svg";
+import { Document, Page, pdfjs } from 'react-pdf';
+// Set the worker URL for pdf.js
+// Make sure the path is correct, and the PDF worker file is available at that location
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 
 const BillLayout = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [pdfUrl, setPdfUrl] = useState(null);
+
+
     useEffect(() => {
-    dispatch({ type: "ClearExpectedDeliveryDate" });
+        dispatch({ type: "ClearExpectedDeliveryDate" });
     }, [dispatch]);
     // Clearing the expected delivery date from the store
 
@@ -58,9 +65,10 @@ const BillLayout = () => {
     const [shippingCountry, setShippingCountry] = useState('');
     const [shippingState, setShippingState] = useState('');
 
+
     const { user } = useSelector(state => state.userReducer);
     const { currencies } = useSelector(state => state.onboardingReducer);
-    const { loading: billLoading, bill, number } = useSelector(state => state.billReducer);
+    const { loading: billLoading, bill, number, extractedBill } = useSelector(state => state.billReducer);
     const { purchaseOrder } = useSelector(state => state.purchaseOrderReducer);
 
     const type = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[6] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[4] : window.location.pathname.split('/')[2];
@@ -75,6 +83,7 @@ const BillLayout = () => {
     const convert = searchParams.get('convert');
     const reference_id = searchParams.get('reference_id');
     const referenceName = searchParams.get('reference');
+    const extracted = searchParams.get('extracted');
     const location = useLocation();
 
     const setPaymentOptionsNull = () => {
@@ -85,15 +94,21 @@ const BillLayout = () => {
     }
 
     useEffect(() => {
-        if (type === 'edit') {
+        if (type === 'edit' && !extracted) {
             dispatch(getCurrency());
             dispatch(readPaymentTerms());
             dispatch(getBillDetails(bill_id, user?.localInfo?.role));
             if (user?.localInfo?.role) {
                 dispatch(readAccountantClient(client_id));
             }
+        } else if (extracted) {
+            dispatch(getCurrency());
+            dispatch(readPaymentTerms());
+            dispatch(getExtractedBillDetails(bill_id, user?.localInfo?.role));
+            if (user?.localInfo?.role) {
+                dispatch(readAccountantClient(client_id));
+            }
         }
-
         if (type === 'create') {
             dispatch(getCurrency());
             dispatch(readPaymentTerms());
@@ -102,8 +117,9 @@ const BillLayout = () => {
                 dispatch(getPurchaseOrderDetails(reference_id));
             }
         }
-        
+
     }, [dispatch, client_id, user?.localInfo?.role, bill_id, convert, reference_id]);
+
     useEffect(() => {
         if (vendorId !== null && currencyId !== null) {
             if (user?.localInfo?.role) {
@@ -113,7 +129,7 @@ const BillLayout = () => {
             dispatch(readOpenBillPaymentsForVendor(bill?.vendor?.vendor_id, bill?.currency_id, user?.localInfo?.role, client_id));
         }
     }, [dispatch, vendorId, currencyId, user?.localInfo?.role]);
-    
+
     useEffect(() => {
         if (type === 'edit') {
             dispatch(getVendorDetails(bill?.vendor?.vendor_id));
@@ -123,7 +139,7 @@ const BillLayout = () => {
     }, [dispatch, bill?.vendor?.vendor_id, bill?.currency_id, user?.localInfo?.role, client_id]);
 
     useEffect(() => {
-        if (type === 'edit') {
+        if (type === 'edit' && !extracted) {
             setBillNumber(bill?.bill_number);
             setBillDate(moment(bill?.bill_date).format('YYYY-MM-DD'));
             setReference(bill?.reference);
@@ -141,7 +157,6 @@ const BillLayout = () => {
             setShippingState(bill?.vendor?.shipping_state);
             setSubject(bill?.subject);
             setNotes(bill?.notes);
-
             if (bill?.linked_payments != [] || bill?.linked_debit_notes != [] > 0) {
                 setPaymentReceivedValue(1);
                 setPaymentList(bill?.linked_payments != [] > 0 ? bill?.linked_payments?.map((payment) => (payment.payment_id)) : []);
@@ -150,28 +165,36 @@ const BillLayout = () => {
                 setPaymentReceivedValue(null);
             }
             // setBankId(bill?.payment !== null ? bill?.payment?.bank_id : null);
-            
+            dispatch(calculateExpectedDeliveryDate(billDate, paymentTermId))
+        } else if (extracted) {
+            setBillNumber(extractedBill?.bill_number);
+            setBillDate(moment(extractedBill?.bill_date).format('YYYY-MM-DD'));
+            setReference(extractedBill?.reference);
+            setVendorName(extractedBill?.vendor?.vendor_name);
+            setVendorId(extractedBill?.vendor?.vendor_id);
+            setCurrencyId(extractedBill?.currency_id);
+            setPaymentTermId(extractedBill?.payment_term_id);
+            setCurrencyConversionRate(extractedBill?.currency_conversion_rate);
+            setCurrency(currencyId !== 1 ? currencies?.find((currency) => currency.currency_id === extractedBill?.currency_id)?.currency_abv : 'AED');
+            setItems(extractedBill?.line_items || [{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
+            setShippingAddress1(extractedBill?.vendor?.shipping_address_line_1);
+            setShippingAddress2(extractedBill?.vendor?.shipping_address_line_2);
+            setShippingAddress3(extractedBill?.vendor?.shipping_address_line_3);
+            setShippingCountry(extractedBill?.vendor?.shipping_country);
+            setShippingState(extractedBill?.vendor?.shipping_state);
+            setSubject(extractedBill?.subject);
+            setNotes(extractedBill?.notes);
+            if (extractedBill?.linked_payments != [] || extractedBill?.linked_debit_notes != [] > 0) {
+                setPaymentReceivedValue(1);
+                setPaymentList(extractedBill?.linked_payments != [] > 0 ? extractedBill?.linked_payments?.map((payment) => (payment.payment_id)) : []);
+                setDebitNoteList(extractedBill?.linked_debit_notes != [] > 0 ? extractedBill?.linked_debit_notes?.map((debitNote) => (debitNote.dn_id)) : []);
+            } else {
+                setPaymentReceivedValue(null);
+            }
             dispatch(calculateExpectedDeliveryDate(billDate, paymentTermId))
         }
         if (type === 'create') {
             setBillNumber(number);
-            if (file) {
-                setCurrencyConversionRate(location.state?.currency_conversion_rate);
-                setCurrencyId(location.state?.currency_id);
-                setCurrency(currencyId !== 1 ? currencies?.find((currency) => currency.currency_id === location.state?.currency_id)?.currency_abv : 'AED');
-                setItems(location.state?.line_items || [{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
-                setReference(location.state?.reference);
-                setSubject(location.state?.subject);
-                setBillDate(location.state?.bill_date);
-                setBillNumber(location.state?.bill_number);
-                setVendorId(location.state?.vendor?.vendor_id);
-                setVendorName(location.state?.vendor?.vendor_name);
-                setShippingAddress1(location.state?.vendor?.shipping_address_line_1);
-                setShippingAddress2(location.state?.vendor?.shipping_address_line_2);
-                setShippingAddress3(location.state?.vendor?.shipping_address_line_3);
-                setShippingCountry(location.state?.vendor?.shipping_country);
-                setShippingState(location.state?.vendor?.shipping_state);
-            }
             if (convert) {
                 if (referenceName == 'purchase-order') {
                     setVendorId(purchaseOrder?.vendor?.vendor_id);
@@ -258,12 +281,30 @@ const BillLayout = () => {
         }
         if (isAdd) {
             dispatch(createBill(data, navigate));
-        }
-        else {
+        } else if (type === 'edit' && !extracted) {
             dispatch(updateBill(bill_id, data, navigate, user?.localInfo?.role));
+        } else if (extracted) {
+            dispatch(convertStagingToBill(bill_id, data, user?.localInfo?.role));
         }
     }
+    // PDF Logic
+    const [pdfError, setPdfError] = useState(null);
+    const [pdfPages, setPdfPages] = useState(null);
+    const [pdfPage, setPdfPage] = useState(1);
+    const [pdfScale, setPdfScale] = useState(1.5);
+    const [pdfRotation, setPdfRotation] = useState(0);
+    const onDocumentLoadSuccess = ({ numPages }) => {
+        setPdfPages(numPages);
+    }
 
+    const onError = (error) => {
+        setPdfError(error.message);
+    }
+
+    const onPageChange = (page) => {
+        if (page < 1 || page > pdfPages) return;
+        setPdfPage(page);
+    }
     return (
         <>
             <div className='layout__header'>
@@ -296,6 +337,7 @@ const BillLayout = () => {
                             shippingAddress3={shippingAddress3} setShippingAddress3={setShippingAddress3}
                             shippingCountry={shippingCountry} setShippingCountry={setShippingCountry}
                             shippingState={shippingState} setShippingState={setShippingState}
+                            extracted={extracted}
                         />
                         <BillLayoutP2
                             currency={currency} currencies={currencies} items={items} setItems={setItems}
@@ -324,6 +366,23 @@ const BillLayout = () => {
                     </div>
                 </div>
             </div>
+            {
+                extracted &&
+                <div className='pdf__viewer-main'>
+                    <div className="pdf__viewer">
+                        <Document file={extractedBill?.attachment_url.replace(extractedBill?.attachment_url.split('/').slice(0,3).join("/"), '')} onLoadSuccess={onDocumentLoadSuccess} onLoadError={onError} loading={<LoadingOutlined />}>
+                            <Page pageNumber={pdfPage} scale={pdfScale} rotate={pdfRotation} renderAnnotationLayer={false} renderTextLayer={false}/>
+                        </Document>
+                        {pdfError && <div className='pdf__viewer--error'>{pdfError}</div>}
+                        {pdfError && <a href={extractedBill?.attachment_url} target='_blank' rel='noreferrer' className='pdf__viewer--error'>Download</a>}
+                    </div>
+                    {pdfPages && <div className='pdf__viewer--controls'>
+                        <button onClick={() => onPageChange(pdfPage - 1)} disabled={pdfPage === 1}>Previous</button>
+                        <span>{pdfPage} of {pdfPages}</span>
+                        <button onClick={() => onPageChange(pdfPage + 1)} disabled={pdfPage === pdfPages}>Next</button>
+                    </div>}
+                </div>
+            }
         </>
     )
 }

@@ -101,6 +101,16 @@ const TaxInvoice = () => {
                 </div>
             ),
         },
+        // {
+        //     title: 'Customer Name',
+        //     dataIndex: 'customer_name',
+        //     key: 'customer_name',
+        // },
+        // {
+        //     title: 'TI Status',
+        //     dataIndex: 'ti_status',
+        //     key: 'ti_status',
+        // },
         {
             title: 'Document',
             dataIndex: 'attachment_url',

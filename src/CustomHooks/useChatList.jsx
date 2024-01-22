@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { store as firestore } from '../firebase';
-import {collection, query, where, orderBy} from "firebase/firestore";
+import { collection, query, where, orderBy } from "firebase/firestore";
 
 const useChatList = (currentUserUid, tab) => {
     const [users, setUsers] = useState([])
@@ -26,7 +26,7 @@ const useChatList = (currentUserUid, tab) => {
             setLoading(false);
         }
 
-         if (error) {
+        if (error) {
             console.error('Error fetching chat user list:', error);
             setLoading(false);
         }

@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-
 import moment from 'moment';
-import { createTaxInvoice, getTaxInvoiceDetails, getNewTaxInvoiceNumber, updateTaxInvoice } from '../../../Actions/TaxInvoice';
+
+
+import { createTaxInvoice, getTaxInvoiceDetails, getNewTaxInvoiceNumber, updateTaxInvoice, getExtractedTaxInvoiceDetails, convertStagingToTaxInvoice } from '../../../Actions/TaxInvoice';
 import { getCurrency } from '../../../Actions/Onboarding';
 import { getCustomerDetails } from '../../../Actions/Customer';
 import { getEstimateDetails } from '../../../Actions/Estimate';
@@ -21,6 +22,9 @@ import "../../../Styles/Layout/LayoutContainer.css";
 import { LoadingOutlined } from '@ant-design/icons';
 import backButton from "../../../assets/Icons/back.svg"
 import logo from "../../../assets/Icons/cropped_logo.svg"
+
+import { Document, Page, pdfjs } from 'react-pdf';
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 const TaxInvoiceLayout = () => {
     const navigate = useNavigate();
@@ -66,7 +70,7 @@ const TaxInvoiceLayout = () => {
     const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;
     const isAdd = type === 'create';
 
-    const { loading: taxInvoiceLoading, taxInvoice, number } = useSelector(state => state.taxInvoiceReducer);
+    const { loading: taxInvoiceLoading, taxInvoice, number, extractedTaxInvoice } = useSelector(state => state.taxInvoiceReducer);
     const { estimate } = useSelector(state => state.estimateReducer);
     const { proforma } = useSelector(state => state.proformaReducer);
     const { currencies } = useSelector(state => state.onboardingReducer);
@@ -76,12 +80,19 @@ const TaxInvoiceLayout = () => {
     const convert = searchParams.get('convert');
     const reference_id = searchParams.get('reference_id');
     const referenceName = searchParams.get('reference');
+    const extracted = searchParams.get('extracted');
     const location = useLocation();
 
     useEffect(() => {
-        if (type === 'edit') {
+        if (type === 'edit' && !extracted) {
             dispatch(getCurrency());
             dispatch(getTaxInvoiceDetails(ti_id, user?.localInfo?.role));
+            if (user?.localInfo?.role) {
+                dispatch(readAccountantClient(client_id));
+            }
+        } else if (extracted) {
+            dispatch(getCurrency());
+            dispatch(getExtractedTaxInvoiceDetails(ti_id, user?.localInfo?.role));
             if (user?.localInfo?.role) {
                 dispatch(readAccountantClient(client_id));
             }
@@ -102,9 +113,14 @@ const TaxInvoiceLayout = () => {
 
     useEffect(() => {
         if (type === 'edit') {
-            dispatch(getCustomerDetails(taxInvoice?.customer?.customer_id));
-            dispatch(readOpenCreditNotesForCustomer(taxInvoice?.customer?.customer_id, taxInvoice?.currency_id, user?.localInfo?.role, client_id));
-            dispatch(readOpenPaymentsForCustomer(taxInvoice?.customer?.customer_id, taxInvoice?.currency_id, user?.localInfo?.role, client_id));
+            if (!customerId && !currencyId) {
+                if (user?.localInfo?.role) {
+                    return;
+                }
+                dispatch(getCustomerDetails(taxInvoice?.customer?.customer_id));
+                dispatch(readOpenCreditNotesForCustomer(taxInvoice?.customer?.customer_id, taxInvoice?.currency_id, user?.localInfo?.role, client_id));
+                dispatch(readOpenPaymentsForCustomer(taxInvoice?.customer?.customer_id, taxInvoice?.currency_id, user?.localInfo?.role, client_id));
+            }
         }
     }, [dispatch, taxInvoice?.customer?.customer_id, taxInvoice?.currency_id, type, user?.localInfo?.role, client_id]);
 
@@ -114,7 +130,7 @@ const TaxInvoiceLayout = () => {
     }, [customer, customerId, termsAndConditions, user?.clientInfo?.terms_and_conditions]);
 
     useEffect(() => {
-        if (customerId !== null && currencyId !== null) {
+        if (!customerId && !currencyId) {
             if (user?.localInfo?.role) {
                 return;
             }
@@ -124,7 +140,7 @@ const TaxInvoiceLayout = () => {
     }, [dispatch, customerId, currencyId, user?.localInfo?.role]);
 
     useEffect(() => {
-        if (type === 'edit') {
+        if (type === 'edit' && !extracted) {
             setTaxInvoiceNumber(taxInvoice?.ti_number);
             setTaxInvoiceDate(moment(taxInvoice?.ti_date).format('YYYY-MM-DD'));
             setValidTill(moment(taxInvoice?.due_date).format('YYYY-MM-DD'));
@@ -148,6 +164,27 @@ const TaxInvoiceLayout = () => {
             setBankId(taxInvoice?.payment !== null ? taxInvoice?.payment?.bank_id : null);
             setPaymentList(taxInvoice?.payment !== null ? taxInvoice?.linked_receipts?.map((receipt) => (receipt.receipt_id)) : []);
             setCreditNoteList(taxInvoice?.payment !== null ? taxInvoice?.linked_credit_notes?.map((creditNote) => (creditNote.cn_id)) : []);
+        } else if (extracted) {
+            setTaxInvoiceNumber(extractedTaxInvoice?.ti_number);
+            setTaxInvoiceDate(moment(extractedTaxInvoice?.ti_date).format('YYYY-MM-DD'));
+            setValidTill(moment(extractedTaxInvoice?.due_date).format('YYYY-MM-DD'));
+            setReference(extractedTaxInvoice?.reference);
+            setCustomerName(extractedTaxInvoice?.customer?.customer_name);
+            setCustomerId(extractedTaxInvoice?.customer?.customer_id);
+            setCurrencyId(extractedTaxInvoice?.currency_id);
+            setCurrencyConversionRate(extractedTaxInvoice?.currency_conversion_rate);
+            setCurrency(currencyId !== 1 ? currencies?.find((currency) => currency.currency_id === extractedTaxInvoice?.currency_id)?.currency_abv : 'AED');
+            setItems(extractedTaxInvoice?.line_items || [{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
+            setShippingAddress1(extractedTaxInvoice?.customer?.shipping_address_line_1);
+            setShippingAddress2(extractedTaxInvoice?.customer?.shipping_address_line_2);
+            setShippingAddress3(extractedTaxInvoice?.customer?.shipping_address_line_3);
+            setShippingCountry(extractedTaxInvoice?.customer?.shipping_country);
+            setShippingState(extractedTaxInvoice?.customer?.shipping_state);
+            setSubject(extractedTaxInvoice?.subject);
+            setTermsAndConditions(extractedTaxInvoice?.terms_and_conditions);
+            setIsSetDefaultTncCustomer(extractedTaxInvoice?.is_set_default_tnc_customer);
+            setIsSetDefaultTncClient(extractedTaxInvoice?.is_set_default_tnc_client);
+            setPaymentReceivedValue(2);
         }
         if (type === 'create') {
             setTaxInvoiceNumber(number);
@@ -187,7 +224,7 @@ const TaxInvoiceLayout = () => {
                 }
             }
         }
-    }, [currencies, taxInvoice, number, estimate, proforma, convert, reference_id, referenceName, file, location.state, user?.clientInfo?.terms_and_conditions, currencyId, type]);
+    }, [currencies, taxInvoice, extractedTaxInvoice, number, estimate, proforma, convert, reference_id, referenceName, location.state, user?.clientInfo?.terms_and_conditions, type]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -250,9 +287,31 @@ const TaxInvoiceLayout = () => {
         if (isAdd) {
             dispatch(createTaxInvoice(data, navigate));
         }
-        else {
+        else if (type === 'edit' && !extracted) {
             dispatch(updateTaxInvoice(ti_id, data, navigate, user?.localInfo?.role));
+        } else if (extracted) {
+            dispatch(convertStagingToTaxInvoice(extractedTaxInvoice?.staging_id, data, user?.localInfo?.role));
         }
+    };
+
+    // PDF Viewer
+    const [pdfError, setPdfError] = useState(null);
+    const [pdfPages, setPdfPages] = useState(null);
+    const [pdfPage, setPdfPage] = useState(1);
+    const [pdfScale, setPdfScale] = useState(1.5);
+    const [pdfRotation, setPdfRotation] = useState(0);
+
+    const onDocumentLoadSuccess = ({ numPages }) => {
+        setPdfPages(numPages);
+    }
+
+    const onError = (error) => {
+        setPdfError(error.message);
+    }
+
+    const onPageChange = (page) => {
+        if (page < 1 || page > pdfPages) return;
+        setPdfPage(page);
     }
     return (
         <>
@@ -286,12 +345,13 @@ const TaxInvoiceLayout = () => {
                             shippingState={shippingState} setShippingState={setShippingState}
                             termsAndConditions={termsAndConditions} setTermsAndConditions={setTermsAndConditions}
                             convert={convert} setPaymentOptionsNull={setPaymentOptionsNull}
+                            extracted={extracted}
                         />
                         <TaxInvoiceLayoutP2 items={items} setItems={setItems} currency={currency} currencies={currencies}
                             termsAndConditions={termsAndConditions} setTermsAndConditions={setTermsAndConditions}
                             isSetDefaultTncCustomer={isSetDefaultTncCustomer} setIsSetDefaultTncCustomer={setIsSetDefaultTncCustomer}
                             isSetDefaultTncClient={isSetDefaultTncClient} setIsSetDefaultTncClient={setIsSetDefaultTncClient}
-                            bankId={bankId} setBankId={setBankId} 
+                            bankId={bankId} setBankId={setBankId}
                             paymentList={paymentList} setPaymentList={setPaymentList}
                             creditNoteList={creditNoteList} setCreditNoteList={setCreditNoteList}
                             customerId={customerId} paymentReceivedValue={paymentReceivedValue} setPaymentReceivedValue={setPaymentReceivedValue}
@@ -314,6 +374,23 @@ const TaxInvoiceLayout = () => {
                     </div>
                 </div>
             </div>
+            {
+                extracted &&
+                <div className='pdf__viewer-main'>
+                    <div className="pdf__viewer">
+                        <Document file={extractedTaxInvoice?.attachment_url.replace(extractedTaxInvoice?.attachment_url.split('/').slice(0,3).join('/'), '')} onLoadSuccess={onDocumentLoadSuccess} onLoadError={onError} loading={<LoadingOutlined />}>
+                            <Page pageNumber={pdfPage} scale={pdfScale} rotate={pdfRotation} renderAnnotationLayer={false} renderTextLayer={false} />
+                        </Document>
+                        {pdfError && <div className='pdf__viewer--error'>{pdfError}</div>}
+                        {pdfError && <a href={extractedTaxInvoice?.attachment_url} target='_blank' rel='noreferrer' className='pdf__viewer--error'>Download</a>}
+                    </div>
+                    {pdfPages && <div className='pdf__viewer--controls'>
+                        <button onClick={() => onPageChange(pdfPage - 1)} disabled={pdfPage === 1}>Previous</button>
+                        <span>{pdfPage} of {pdfPages}</span>
+                        <button onClick={() => onPageChange(pdfPage + 1)} disabled={pdfPage === pdfPages}>Next</button>
+                    </div>}
+                </div>
+            }
         </>
     )
 }

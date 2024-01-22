@@ -102,8 +102,8 @@ export default function billColumns(showModal, navigate, role = 0, client_id = 0
                     </div>
                 ),
             });
+            return columns;
         }
-        return columns;
     } else if (role === 1 || role === 2) {
         columns.push({
             title: 'Actions',

@@ -76,12 +76,20 @@
     font-weight: 400;
 }
 
-.chatPart--chatDocNumber {
+.receivedChat .chatPart--chatDocNumber {
     font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
     text-decoration: none;
     color: rgb(90, 90, 252);
+}
+
+.sentChat .chatPart--chatDocNumber {
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    color: rgb(229, 255, 0);
 }
 
 .chatPart--input {
@@ -139,4 +147,14 @@
 .empty__chatBlock--text {
     padding: 1rem 0;
     font-size: 1rem;
+}
+
+
+.chatPart--document {
+    display: flex;
+    padding: 0.5rem 1.2rem;
+    overflow: hidden;
+    background-color: #F2F2F2;
+    color: black;
+    gap: 1rem;
 }

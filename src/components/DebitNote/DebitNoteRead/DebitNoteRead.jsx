@@ -70,6 +70,13 @@ const DebitNoteRead = () => {
     }, [dispatch, dn_id, client_id, user?.localInfo?.role]);
 
     useEffect(() => {
+        dispatch(setChatDocument({ id: debitNote?.dn_id, number: debitNote?.dn_number}));
+        return () => {
+            dispatch({ type: "RemoveChatDocument" });
+        }
+    }, [dispatch, debitNote]);
+
+    useEffect(() => {
         const amount = calculateTotalAmounts(debitNote?.line_items, setSubTotal, setDiscount, setTax, setTotal, setItemTax, taxRates);
         setItemTotal(amount);
     }, [debitNote, taxRates]);

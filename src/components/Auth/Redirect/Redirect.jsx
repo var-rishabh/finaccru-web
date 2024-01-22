@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+
 import { confirmEmail } from '../../../Actions/User';
 
 const Redirect = () => {
@@ -8,7 +9,9 @@ const Redirect = () => {
     const params = new URLSearchParams(query);
     const oobCode = params.get('oobCode');
     const mode = params.get('mode');
+
     const dispatch = useDispatch();
+
     useEffect(() => {
         if (oobCode && mode) {
             if (mode === 'resetPassword') {
@@ -30,4 +33,4 @@ const Redirect = () => {
     )
 }
 
-export default Redirect
+export default Redirect;

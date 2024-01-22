@@ -103,6 +103,16 @@ const Bill = () => {
                 </div>
             ),
         },
+        // {
+        //     title: 'Vendor Name',
+        //     dataIndex: 'vendor_name',
+        //     key: 'vendor_name',
+        // },
+        // {
+        //     title: 'Bill Status',
+        //     dataIndex: 'bill_status',
+        //     key: 'bill_status',
+        // },
         {
             title: 'Document',
             dataIndex: 'attachment_url',

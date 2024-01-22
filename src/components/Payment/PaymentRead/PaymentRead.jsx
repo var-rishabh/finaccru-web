@@ -20,6 +20,7 @@ import PaymentFor from './Parts/PaymentFor';
 import { pdfStyle as forPdfStyles, styles as forStyles } from '../../../Styles/ReadForPayment';
 import PaymentMeta from './Parts/PaymentMeta';
 import { pdfStyle as metaPdfStyles, styles as metaStyles } from '../../../Styles/ReadMetaPayment';
+import { setChatDocument } from '../../../Actions/Chat';
 
 const PaymentReadLayout = () => {
     const dispatch = useDispatch();
@@ -46,6 +47,13 @@ const PaymentReadLayout = () => {
             dispatch(readAccountantClient(client_id));
         }
     }, [dispatch, payment_id, user?.localInfo?.role, client_id]);
+    
+    useEffect(() => {
+        dispatch(setChatDocument({ id: payment?.receipt_id, number: payment?.receipt_number}));
+        return () => {
+            dispatch({ type: "RemoveChatDocument" });
+        }
+    }, [dispatch, payment]);
 
     const toWords = new ToWords({
         localeCode: 'en-US',

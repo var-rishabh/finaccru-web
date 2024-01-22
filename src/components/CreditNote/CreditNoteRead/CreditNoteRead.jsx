@@ -38,6 +38,7 @@ import ViewFooter from '../../../Shared/ViewFooter/ViewFooter';
 import calculateTotalAmounts from '../../../utils/calculateTotalAmounts';
 import ReadContent from '../../../utils/ReadContent';
 import DueAmountCard from '../../../Shared/DueAmountCard/DueAmountCard';
+import { setChatDocument } from '../../../Actions/Chat';
 
 const CreditNoteReadLayout = () => {
     const navigate = useNavigate();
@@ -101,6 +102,13 @@ const CreditNoteReadLayout = () => {
 
         setGroupedItems(groupedByTaxId);
     }, [itemTotal, itemTax, creditNote, taxRates]);
+
+    useEffect(() => {
+        dispatch(setChatDocument({ id: creditNote?.cn_id, number: creditNote?.cn_number}));
+        return () => {
+            dispatch({ type: "RemoveChatDocument" });
+        }
+    }, [dispatch, creditNote]);
 
     const [clientData, setClientData] = useState({});
     useEffect(() => {

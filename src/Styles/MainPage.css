@@ -202,3 +202,23 @@ th.ant-table-cell {
 .mainPage__list--delete--modal .ant-modal-content {
     box-shadow: none !important;
 }
+
+.pdf__viewer-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5rem;
+    width: 100%;
+}
+
+.pdf__viewer {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    width: 70%;
+    max-width: 60rem;
+    padding: 0;
+    background-color: var(--white);
+    border: 2px solid var(--bg-gray);
+}

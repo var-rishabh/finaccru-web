@@ -3,6 +3,7 @@ import { createReducer } from "@reduxjs/toolkit";
 const initialState = {
     loading: false,
     open: false,
+    document: null,
 }
 
 export const chatReducer = createReducer(initialState, (builder) => {
@@ -37,6 +38,12 @@ export const chatReducer = createReducer(initialState, (builder) => {
     })  
     .addCase("CloseChatModal", (state) => {
         state.open = false;
+    })
+    .addCase("SetChatDocument", (state, action) => {
+        state.document = action.payload;
+    })
+    .addCase("RemoveChatDocument", (state) => {
+        state.document = null;
     })
 })
 

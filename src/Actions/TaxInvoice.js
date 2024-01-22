@@ -288,7 +288,7 @@ export const approveTaxInvoice = (id, role = 1, client_id) => async (dispatch) =
     }
 }
 
-export const getExtractedTaxInvoiceList = () => async (dispatch) => {
+export const getExtractedTaxInvoiceList = (role = 0, page = 1, client_id = 0) => async (dispatch) => {
     try {
         dispatch({ type: "ExtractedTaxInvoiceListRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -297,12 +297,64 @@ export const getExtractedTaxInvoiceList = () => async (dispatch) => {
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/tax-invoices/extracted/read-list`, config);
-        dispatch({ type: "ExtractedTaxInvoiceListSuccess", payload: response.data });
+        if (role === 0) {
+            const response = await axios.get(`${url}/private/client/tax-invoices/extracted/read-list`, config);
+            dispatch({ type: "ExtractedTaxInvoiceListSuccess", payload: response.data });
+        } else {
+            const response = await axios.get(`${url}/private/accountant/${role === 1 ? 'jr' : 'sr'}/read-extracted-tax-invoices/${client_id}/${page}`, config);
+            dispatch({ type: "ExtractedTaxInvoiceListSuccess", payload: response.data });
+        }
 
     } catch (error) {
         console.log(error);
         dispatch({ type: "ExtractedTaxInvoiceListFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+export const getExtractedTaxInvoiceDetails = (staging_id, role = 0) => async (dispatch) => {
+    try {
+        dispatch({ type: "ExtractedTaxInvoiceDetailsRequest" });
+        const token = await auth.currentUser.getIdToken(true);
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        if (role !== 0) {
+            const response = await axios.get(`${url}/private/accountant/read-extracted-tax-invoice/${staging_id}`, config);
+            dispatch({ type: "ExtractedTaxInvoiceDetailsSuccess", payload: response.data });
+        } else {
+            toast.error("You are not authorized to view this page");
+            dispatch({ type: "ExtractedTaxInvoiceDetailsFailure", payload: "You are not authorized to view this page" });
+        }
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ExtractedTaxInvoiceDetailsFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+export const convertStagingToTaxInvoice = (staging_id, data, role = 0) => async (dispatch) => {
+    try {
+        dispatch({ type: "ConvertStagingToTaxInvoiceRequest" });
+        const token = await auth.currentUser.getIdToken(true);
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        if (role !== 0) {
+            const response = await axios.post(`${url}/private/accountant/convert-staging-to-tax-invoice/${staging_id}`, data, config);
+            dispatch({ type: "ConvertStagingToTaxInvoiceSuccess", payload: response.data });
+        } else {
+            toast.error("You are not authorized to view this page");
+            dispatch({ type: "ConvertStagingToTaxInvoiceFailure", payload: "You are not authorized to view this page" });
+        }
+        toast.success("TaxInvoice updated successfully");
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ConvertStagingToTaxInvoiceFailure", payload: error.response?.data || error.message });
         toast.error(error.response?.data || error.message);
     }
 }

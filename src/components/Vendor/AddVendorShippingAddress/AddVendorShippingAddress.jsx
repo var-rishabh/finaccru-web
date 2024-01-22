@@ -12,7 +12,8 @@ import { LoadingOutlined } from '@ant-design/icons';
 const AddVendorShippingAddress = ({ isShippingModalOpen, handleShippingCancel, vendorId, handleAddVendorShippingAddressSubmit }) => {
     const dispatch = useDispatch();
     const { loading } = useSelector((state) => state.vendorReducer);
-
+    const { user } = useSelector(state => state.userReducer);
+    const client_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
     const [label, setLabel] = useState('');
     const [address1, setAddress1] = useState('');
     const [address2, setAddress2] = useState('');
@@ -52,7 +53,7 @@ const AddVendorShippingAddress = ({ isShippingModalOpen, handleShippingCancel, v
             state: state,
             country: country
         }
-        dispatch(createVendorShippingAddress(values, vendorId, handleAddVendorShippingAddressSubmit));
+        dispatch(createVendorShippingAddress(values, vendorId, handleAddVendorShippingAddressSubmit, user?.localInfo?.role, client_id));
         setLabel('');
         setAddress1('');
         setAddress2('');
