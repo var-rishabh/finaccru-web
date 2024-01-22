@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getBillDetails, markBillVoid, submitBillForApproval, approveBill } from '../../../Actions/Bill';
+import { getBillDetails, markBillVoid, submitBillForApproval, approveBill, getExtractedBillDetails } from '../../../Actions/Bill';
 import { getCurrency, getTaxRate } from '../../../Actions/Onboarding';
 import { readAccountantClient } from '../../../Actions/Accountant';
 
@@ -32,6 +32,13 @@ import calculateTotalAmounts from '../../../utils/calculateTotalAmounts';
 import PurchaseReadContent from '../../../utils/PurchaseReadContent';
 import ViewHeader from '../../../Shared/ViewHeader/ViewHeader';
 import ViewFooter from '../../../Shared/ViewFooter/ViewFooter';
+import { setChatDocument } from '../../../Actions/Chat';
+import { Document, Page, pdfjs } from 'react-pdf';
+import { LoadingOutlined } from '@ant-design/icons';
+// Set the worker URL for pdf.js
+// Make sure the path is correct, and the PDF worker file is available at that location
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+
 
 const BillRead = () => {
     const navigate = useNavigate();
@@ -39,7 +46,7 @@ const BillRead = () => {
 
     const { user } = useSelector(state => state.userReducer);
     const { client } = useSelector(state => state.accountantReducer);
-    const { loading, bill } = useSelector(state => state.billReducer);
+    const { loading, bill, extractedBill } = useSelector(state => state.billReducer);
     const { taxRates } = useSelector(state => state.onboardingReducer);
 
     const bill_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
@@ -56,25 +63,34 @@ const BillRead = () => {
 
     const { currencies } = useSelector(state => state.onboardingReducer);
 
+    const searchParams = new URLSearchParams(window.location.search);
+    const extracted = searchParams.get('extracted');
+
+    const finalBill = extracted ? extractedBill : bill;
+
     useEffect(() => {
         dispatch(getCurrency());
         dispatch(getTaxRate());
     }, [dispatch]);
 
     useEffect(() => {
-        dispatch(getBillDetails(bill_id, user?.localInfo?.role));
+        if (extracted) {
+            dispatch(getExtractedBillDetails(bill_id, user?.localInfo?.role));
+        } else {
+            dispatch(getBillDetails(bill_id, user?.localInfo?.role));
+        }
         if (user?.localInfo?.role) {
             dispatch(readAccountantClient(client_id));
         }
     }, [dispatch, bill_id, client_id, user?.localInfo?.role]);
 
     useEffect(() => {
-        const amount = calculateTotalAmounts(bill?.line_items, setSubTotal, setDiscount, setTax, setTotal, setItemTax, taxRates);
+        const amount = calculateTotalAmounts(finalBill?.line_items, setSubTotal, setDiscount, setTax, setTotal, setItemTax, taxRates);
         setItemTotal(amount);
-    }, [bill, taxRates]);
+    }, [finalBill, taxRates]);
 
     useEffect(() => {
-        const groupedByTaxId = bill?.line_items?.reduce((acc, item, index) => {
+        const groupedByTaxId = finalBill?.line_items?.reduce((acc, item, index) => {
             const existingGroup = acc.find((group) => group.tax_id === item.tax_id);
             if (existingGroup) {
                 existingGroup.taxable_amount += (itemTotal?.at(index) - itemTax?.at(index));
@@ -84,7 +100,7 @@ const BillRead = () => {
                 const taxItem = taxRates?.find((tr) => tr.tax_rate_id === item.tax_id);
                 acc.push({
                     tax_id: item.tax_id,
-                    tax_rate_name: taxItem.tax_rate_name,
+                    tax_rate_name: taxItem?.tax_rate_name,
                     taxable_amount: (itemTotal?.at(index) - itemTax?.at(index)),
                     tax_amount: (itemTax?.at(index)),
                     total_amount: (itemTotal?.at(index)),
@@ -94,7 +110,14 @@ const BillRead = () => {
         }, []);
 
         setGroupedItems(groupedByTaxId);
-    }, [itemTotal, itemTax, bill, taxRates]);
+    }, [itemTotal, itemTax, finalBill, taxRates]);
+
+    useEffect(() => {
+        dispatch(setChatDocument({ id: bill?.bill_id, number: bill?.bill_number }));
+        return () => {
+            dispatch({ type: "RemoveChatDocument" });
+        }
+    }, [dispatch, bill]);
 
     const [clientData, setClientData] = useState({});
     useEffect(() => {
@@ -104,8 +127,25 @@ const BillRead = () => {
             setClientData(user);
         }
     }, [user, client]);
-    const contents = PurchaseReadContent("Bill", bill, clientData, currencies, taxRates, itemTax, itemTotal, subTotal, discount, tax, total, groupedItems);
+    const contents = PurchaseReadContent("Bill", finalBill, clientData, currencies, taxRates, itemTax, itemTotal, subTotal, discount, tax, total, groupedItems);
+    // PDF Logic
+    const [pdfError, setPdfError] = useState(null);
+    const [pdfPages, setPdfPages] = useState(null);
+    const [pdfPage, setPdfPage] = useState(1);
+    const [pdfScale, setPdfScale] = useState(1.5);
+    const [pdfRotation, setPdfRotation] = useState(0);
+    const onDocumentLoadSuccess = ({ numPages }) => {
+        setPdfPages(numPages);
+    }
 
+    const onError = (error) => {
+        setPdfError(error.message);
+    }
+
+    const onPageChange = (page) => {
+        if (page < 1 || page > pdfPages) return;
+        setPdfPage(page);
+    }
     return (
         <>
             <div className='read__header'>
@@ -121,20 +161,19 @@ const BillRead = () => {
                             <>
                                 <a className='read__header--btn1'
                                     onClick={() => {
-                                        navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/bill/edit/${bill?.bill_id}`)
+                                        navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/bill/edit/${extracted ? bill_id : finalBill?.bill_id}${extracted ? "?extracted=true" : ""}`)
                                     }}
-                                >
-                                    Edit
-                                </a>
-                                <a className='read__header--btn2'
-                                    onClick={() => {
-                                        dispatch(approveBill(bill_id, user?.localInfo?.role, client_id))
-                                    }}
-                                >
-                                    Approve
-                                </a>
+                                > Edit </a>
+                                {
+                                    extracted ? "" :
+                                        <a className='read__header--btn2'
+                                            onClick={() => {
+                                                dispatch(approveBill(bill_id, user?.localInfo?.role, client_id))
+                                            }}
+                                        > Approve </a>
+                                }
                             </> :
-                            bill?.status === "Draft" ?
+                            finalBill?.status === "Draft" ?
                                 <>
                                     <a className='read__header--btn1'
                                         onClick={() => {
@@ -151,7 +190,7 @@ const BillRead = () => {
                                         Mark as Void
                                     </a>
                                 </>
-                                : bill?.status === "Pending Approval" ?
+                                : finalBill?.status === "Pending Approval" ?
                                     <a className='read__header--btn1'
                                         onClick={() => {
                                             dispatch(markBillVoid(bill_id))
@@ -162,11 +201,11 @@ const BillRead = () => {
                     }
                     {
                         user?.localInfo?.role ? "" :
-                            bill?.status === "Void" ? "" :
-                                bill?.status === "Approved" ? "" :
+                            finalBill?.status === "Void" ? "" :
+                                finalBill?.status === "Approved" ? "" :
                                     <a className='read__header--btn1'
                                         onClick={() => {
-                                            navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/bill/edit/${bill?.bill_id}`)
+                                            navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/bill/edit/${finalBill?.bill_id}`)
                                         }}
                                     >
                                         Edit
@@ -189,34 +228,34 @@ const BillRead = () => {
                             country={user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}
                             state={user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state}
                             trade_license_number={user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}
-                            number={bill?.bill_number}
-                            date={bill?.bill_date}
-                            expected_delivery_date={bill?.expected_delivery_date}
+                            number={finalBill?.bill_number}
+                            date={finalBill?.bill_date}
+                            expected_delivery_date={finalBill?.expected_delivery_date}
                         />
                         <ReadFor
                             title={"Bill"}
                             styles={forStyles}
-                            vendor_name={bill?.vendor?.vendor_name}
-                            billing_address_line_1={bill?.vendor?.billing_address_line_1}
-                            billing_address_line_2={bill?.vendor?.billing_address_line_2}
-                            billing_address_line_3={bill?.vendor?.billing_address_line_3}
-                            billing_state={bill?.vendor?.billing_state}
-                            billing_country={bill?.vendor?.billing_country}
-                            shipping_address_line_1={bill?.vendor?.shipping_address_line_1}
-                            shipping_address_line_2={bill?.vendor?.shipping_address_line_2}
-                            shipping_address_line_3={bill?.vendor?.shipping_address_line_3}
-                            shipping_state={bill?.vendor?.shipping_state}
-                            shipping_country={bill?.vendor?.shipping_country}
-                            trn={bill?.vendor?.trn}
+                            vendor_name={finalBill?.vendor?.vendor_name}
+                            billing_address_line_1={finalBill?.vendor?.billing_address_line_1}
+                            billing_address_line_2={finalBill?.vendor?.billing_address_line_2}
+                            billing_address_line_3={finalBill?.vendor?.billing_address_line_3}
+                            billing_state={finalBill?.vendor?.billing_state}
+                            billing_country={finalBill?.vendor?.billing_country}
+                            shipping_address_line_1={finalBill?.vendor?.shipping_address_line_1}
+                            shipping_address_line_2={finalBill?.vendor?.shipping_address_line_2}
+                            shipping_address_line_3={finalBill?.vendor?.shipping_address_line_3}
+                            shipping_state={finalBill?.vendor?.shipping_state}
+                            shipping_country={finalBill?.vendor?.shipping_country}
+                            trn={finalBill?.vendor?.trn}
                         />
                         <ReadMeta
                             styles={metaStyles}
-                            currency_abv={currencies?.find((currency) => currency.currency_id === bill?.currency_id)?.currency_abv}
-                            currency_conversion_rate={bill?.currency_conversion_rate}
-                            subject={bill?.subject}
+                            currency_abv={currencies?.find((currency) => currency.currency_id === finalBill?.currency_id)?.currency_abv}
+                            currency_conversion_rate={finalBill?.currency_conversion_rate}
+                            subject={finalBill?.subject}
                         />
                         <div className='read__items'>
-                            {bill?.line_items?.map((item, index) => (
+                            {finalBill?.line_items?.map((item, index) => (
                                 <LineItem styles={lineItemStyles} key={index} index={index}
                                     item_name={item?.item_name} unit={item?.unit} qty={item?.qty} rate={item?.rate}
                                     discount={item?.discount} is_percentage_discount={item?.is_percentage_discount}
@@ -228,25 +267,42 @@ const BillRead = () => {
                         </div>
                         <ReadNotes
                             styles={bankStyles}
-                            currency_abv={currencies?.find((currency) => currency.currency_id === bill?.currency_id)?.currency_abv}
-                            notes={bill?.notes}
+                            currency_abv={currencies?.find((currency) => currency.currency_id === finalBill?.currency_id)?.currency_abv}
+                            notes={finalBill?.notes}
                             subTotal={subTotal} discount={discount} tax={tax} total={total}
                         />
                         <ReadTax
                             styles={taxStyles}
-                            currency_abv={currencies?.find((currency) => currency.currency_id === bill?.currency_id)?.currency_abv}
-                            currency_conversion_rate={bill?.currency_conversion_rate}
+                            currency_abv={currencies?.find((currency) => currency.currency_id === finalBill?.currency_id)?.currency_abv}
+                            currency_conversion_rate={finalBill?.currency_conversion_rate}
                             subTotal={subTotal} discount={discount} tax={tax} total={total}
-                            groupedItems={groupedItems} terms_and_conditions={bill?.terms_and_conditions}
+                            groupedItems={groupedItems} terms_and_conditions={finalBill?.terms_and_conditions}
                         />
                         <ViewFooter />
                     </div>
                 }
             </div>
-            <DueAmountCard title={"Bill"} due_amount={bill?.due_amount}
-                currency_abv={currencies?.find((currency) => currency.currency_id === bill?.currency_id)?.currency_abv}
-                linked_item1={bill?.linked_payments} linked_item2={bill?.linked_debit_notes}
+            <DueAmountCard title={"Bill"} due_amount={finalBill?.due_amount}
+                currency_abv={currencies?.find((currency) => currency.currency_id === finalBill?.currency_id)?.currency_abv}
+                linked_item1={finalBill?.linked_payments} linked_item2={finalBill?.linked_debit_notes}
             />
+            {
+                extracted &&
+                <div className='pdf__viewer-main'>
+                    <div className="pdf__viewer">
+                        <Document file={extractedBill?.attachment_url.replace(extractedBill?.attachment_url.split('/').slice(0, 3).join("/"), '')} onLoadSuccess={onDocumentLoadSuccess} onLoadError={onError} loading={<LoadingOutlined />}>
+                            <Page pageNumber={pdfPage} scale={pdfScale} rotate={pdfRotation} renderAnnotationLayer={false} renderTextLayer={false} />
+                        </Document>
+                        {pdfError && <div className='pdf__viewer--error'>{pdfError}</div>}
+                        {pdfError && <a href={extractedBill?.attachment_url} target='_blank' rel='noreferrer' className='pdf__viewer--error'>Download</a>}
+                    </div>
+                    {pdfPages && <div className='pdf__viewer--controls'>
+                        <button onClick={() => onPageChange(pdfPage - 1)} disabled={pdfPage === 1}>Previous</button>
+                        <span>{pdfPage} of {pdfPages}</span>
+                        <button onClick={() => onPageChange(pdfPage + 1)} disabled={pdfPage === pdfPages}>Next</button>
+                    </div>}
+                </div>
+            }
         </>
     )
 }

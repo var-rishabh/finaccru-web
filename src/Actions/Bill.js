@@ -311,8 +311,7 @@ export const extractDataFromTaxInvoice = (file, navigate) => async (dispatch) =>
     }
 }
 
-
-export const getExtractedBillList = () => async (dispatch) => {
+export const getExtractedBillList = (role = 0, page = 1, client_id = 0) => async (dispatch) => {
     try {
         dispatch({ type: "ExtractedBillListRequest" });
         const token = await auth.currentUser.getIdToken(true);
@@ -321,12 +320,65 @@ export const getExtractedBillList = () => async (dispatch) => {
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/bills/extracted/read-list`, config);
-        dispatch({ type: "ExtractedBillListSuccess", payload: response.data });
+        if (role === 0) {
+            const response = await axios.get(`${url}/private/client/bills/extracted/read-list`, config);
+            dispatch({ type: "ExtractedBillListSuccess", payload: response.data });
+        } else {
+            const response = await axios.get(`${url}/private/accountant/${role === 1 ? 'jr' : 'sr'}/read-extracted-bills/${client_id}/${page}`, config);
+            dispatch({ type: "ExtractedBillListSuccess", payload: response.data });
+        }
 
     } catch (error) {
         console.log(error);
         dispatch({ type: "ExtractedBillListFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+export const getExtractedBillDetails = (staging_id, role = 0) => async (dispatch) => {
+    try {
+        dispatch({ type: "ExtractedBillDetailsRequest" });
+        const token = await auth.currentUser.getIdToken(true);
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+
+        if (role !== 0) {
+            const response = await axios.get(`${url}/private/accountant/read-extracted-bill/${staging_id}`, config);
+            dispatch({ type: "ExtractedBillDetailsSuccess", payload: response.data });
+        } else {
+            toast.error("You are not authorized to view this page");
+            dispatch({ type: "ExtractedBillDetailsFailure", payload: "You are not authorized to view this page" });
+        }
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ExtractedBillDetailsFailure", payload: error.response?.data || error.message });
+        toast.error(error.response?.data || error.message);
+    }
+}
+
+export const convertStagingToBill = (staging_id, data, role = 0) => async (dispatch) => {
+    try {
+        dispatch({ type: "ConvertStagingToBillRequest" });
+        const token = await auth.currentUser.getIdToken(true);
+        const config = {
+            headers: {
+                token: token,
+            },
+        };
+        if (role !== 0) {
+            const response = await axios.post(`${url}/private/accountant/convert-staging-to-bill/${staging_id}`, data, config);
+            dispatch({ type: "ConvertStagingToBillSuccess", payload: response.data });
+        } else {
+            toast.error("You are not authorized to view this page");
+            dispatch({ type: "ConvertStagingToBillFailure", payload: "You are not authorized to view this page" });
+        }
+        toast.success("Bill updated successfully");
+    } catch (error) {
+        console.log(error);
+        dispatch({ type: "ConvertStagingToBillFailure", payload: error.response?.data || error.message });
         toast.error(error.response?.data || error.message);
     }
 }

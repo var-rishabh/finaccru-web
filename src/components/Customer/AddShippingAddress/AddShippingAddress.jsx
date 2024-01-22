@@ -12,7 +12,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 const AddShippingAddress = ({ isShippingModalOpen, handleShippingCancel, customerId, handleAddShippingAddressSubmit }) => {
     const dispatch = useDispatch();
     const { loading } = useSelector((state) => state.customerReducer);
-
+    const { user } = useSelector(state => state.userReducer);
     const [label, setLabel] = useState('');
     const [address1, setAddress1] = useState('');
     const [address2, setAddress2] = useState('');
@@ -21,6 +21,7 @@ const AddShippingAddress = ({ isShippingModalOpen, handleShippingCancel, custome
     const [selectedCountry, setSelectedCountry] = useState("ae");
     const [state, setState] = useState('');
     const [allState, setAllStates] = useState(uaeStates);
+    const client_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
 
     const handleCountryChange = (value) => {
         const countryCode = value;
@@ -52,8 +53,7 @@ const AddShippingAddress = ({ isShippingModalOpen, handleShippingCancel, custome
             state: state,
             country: country
         }
-        dispatch(createShippingAddress(values, customerId, handleAddShippingAddressSubmit));
-        setLabel('');
+        dispatch(createShippingAddress(values, customerId, handleAddShippingAddressSubmit, user?.localInfo?.role, client_id));
         setAddress1('');
         setAddress2('');
         setAddress3('');

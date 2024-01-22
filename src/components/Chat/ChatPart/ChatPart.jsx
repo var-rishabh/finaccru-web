@@ -12,11 +12,10 @@ const ChatPart = ({ chatId, tab, user, users }) => {
     const dispatch = useDispatch()
 
     const { user: userDetails } = useSelector(state => state.userReducer);
-    const { loading: chatLoading, open } = useSelector(state => state.chatReducer);
+    const { loading: chatLoading, open, document } = useSelector(state => state.chatReducer);
 
     // Get chats
     const { chats, loading } = useChats(chatId, tab);
-
     const [text, setText] = useState("");
     const [file, setFile] = useState(null);
 
@@ -27,9 +26,13 @@ const ChatPart = ({ chatId, tab, user, users }) => {
             chat_id: chatId,
             receiver_id: user?.user,
             text: text,
+            document: document,
         }
         dispatch(sendChatMessage(data, userDetails?.localInfo?.role, tab, chatId));
         setText("");
+        if (document !== null) {
+            dispatch({ type: "RemoveChatDocument" });
+        }
     }
 
     // Auto scroll to bottom
@@ -79,24 +82,35 @@ const ChatPart = ({ chatId, tab, user, users }) => {
                                             <div className="chatPart--chatInfo">
                                                 <div className="chatPart--chatTime">
                                                     {
-                                                        new Date(message?.time).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                                                        message?.time.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
                                                     } | {
-                                                        new Date(message?.time).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+                                                        message?.time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
                                                     }
                                                 </div>
                                                 {
-                                                    message?.document_number &&
-                                                    <a href={`/`} rel="noreferrer" target="_blank" className="chatPart--chatDocNumber">
-                                                        {message?.document_name}
+                                                    message?.document && userDetails?.localInfo?.role !== 0 &&
+                                                    <a href={
+                                                        `/clients/${message?.from}` +
+                                                        `${message?.document?.number.startsWith("EST") ? `/estimate/view/${message?.document?.id}`
+                                                            : message?.document?.number.startsWith("PI") ? `/proforma/view/${message?.document?.id}`
+                                                                : message?.document?.number.startsWith("INV") ? `/tax-invoice/view/${message?.document?.id}`
+                                                                    : message?.document?.number.startsWith("CN") ? `/credit-note/view/${message?.document?.id}`
+                                                                        : message?.document?.number.startsWith("RC") ? `/payment/view/${message?.document?.id}`
+                                                                            : message?.document?.number.startsWith("PO") ? `/purchase-order/view/${message?.document?.id}`
+                                                                                : message?.document?.number.startsWith("BILL") ? `/bill/view/${message?.document?.id}`
+                                                                                    : message?.document?.number.startsWith("BP") ? `/bill-payment/view/${message?.document?.id}`
+                                                                                        : message?.document?.number.startsWith("DN") ? `/debit-note/view/${message?.document?.id}`
+                                                                                            : null}`
+                                                    } rel="noreferrer" className="chatPart--chatDocNumber">
+                                                        {message?.document?.number}
                                                     </a>
                                                 }
                                             </div>
                                         </div>
                                     )
                                 })
-
                             }
-                            <div ref={messagesEndRef} />
+
                         </div>
                         <form className="chatPart--input">
                             <label htmlFor="file"><LinkOutlined /></label>
@@ -106,9 +120,19 @@ const ChatPart = ({ chatId, tab, user, users }) => {
                                 {chatLoading ? <LoadingOutlined /> : <SendOutlined />}
                             </button>
                         </form>
+                        {document !== null &&
+                            <div className="chatPart--document" style={{ display: "flex", alignItems: "center" }}>
+                                <div className="chatPart--document--close" onClick={() => dispatch({ type: "RemoveChatDocument" })}>X</div>
+                                <div>
+                                    <span style={{ fontWeight: "bold" }}>Document: {document?.number}</span>
+                                </div>
+
+                            </div>
+                        }
+                        <div ref={messagesEndRef} />
                     </> :
                     <div className="empty__chatBlock">
-                        <WechatOutlined style={{fontSize: "3rem"}}/>
+                        <WechatOutlined style={{ fontSize: "3rem" }} />
                         <div className="empty__chatBlock--text">
                             Start a chat now!
                         </div>

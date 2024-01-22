@@ -23,7 +23,7 @@ const BillLayoutP1 = ({
     currencyConversionRate, setCurrencyConversionRate,
     subject, setSubject, shippingAddress1, setShippingAddress1,
     shippingAddress2, setShippingAddress2, shippingAddress3, setShippingAddress3,
-    shippingState, setShippingState, shippingCountry, setShippingCountry,
+    shippingState, setShippingState, shippingCountry, setShippingCountry, extracted
 }) => {
     const filterOption = (input, option) => {
         return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
@@ -32,6 +32,7 @@ const BillLayoutP1 = ({
     const { client } = useSelector(state => state.accountantReducer);
     const { bill } = useSelector(state => state.billReducer)
     const { loading: vendorLoading, vendorsInf, totalVendors, vendor, paymentTerms, paymentTermsLoading, expectedDeliveryDate } = useSelector(state => state.vendorReducer);
+    const client_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
 
     const [currentVendorPage, setCurrentVendorPage] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,14 +42,14 @@ const BillLayoutP1 = ({
 
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(getVendorInfiniteScroll(1, true));
+        dispatch(getVendorInfiniteScroll(1, true, "", user?.localInfo?.role, client_id));
         setCurrentVendorPage(1);
     }, [dispatch]);
 
     useEffect(() => {
         if (vendorId) {
-            dispatch(getVendorDetails(vendorId));
-            dispatch(getVendorShippingAddressList(vendorId));
+            dispatch(getVendorDetails(vendorId, user?.localInfo?.role));
+            dispatch(getVendorShippingAddressList(vendorId, user?.localInfo?.role, client_id));
         }
     }, [vendorId, dispatch]);
 
@@ -83,7 +84,7 @@ const BillLayoutP1 = ({
 
     useEffect(() => {
         if (vendorKeyword === null) return;
-        dispatch(getVendorInfiniteScroll(1, true, vendorKeyword));
+        dispatch(getVendorInfiniteScroll(1, true, vendorKeyword, user?.localInfo?.role, client_id));
         setCurrentVendorPage(1);
     }, [vendorKeyword, dispatch]);
 
@@ -98,7 +99,7 @@ const BillLayoutP1 = ({
         });
         setVendorName(vendorSelected.vendor_name);
         dispatch(getVendorDetails(value.vendor_id));
-        dispatch(getVendorShippingAddressList(value.vendor_id));
+        dispatch(getVendorShippingAddressList(value.vendor_id, user?.localInfo?.role, client_id));
     }
 
     const onChangeShipping = (value) => {
@@ -123,16 +124,16 @@ const BillLayoutP1 = ({
 
     const handleVendorSubmit = (data) => {
         setIsModalOpen(false);
-        dispatch(getVendorInfiniteScroll(1, true));
+        dispatch(getVendorInfiniteScroll(1, true, "", user?.localInfo?.role, client_id));
         setCurrentVendorPage(1);
         dispatch(getVendorDetails(data.vendor_id));
         setVendorId(data.vendor_id);
         setVendorName(data.vendor_name);
-        dispatch(getVendorShippingAddressList(data.vendorId));
+        dispatch(getVendorShippingAddressList(data.vendorId, user?.localInfo?.role, client_id));
     }
 
     const handleAddVendorShippingAddressSubmit = (data) => {
-        dispatch(getVendorShippingAddressList(vendorId));
+        dispatch(getVendorShippingAddressList(vendorId, user?.localInfo?.role, client_id));
         setShippingLabel(data.label);
         setShippingId(data.shipping_address_id);
         setShippingAddress1(data.address_line_1);
@@ -147,7 +148,7 @@ const BillLayoutP1 = ({
         if (vendorLoading) return;
         if ((current - 1) * 20 > totalVendors) return;
         if (currentVendorPage >= current) return;
-        dispatch(getVendorInfiniteScroll(current, false));
+        dispatch(getVendorInfiniteScroll(current, false, "", user?.localInfo?.role, client_id));
         setCurrentVendorPage((prev) => prev + 1);
     }
 
@@ -226,7 +227,7 @@ const BillLayoutP1 = ({
                             <div className='layout__form--customer-data'>
                                 <div className='layout__form--customer-data-info'>
                                     <span style={{ fontWeight: 500 }}>{vendorName}</span>
-                                    {user?.localInfo?.role ?
+                                    {(user?.localInfo?.role && !extracted) ?
                                         <>
                                             <span>{bill?.vendor?.billing_address_line_1}</span>
                                             {bill?.vendor?.billing_address_line_2 && <span>{bill?.vendor?.billing_address_line_2}</span>}
@@ -244,7 +245,7 @@ const BillLayoutP1 = ({
                                         </>
                                     }
                                 </div>
-                                {!user?.localInfo?.role && <CloseOutlined className='layout__for--anticon-close'
+                                {(!user?.localInfo?.role || extracted) && <CloseOutlined className='layout__for--anticon-close'
                                     onClick={() => {
                                         setVendorName(''); setVendorId(null); setShippingId(null);
                                         setShippingAddress1(null);
@@ -273,13 +274,13 @@ const BillLayoutP1 = ({
                                                 <span>{shippingState + ', ' + shippingCountry}</span>
 
                                             </div>
-                                            {!user?.localInfo?.role && <CloseOutlined className='layout__for--anticon-close'
+                                            {(!user?.localInfo?.role || extracted) && <CloseOutlined className='layout__for--anticon-close'
                                                 onClick={() => {
                                                     setShippingId(null); setShippingAddress1(null);
                                                     setShippingAddress2(null); setShippingAddress3(null);
                                                     setShippingState(null); setShippingCountry(null);
                                                     setShippingLabel(null);
-                                                    dispatch(getVendorShippingAddressList(vendorId))
+                                                    dispatch(getVendorShippingAddressList(vendorId, user?.localInfo?.role, client_id));
                                                 }}
                                             />}
                                         </div>

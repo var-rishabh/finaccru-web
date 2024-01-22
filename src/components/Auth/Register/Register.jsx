@@ -10,9 +10,11 @@ import uaeStates from '../../../data/uaeStates';
 
 const Register = () => {
   const query = useLocation().search;
+
   const params = new URLSearchParams(query);
   const email_id = params.get('email_id');
   const mobile_number = params.get('mobile_number');
+  
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState(email_id ? email_id : "");
   const [phone, setPhone] = useState("");

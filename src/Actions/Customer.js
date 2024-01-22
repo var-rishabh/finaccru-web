@@ -124,7 +124,7 @@ export const updateCustomer = (data, id, handleCustomerSubmit, navigate) => asyn
     }
 }
 
-export const getCustomerDetails = (id) => async (dispatch) => {
+export const getCustomerDetails = (id, role = 0) => async (dispatch) => {
     try {
         dispatch({ type: "CustomerDetailsRequest" });
         const token = await auth.currentUser.getIdToken();
@@ -133,8 +133,14 @@ export const getCustomerDetails = (id) => async (dispatch) => {
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/customers/read/${id}`, config);
-        dispatch({ type: "CustomerDetailsSuccess", payload: response.data });
+        if (role === 0) {
+            const response = await axios.get(`${url}/private/client/customers/read/${id}`, config);
+            dispatch({ type: "CustomerDetailsSuccess", payload: response.data });
+        }
+        else {
+            const response = await axios.get(`${url}/private/accountant/read-customer/${id}`, config);
+            dispatch({ type: "CustomerDetailsSuccess", payload: response.data });
+        }
     } catch (error) {
         console.log(error);
         dispatch({ type: "CustomerDetailsFailure", payload: error.response?.data || error.message });
@@ -142,7 +148,7 @@ export const getCustomerDetails = (id) => async (dispatch) => {
     }
 }
 
-export const getCustomerInfiniteScroll = (page = 1, refresh = false, keyword="") => async (dispatch) => {
+export const getCustomerInfiniteScroll = (page = 1, refresh = false, keyword = "", role = 0, client_id = 0) => async (dispatch) => {
     try {
         dispatch({ type: "CustomerInfiniteScrollRequest" });
         const token = await auth.currentUser.getIdToken();
@@ -151,8 +157,13 @@ export const getCustomerInfiniteScroll = (page = 1, refresh = false, keyword="")
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/customers/read-customers-list/${page}?keyword=${keyword}`, config);
-        dispatch({ type: "CustomerInfiniteScrollSuccess", payload: { data: response.data, refresh: refresh } });
+        if (role === 0) {
+            const response = await axios.get(`${url}/private/client/customers/read-customers-list/${page}?keyword=${keyword}`, config);
+            dispatch({ type: "CustomerInfiniteScrollSuccess", payload: { data: response.data, refresh: refresh } });
+        } else {
+            const response = await axios.get(`${url}/private/accountant/${role === 1 ? 'jr' : 'sr'}/read-customers-list/${page}?keyword=${keyword}&client_id=${client_id}`, config);
+            dispatch({ type: "CustomerInfiniteScrollSuccess", payload: { data: response.data, refresh: refresh } });
+        }
     }
     catch (error) {
         console.log(error);
@@ -161,7 +172,7 @@ export const getCustomerInfiniteScroll = (page = 1, refresh = false, keyword="")
     }
 }
 
-export const createShippingAddress = (data, customer_id, handleShippingAddressSubmit) => async (dispatch) => {
+export const createShippingAddress = (data, customer_id, handleShippingAddressSubmit, role = 0, client_id = 0) => async (dispatch) => {
     try {
         dispatch({ type: "CreateShippingAddressRequest" });
         const token = await auth.currentUser.getIdToken();
@@ -170,12 +181,23 @@ export const createShippingAddress = (data, customer_id, handleShippingAddressSu
                 token: token,
             },
         };
-        const response = await axios.post(`${url}/private/client/customers/${customer_id}/create-shipping-address`, data, config);
-        dispatch({ type: "CreateShippingAddressSuccess", payload: response.data });
-        toast.success("Shipping Address created successfully");
-        if (handleShippingAddressSubmit) {
-            handleShippingAddressSubmit(response.data);
+        if (role === 0) {
+            const response = await axios.post(`${url}/private/client/customers/${customer_id}/create-shipping-address`, data, config);
+            dispatch({ type: "CreateShippingAddressSuccess", payload: response.data });
+            if (handleShippingAddressSubmit) {
+                handleShippingAddressSubmit(response.data);
+            }
+        } else {
+            const response = await axios.post(`${url}/private/accountant/${role === 1 ? 'jr' : 'sr'}/customer/${customer_id}/create-shipping-address?client_id=${client_id}`, data, config);
+            dispatch({ type: "CreateShippingAddressSuccess", payload: response.data });
+            if (handleShippingAddressSubmit) {
+                handleShippingAddressSubmit(response.data);
+            }
         }
+        dispatch(getShippingAddressList(customer_id, role, client_id));
+
+        toast.success("Shipping Address created successfully");
+
     } catch (error) {
         console.log(error);
         if (error.response?.status === 422) {
@@ -194,7 +216,7 @@ export const createShippingAddress = (data, customer_id, handleShippingAddressSu
     }
 }
 
-export const getShippingAddressList = (customer_id) => async (dispatch) => {
+export const getShippingAddressList = (customer_id, role = 0, client_id = 0) => async (dispatch) => {
     try {
         dispatch({ type: "ShippingAddressListRequest" });
         const token = await auth.currentUser.getIdToken();
@@ -203,8 +225,13 @@ export const getShippingAddressList = (customer_id) => async (dispatch) => {
                 token: token,
             },
         };
-        const response = await axios.get(`${url}/private/client/customers/${customer_id}/read-shipping-address-list`, config);
-        dispatch({ type: "ShippingAddressListSuccess", payload: response.data });
+        if (role === 0) {
+            const response = await axios.get(`${url}/private/client/customers/${customer_id}/read-shipping-address-list`, config);
+            dispatch({ type: "ShippingAddressListSuccess", payload: response.data });
+        } else {
+            const response = await axios.get(`${url}/private/accountant/${role === 1 ? 'jr' : 'sr'}/customer/${customer_id}/read-shipping-address-list?client_id=${client_id}`, config);
+            dispatch({ type: "ShippingAddressListSuccess", payload: response.data });
+        }
     } catch (error) {
         console.log(error);
         dispatch({ type: "ShippingAddressListFailure", payload: error.response?.data || error.message });

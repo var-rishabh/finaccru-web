@@ -9,17 +9,19 @@ import { Modal, Switch, Tabs } from 'antd';
 import Header from '../Accountant/Header/Header';
 import TableCard from "../../Shared/TableCard/TableCard";
 
-import { approveTaxInvoice, getTaxInvoiceList } from '../../Actions/TaxInvoice';
+import { approveTaxInvoice, getTaxInvoiceList, getExtractedTaxInvoiceList } from '../../Actions/TaxInvoice';
 import { approvePayments, getPaymentsList } from '../../Actions/Payment';
 import { approveCreditNote, getCreditNoteList } from '../../Actions/CreditNote';
-import { approveBill, getBillList } from '../../Actions/Bill';
+import { approveBill, getBillList, getExtractedBillList } from '../../Actions/Bill';
 import { approveBillPayment, getBillPaymentList } from '../../Actions/BillPayment';
 import { approveDebitNote, getDebitNoteList } from '../../Actions/DebitNote';
 
 import taxInvoiceColumns from '../../Columns/TaxInvoice';
+import extractedTaxInvoiceColumns from '../../Columns/ExtractedTaxInvoice';
 import paymentColumns from '../../Columns/Payment';
 import creditNoteColumns from '../../Columns/CreditNote';
 import billColumns from '../../Columns/Bill';
+import extractedBillColumns from '../../Columns/ExtractedBill';
 import billPaymentColumns from '../../Columns/BillPayment';
 import debitNoteColumns from '../../Columns/DebitNote';
 
@@ -42,10 +44,10 @@ const Client = () => {
     const [showAll, setShowAll] = useState(false); // false: pending, true: all
 
     const { client, loading } = useSelector(state => state.accountantReducer);
-    const { taxInvoices, loading: taxInvoiceLoading } = useSelector(state => state.taxInvoiceReducer);
+    const { taxInvoices, loading: taxInvoiceLoading, extractedTaxInvoices } = useSelector(state => state.taxInvoiceReducer);
     const { payments, loading: paymentsLoading } = useSelector(state => state.paymentReducer);
     const { creditNotes, loading: creditNotesLoading } = useSelector(state => state.creditNoteReducer, id);
-    const { bills, loading: billsLoading } = useSelector(state => state.billReducer);
+    const { bills, loading: billsLoading, extractedBills } = useSelector(state => state.billReducer);
     const { billPayments, loading: billPaymentsLoading } = useSelector(state => state.billPaymentReducer);
     const { debitNotes, loading: debitNotesLoading } = useSelector(state => state.debitNoteReducer);
 
@@ -66,6 +68,10 @@ const Client = () => {
             dispatch(getBillPaymentList(1, "", 0, user?.localInfo?.role, id, showAll));
         } else if (activeTab === "6") {
             dispatch(getDebitNoteList(1, "", 0, user?.localInfo?.role, id, showAll));
+        } else if (activeTab === "7") {
+            dispatch(getExtractedTaxInvoiceList(user?.localInfo?.role, 1, id));
+        } else if (activeTab === "8") {
+            dispatch(getExtractedBillList(user?.localInfo?.role, 1, id));
         }
     }, [activeTab, dispatch, id, user?.localInfo?.role, showAll])
 
@@ -125,9 +131,11 @@ const Client = () => {
     }
 
     const taxInvoiceColumns2 = taxInvoiceColumns(handleShowModal, navigate, user?.localInfo?.role, id, jr_id);
+    const extractedTaxInvoiceColumns2 = extractedTaxInvoiceColumns(handleShowModal, navigate, user?.localInfo?.role, id, jr_id);
     const creditNoteColumns2 = creditNoteColumns(handleShowModal, navigate, showAdjustModal, user?.localInfo?.role, id, jr_id);
     const paymentColumns2 = paymentColumns(handleShowModal, navigate, user?.localInfo?.role, id, jr_id);
     const billColumns2 = billColumns(handleShowModal, navigate, user?.localInfo?.role, id, jr_id);
+    const extractedBillColumns2 = extractedBillColumns(handleShowModal, navigate, user?.localInfo?.role, id, jr_id);
     const billPaymentColumns2 = billPaymentColumns(handleShowModal, navigate, user?.localInfo?.role, id, jr_id);
     const debitNoteColumns2 = debitNoteColumns(handleShowModal, navigate, showAdjustModal, user?.localInfo?.role, id, jr_id);
 
@@ -142,6 +150,11 @@ const Client = () => {
             label: 'Tax Invoices',
             children: <TableCard columns={taxInvoiceColumns2} dispatch={dispatch} loading={taxInvoiceLoading} items={taxInvoices} getList={getTaxInvoiceList} showAll={showAll} />,
         },
+        user?.localInfo?.role === 1 && {
+            key: '7',
+            label: 'Extracted Tax Invoices',
+            children: <TableCard columns={extractedTaxInvoiceColumns2} dispatch={dispatch} loading={taxInvoiceLoading} items={extractedTaxInvoices} getList={getExtractedTaxInvoiceList} showAll={showAll} />,
+        },
         {
             key: '3',
             label: 'Credit Notes',
@@ -150,7 +163,12 @@ const Client = () => {
         {
             key: '4',
             label: 'Bills',
-            children: <TableCard columns={billColumns2} dispatch={dispatch} loading={billsLoading} items={bills} getList={getBillList} showAll={showAll} />,
+            children: <TableCard columns={billColumns2} dispatch={dispatch} loading={billsLoading} items={bills} getList={getBillList} />,
+        },
+        user?.localInfo?.role === 1 && {
+            key: '8',
+            label: 'Extracted Bills',
+            children: <TableCard columns={extractedBillColumns2} dispatch={dispatch} loading={billsLoading} items={extractedBills} getList={getExtractedBillList} showAll={showAll} />,
         },
         {
             key: '5',

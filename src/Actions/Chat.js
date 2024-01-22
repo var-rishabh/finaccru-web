@@ -81,3 +81,11 @@ export const closeChatModal = () => async (dispatch) => {
         console.log(error);
     }
 }
+
+export const setChatDocument = (data) => async (dispatch) => {
+    try {
+        dispatch({ type: "SetChatDocument", payload: data });
+    } catch (error) {
+        console.log(error);
+    }
+}

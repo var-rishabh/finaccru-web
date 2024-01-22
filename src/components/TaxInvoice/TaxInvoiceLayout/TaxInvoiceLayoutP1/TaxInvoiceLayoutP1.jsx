@@ -14,25 +14,12 @@ import { CloseOutlined } from '@ant-design/icons';
 const TaxInvoiceFormP1 = ({
     taxInvoiceNumber, taxInvoiceDate, validTill, reference, subject, customerName, customerId, currency, currencyId, currencyConversionRate, shippingAddress1, shippingAddress2, shippingAddress3, shippingState, shippingCountry,
     setTaxInvoiceNumber, setTaxInvoiceDate, setValidTill, setReference, setSubject, setCustomerName, setCustomerId, setCurrency, setCurrencyId, setCurrencyConversionRate, setShippingAddress1, setShippingAddress2, setShippingAddress3, setShippingState, setShippingCountry,
-    termsAndConditions, setTermsAndConditions, convert, setPaymentOptionsNull
+    termsAndConditions, setTermsAndConditions, convert, setPaymentOptionsNull, extracted
 }) => {
     const filterOption = (input, option) => {
         return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
     }
-    // const filterOption2 = (input, option) => {
-    //     if (option?.key !== 'addShippingAddress') {
-    //         const searchStr = option?.children?.props?.children?.reduce((acc, cur) => {
-    //             if (typeof cur === 'string') {
-    //                 return acc + cur;
-    //             }
-    //         }, '');
 
-    //         return searchStr.toLowerCase().includes(input.toLowerCase());
-
-    //     }
-    //     return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
-    // }
-    
     const { user } = useSelector(state => state.userReducer);
     const { client } = useSelector(state => state.accountantReducer);
     const { taxInvoice } = useSelector(state => state.taxInvoiceReducer);
@@ -42,18 +29,17 @@ const TaxInvoiceFormP1 = ({
     const [shippingId, setShippingId] = useState(null);
     const [isShippingModalOpen, setIsShippingModalOpen] = useState(false);
     const [shippingLabel, setShippingLabel] = useState(null);
-
+    const client_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(getCustomerInfiniteScroll(1, true));
+        dispatch(getCustomerInfiniteScroll(1, true, "", user?.localInfo?.role, client_id));
         setCurrentCustomerPage(1);
-
     }, [dispatch]);
 
     useEffect(() => {
         if (customerId) {
-            dispatch(getCustomerDetails(customerId));
-            dispatch(getShippingAddressList(customerId));
+            dispatch(getCustomerDetails(customerId, user?.localInfo?.role));
+            dispatch(getShippingAddressList(customerId, user?.localInfo?.role, client_id));
         }
     }, [customerId, dispatch]);
 
@@ -78,7 +64,7 @@ const TaxInvoiceFormP1 = ({
 
     useEffect(() => {
         if (customerKeyword === null) return;
-        dispatch(getCustomerInfiniteScroll(1, true, customerKeyword));
+        dispatch(getCustomerInfiniteScroll(1, true, customerKeyword, user?.localInfo?.role, client_id));
         setCurrentCustomerPage(1);
     }, [customerKeyword, dispatch]);
 
@@ -93,7 +79,7 @@ const TaxInvoiceFormP1 = ({
         });
         setCustomerName(customerSelected.customer_name);
         dispatch(getCustomerDetails(value.customer_id));
-        dispatch(getShippingAddressList(value.customer_id));
+        dispatch(getShippingAddressList(value.customer_id, user?.localInfo?.role, client_id));
         setPaymentOptionsNull();
         setTermsAndConditions(customer?.terms_and_conditions ? customer?.terms_and_conditions : termsAndConditions);
     }
@@ -120,7 +106,7 @@ const TaxInvoiceFormP1 = ({
 
     const handleCustomerSubmit = (data) => {
         setIsModalOpen(false);
-        dispatch(getCustomerInfiniteScroll(1, true));
+        dispatch(getCustomerInfiniteScroll(1, true, "", user?.localInfo?.role, client_id));
         setCurrentCustomerPage(1);
         dispatch(getCustomerDetails(data.customer_id));
         setCustomerId(data.customer_id);
@@ -128,7 +114,7 @@ const TaxInvoiceFormP1 = ({
     }
 
     const handleAddShippingAddressSubmit = (data) => {
-        dispatch(getShippingAddressList(customerId));
+        dispatch(getShippingAddressList(customerId, user?.localInfo?.role, client_id));
         setShippingLabel(data.label);
         setShippingId(data.shipping_address_id);
         setShippingAddress1(data.address_line_1);
@@ -143,7 +129,7 @@ const TaxInvoiceFormP1 = ({
         if (customerLoading) return;
         if ((current - 1) * 20 > totalCustomers) return;
         if (currentCustomerPage >= current) return;
-        dispatch(getCustomerInfiniteScroll(current, false));
+        dispatch(getCustomerInfiniteScroll(current, false, "", user?.localInfo?.role, client_id));
         setCurrentCustomerPage((prev) => prev + 1);
     }
 
@@ -169,9 +155,9 @@ const TaxInvoiceFormP1 = ({
                             value={taxInvoiceNumber}
                             onChange={(e) => {
                                 const input = e.target.value
-                                setTaxInvoiceNumber("TI-" + input.substr("TI-".length))
+                                setTaxInvoiceNumber("INV-" + input.substr("INV-".length))
                             }}
-                            {...user?.localInfo?.role && { disabled: true }}
+                            {...user?.localInfo?.role && !extracted && { disabled: true }}
                         />
                     </div>
                     <div className='layout__form--head-info2-data'>
@@ -206,7 +192,7 @@ const TaxInvoiceFormP1 = ({
                             <div className='layout__form--customer-data'>
                                 <div className='layout__form--customer-data-info'>
                                     <span style={{ fontWeight: 500 }}>{customerName}</span>
-                                    {user?.localInfo?.role ?
+                                    {(user?.localInfo?.role && !extracted) ?
                                         <>
                                             <span>{taxInvoice?.customer?.billing_address_line_1}</span>
                                             {taxInvoice?.customer?.billing_address_line_2 && <span>{taxInvoice?.customer?.billing_address_line_2}</span>}
@@ -224,7 +210,7 @@ const TaxInvoiceFormP1 = ({
                                         </>
                                     }
                                 </div>
-                                {!user?.localInfo?.role && <CloseOutlined className='taxInvoice__for--anticon-close'
+                                {(!user?.localInfo?.role || extracted) && <CloseOutlined className='taxInvoice__for--anticon-close'
                                     onClick={() => {
                                         setCustomerName(''); setCustomerId(null); setShippingId(null);
                                         setShippingAddress1(null);
@@ -255,7 +241,7 @@ const TaxInvoiceFormP1 = ({
                                                 <span>{shippingState + ', ' + shippingCountry}</span>
 
                                             </div>
-                                            {!user?.localInfo?.role &&
+                                            {(!user?.localInfo?.role || extracted) &&
                                                 <CloseOutlined
                                                     className='taxInvoice__for--anticon-close'
                                                     onClick={() => {
@@ -263,7 +249,7 @@ const TaxInvoiceFormP1 = ({
                                                         setShippingAddress2(null); setShippingAddress3(null);
                                                         setShippingState(null); setShippingCountry(null);
                                                         setShippingLabel(null);
-                                                        dispatch(getShippingAddressList(customerId))
+                                                        dispatch(getShippingAddressList(customerId, user?.localInfo?.role, client_id));
                                                     }}
                                                 />}
                                         </div>

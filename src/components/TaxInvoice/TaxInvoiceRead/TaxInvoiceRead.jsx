@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { getTaxInvoiceDetails, markTaxInvoiceVoid, submitTaxInvoiceForApproval, approveTaxInvoice } from '../../../Actions/TaxInvoice';
+import { setChatDocument } from '../../../Actions/Chat';
+import { getTaxInvoiceDetails, markTaxInvoiceVoid, submitTaxInvoiceForApproval, approveTaxInvoice, getExtractedTaxInvoiceDetails } from '../../../Actions/TaxInvoice';
 import { getCurrency, getTaxRate } from '../../../Actions/Onboarding';
+
 import Loader from '../../Loader/Loader';
+import { LoadingOutlined } from '@ant-design/icons';
 
 import '../../../Styles/Read.css';
 import backButton from "../../../assets/Icons/back.svg";
@@ -33,6 +35,8 @@ import ViewHeader from '../../../Shared/ViewHeader/ViewHeader';
 import ViewFooter from '../../../Shared/ViewFooter/ViewFooter';
 
 import { readAccountantClient } from '../../../Actions/Accountant';
+import { Document, Page, pdfjs } from 'react-pdf';
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 const TaxInvoiceReadLayout = () => {
     const navigate = useNavigate();
@@ -40,7 +44,7 @@ const TaxInvoiceReadLayout = () => {
 
     const { user } = useSelector(state => state.userReducer);
     const { client } = useSelector(state => state.accountantReducer);
-    const { loading, taxInvoice } = useSelector(state => state.taxInvoiceReducer);
+    const { loading, taxInvoice, extractedTaxInvoice } = useSelector(state => state.taxInvoiceReducer);
     const { taxRates } = useSelector(state => state.onboardingReducer);
 
     const ti_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
@@ -56,25 +60,34 @@ const TaxInvoiceReadLayout = () => {
 
     const { currencies } = useSelector(state => state.onboardingReducer);
 
+    const searchParams = new URLSearchParams(window.location.search);
+    const extracted = searchParams.get('extracted');
+
+    const finalTaxInvoice = extracted ? extractedTaxInvoice : taxInvoice;
+
     useEffect(() => {
         dispatch(getCurrency());
         dispatch(getTaxRate());
     }, [dispatch]);
 
     useEffect(() => {
-        dispatch(getTaxInvoiceDetails(ti_id, user?.localInfo?.role));
+        if (extracted) {
+            dispatch(getExtractedTaxInvoiceDetails(ti_id, user?.localInfo?.role));
+        } else {
+            dispatch(getTaxInvoiceDetails(ti_id, user?.localInfo?.role));
+        }
         if (user?.localInfo?.role) {
             dispatch(readAccountantClient(client_id));
         }
     }, [dispatch, ti_id, client_id, user?.localInfo?.role]);
 
     useEffect(() => {
-        const amount = calculateTotalAmounts(taxInvoice?.line_items, setSubTotal, setDiscount, setTax, setTotal, setItemTax, taxRates);
+        const amount = calculateTotalAmounts(finalTaxInvoice?.line_items, setSubTotal, setDiscount, setTax, setTotal, setItemTax, taxRates);
         setItemTotal(amount);
-    }, [taxInvoice, taxRates]);
+    }, [finalTaxInvoice, taxRates]);
 
     useEffect(() => {
-        const groupedByTaxId = taxInvoice?.line_items?.reduce((acc, item, index) => {
+        const groupedByTaxId = finalTaxInvoice?.line_items?.reduce((acc, item, index) => {
             const existingGroup = acc.find((group) => group.tax_id === item.tax_id);
             if (existingGroup) {
                 existingGroup.taxable_amount += (itemTotal?.at(index) - itemTax?.at(index));
@@ -84,7 +97,7 @@ const TaxInvoiceReadLayout = () => {
                 const taxItem = taxRates?.find((tr) => tr.tax_rate_id === item.tax_id);
                 acc.push({
                     tax_id: item.tax_id,
-                    tax_rate_name: taxItem.tax_rate_name,
+                    tax_rate_name: taxItem?.tax_rate_name,
                     taxable_amount: (itemTotal?.at(index) - itemTax?.at(index)),
                     tax_amount: (itemTax?.at(index)),
                     total_amount: (itemTotal?.at(index)),
@@ -94,7 +107,7 @@ const TaxInvoiceReadLayout = () => {
         }, []);
 
         setGroupedItems(groupedByTaxId);
-    }, [itemTotal, itemTax, taxInvoice, taxRates]);
+    }, [itemTotal, itemTax, finalTaxInvoice, taxRates]);
 
     const [clientData, setClientData] = useState({});
     useEffect(() => {
@@ -104,8 +117,32 @@ const TaxInvoiceReadLayout = () => {
             setClientData(user);
         }
     }, [user, client]);
-    const contents = ReadContent("Tax Invoice", taxInvoice, clientData, currencies, taxRates, itemTax, itemTotal, subTotal, discount, tax, total, groupedItems);
+    useEffect(() => {
+        dispatch(setChatDocument({ id: finalTaxInvoice?.ti_id, number: finalTaxInvoice?.ti_number }));
+        return () => {
+            dispatch({ type: "RemoveChatDocument" });
+        }
+    }, [dispatch, finalTaxInvoice])
 
+    const contents = ReadContent("Tax Invoice", finalTaxInvoice, clientData, currencies, taxRates, itemTax, itemTotal, subTotal, discount, tax, total, groupedItems);
+    // PDF Logic
+    const [pdfError, setPdfError] = useState(null);
+    const [pdfPages, setPdfPages] = useState(null);
+    const [pdfPage, setPdfPage] = useState(1);
+    const [pdfScale, setPdfScale] = useState(1.5);
+    const [pdfRotation, setPdfRotation] = useState(0);
+    const onDocumentLoadSuccess = ({ numPages }) => {
+        setPdfPages(numPages);
+    }
+
+    const onError = (error) => {
+        setPdfError(error.message);
+    }
+
+    const onPageChange = (page) => {
+        if (page < 1 || page > pdfPages) return;
+        setPdfPage(page);
+    }
     return (
         <>
             <div className='read__header'>
@@ -120,10 +157,12 @@ const TaxInvoiceReadLayout = () => {
                         user?.localInfo?.role ?
                             <>
                                 <a className='read__header--btn1'
-                                    onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/tax-invoice/edit/${taxInvoice?.ti_id}`)}
+                                    onClick={() => {
+                                        navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/tax-invoice/edit/${extracted ? ti_id : finalTaxInvoice?.ti_id}${extracted ? "?extracted=true" : ""}`)
+                                    }}
                                 >Edit</a>
                                 {
-                                    taxInvoice?.ti_status === "Pending Approval" ?
+                                    finalTaxInvoice?.ti_status === "Pending Approval" && !extracted ?
                                         <a className='read__header--btn2'
                                             onClick={() => {
                                                 dispatch(approveTaxInvoice(ti_id, user?.localInfo?.role, client_id))
@@ -131,8 +170,8 @@ const TaxInvoiceReadLayout = () => {
                                         >Approve</a> : ""
                                 }
                             </> :
-                            taxInvoice?.ti_status === "Approved" || taxInvoice?.ti_status === "Void" ? "" :
-                                taxInvoice?.ti_status === "Pending Approval" ?
+                            finalTaxInvoice?.ti_status === "Approved" || finalTaxInvoice?.ti_status === "Void" ? "" :
+                                finalTaxInvoice?.ti_status === "Pending Approval" ?
                                     <>
                                         <a className='read__header--btn1'
                                             onClick={() => {
@@ -140,7 +179,7 @@ const TaxInvoiceReadLayout = () => {
                                             }}
                                         >Mark as Void</a>
                                         <a className='read__header--btn1'
-                                            onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/tax-invoice/edit/${taxInvoice?.ti_id}`)}
+                                            onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/tax-invoice/edit/${finalTaxInvoice?.ti_id}`)}
                                         >Edit</a>
                                     </> :
                                     <>
@@ -155,7 +194,7 @@ const TaxInvoiceReadLayout = () => {
                                             }}
                                         >Mark as Void</a>
                                         <a className='read__header--btn1'
-                                            onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/tax-invoice/edit/${taxInvoice?.ti_id}`)}
+                                            onClick={() => navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/tax-invoice/edit/${finalTaxInvoice?.ti_id}`)}
                                         >Edit</a>
                                     </>
                     }
@@ -176,35 +215,35 @@ const TaxInvoiceReadLayout = () => {
                             country={user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}
                             state={user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state}
                             trade_license_number={user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}
-                            number={taxInvoice?.ti_number}
-                            date={taxInvoice?.ti_date}
-                            due_date={taxInvoice?.due_date}
-                            reference={taxInvoice?.reference}
+                            number={finalTaxInvoice?.ti_number}
+                            date={finalTaxInvoice?.ti_date}
+                            due_date={finalTaxInvoice?.due_date}
+                            reference={finalTaxInvoice?.reference}
                         />
                         <ReadFor
                             title={"Tax Invoice"}
                             styles={forStyles}
-                            customer_name={taxInvoice?.customer?.customer_name}
-                            billing_address_line_1={taxInvoice?.customer?.billing_address_line_1}
-                            billing_address_line_2={taxInvoice?.customer?.billing_address_line_2}
-                            billing_address_line_3={taxInvoice?.customer?.billing_address_line_3}
-                            billing_state={taxInvoice?.customer?.billing_state}
-                            billing_country={taxInvoice?.customer?.billing_country}
-                            shipping_address_line_1={taxInvoice?.customer?.shipping_address_line_1}
-                            shipping_address_line_2={taxInvoice?.customer?.shipping_address_line_2}
-                            shipping_address_line_3={taxInvoice?.customer?.shipping_address_line_3}
-                            shipping_state={taxInvoice?.customer?.shipping_state}
-                            shipping_country={taxInvoice?.customer?.shipping_country}
-                            trn={taxInvoice?.customer?.trn}
+                            customer_name={finalTaxInvoice?.customer?.customer_name}
+                            billing_address_line_1={finalTaxInvoice?.customer?.billing_address_line_1}
+                            billing_address_line_2={finalTaxInvoice?.customer?.billing_address_line_2}
+                            billing_address_line_3={finalTaxInvoice?.customer?.billing_address_line_3}
+                            billing_state={finalTaxInvoice?.customer?.billing_state}
+                            billing_country={finalTaxInvoice?.customer?.billing_country}
+                            shipping_address_line_1={finalTaxInvoice?.customer?.shipping_address_line_1}
+                            shipping_address_line_2={finalTaxInvoice?.customer?.shipping_address_line_2}
+                            shipping_address_line_3={finalTaxInvoice?.customer?.shipping_address_line_3}
+                            shipping_state={finalTaxInvoice?.customer?.shipping_state}
+                            shipping_country={finalTaxInvoice?.customer?.shipping_country}
+                            trn={finalTaxInvoice?.customer?.trn}
                         />
                         <ReadMeta
                             styles={metaStyles}
-                            currency_abv={currencies?.find((currency) => currency.currency_id === taxInvoice?.currency_id)?.currency_abv}
-                            currency_conversion_rate={taxInvoice?.currency_conversion_rate}
-                            subject={taxInvoice?.subject}
+                            currency_abv={currencies?.find((currency) => currency.currency_id === finalTaxInvoice?.currency_id)?.currency_abv}
+                            currency_conversion_rate={finalTaxInvoice?.currency_conversion_rate}
+                            subject={finalTaxInvoice?.subject}
                         />
                         <div className='read__items'>
-                            {taxInvoice?.line_items?.map((item, index) => (
+                            {finalTaxInvoice?.line_items?.map((item, index) => (
                                 <LineItem styles={lineItemStyles} key={index} index={index}
                                     item_name={item?.item_name} unit={item?.unit} qty={item?.qty} rate={item?.rate}
                                     discount={item?.discount} is_percentage_discount={item?.is_percentage_discount}
@@ -216,26 +255,43 @@ const TaxInvoiceReadLayout = () => {
                         </div>
                         <ReadBank
                             styles={bankStyles}
-                            currency_abv={currencies?.find((currency) => currency.currency_id === taxInvoice?.currency_id)?.currency_abv}
+                            currency_abv={currencies?.find((currency) => currency.currency_id === finalTaxInvoice?.currency_id)?.currency_abv}
                             primary_bank={user?.clientInfo?.primary_bank}
                             other_bank_accounts={user?.clientInfo?.other_bank_accounts}
                             subTotal={subTotal} discount={discount} tax={tax} total={total}
                         />
                         <ReadTax
                             styles={taxStyles}
-                            currency_abv={currencies?.find((currency) => currency.currency_id === taxInvoice?.currency_id)?.currency_abv}
-                            currency_conversion_rate={taxInvoice?.currency_conversion_rate}
+                            currency_abv={currencies?.find((currency) => currency.currency_id === finalTaxInvoice?.currency_id)?.currency_abv}
+                            currency_conversion_rate={finalTaxInvoice?.currency_conversion_rate}
                             subTotal={subTotal} discount={discount} tax={tax} total={total}
-                            groupedItems={groupedItems} terms_and_conditions={taxInvoice?.terms_and_conditions}
+                            groupedItems={groupedItems} terms_and_conditions={finalTaxInvoice?.terms_and_conditions}
                         />
                         <ViewFooter />
                     </div>
                 }
             </div>
-            <DueAmountCard title={"Tax Invoice"} due_amount={taxInvoice?.due_amount}
-                currency_abv={currencies?.find((currency) => currency.currency_id === taxInvoice?.currency_id)?.currency_abv}
-                linked_item1={taxInvoice?.linked_receipts} linked_item2={taxInvoice?.linked_credit_notes}
+            <DueAmountCard title={"Tax Invoice"} due_amount={finalTaxInvoice?.due_amount}
+                currency_abv={currencies?.find((currency) => currency.currency_id === finalTaxInvoice?.currency_id)?.currency_abv}
+                linked_item1={finalTaxInvoice?.linked_receipts} linked_item2={finalTaxInvoice?.linked_credit_notes}
             />
+            {
+                extracted &&
+                <div className='pdf__viewer-main'>
+                    <div className="pdf__viewer">
+                        <Document file={extractedTaxInvoice?.attachment_url.replace(extractedTaxInvoice?.attachment_url.split('/').slice(0, 3).join("/"), '')} onLoadSuccess={onDocumentLoadSuccess} onLoadError={onError} loading={<LoadingOutlined />}>
+                            <Page pageNumber={pdfPage} scale={pdfScale} rotate={pdfRotation} renderAnnotationLayer={false} renderTextLayer={false} />
+                        </Document>
+                        {pdfError && <div className='pdf__viewer--error'>{pdfError}</div>}
+                        {pdfError && <a href={extractedTaxInvoice?.attachment_url} target='_blank' rel='noreferrer' className='pdf__viewer--error'>Download</a>}
+                    </div>
+                    {pdfPages && <div className='pdf__viewer--controls'>
+                        <button onClick={() => onPageChange(pdfPage - 1)} disabled={pdfPage === 1}>Previous</button>
+                        <span>{pdfPage} of {pdfPages}</span>
+                        <button onClick={() => onPageChange(pdfPage + 1)} disabled={pdfPage === pdfPages}>Next</button>
+                    </div>}
+                </div>
+            }
         </>
     )
 }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import { store as firestore } from '../firebase';
-import {collection, query, where, orderBy} from "firebase/firestore";
+import { collection, query, where, orderBy } from "firebase/firestore";
 
 const useChats = (id, tab) => {
     const [chats, setChats] = useState([])
@@ -16,20 +16,21 @@ const useChats = (id, tab) => {
     useEffect(() => {
         if (snapshot) {
             const userList = snapshot.docs.map(doc => {
+                const document = doc.data()?.document;
                 const seconds = doc.data().createdAt.seconds;
                 const nanoseconds = doc.data().createdAt.nanoseconds;
                 const data = doc.data();
-                const time = new Date(seconds * 1e3 + nanoseconds / 1e6).toLocaleString();
+                const time = new Date(seconds * 1e3 + nanoseconds / 1e6);
                 const message = data.text;
                 const from = data.from;
                 const uid = doc.id;
-                return {data, uid, time, message, from}
+                return { data, uid, time, message, from, document };
             });
             setChats(userList);
             setLoading(false);
         }
 
-         if (error) {
+        if (error) {
             console.error('Error fetching chat user list:', error);
             setLoading(false);
         }

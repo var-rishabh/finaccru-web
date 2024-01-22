@@ -36,6 +36,7 @@ import ViewFooter from '../../../Shared/ViewFooter/ViewFooter';
 // Functions
 import calculateTotalAmounts from '../../../utils/calculateTotalAmounts';
 import ReadContent from '../../../utils/ReadContent';
+import { setChatDocument } from '../../../Actions/Chat';
 
 const EstimateReadLayout = () => {
 
@@ -93,6 +94,14 @@ const EstimateReadLayout = () => {
 
         setGroupedItems(groupedByTaxId);
     }, [itemTotal, itemTax, estimate, taxRates]);
+
+
+    useEffect(() => {
+        dispatch(setChatDocument({ id: estimate?.estimate_id, number: estimate?.estimate_number}));
+        return () => {
+            dispatch({ type: "RemoveChatDocument" });
+        }
+    }, [dispatch, estimate]);
 
     const contents = ReadContent("Estimate", estimate, user, currencies, taxRates, itemTax, itemTotal, subTotal, discount, tax, total, groupedItems);
 

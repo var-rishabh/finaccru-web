@@ -27,6 +27,7 @@ import calculateTotalAmounts from '../../../utils/calculateTotalAmounts';
 import ReadContent from '../../../utils/ReadContent';
 import ViewHeader from '../../../Shared/ViewHeader/ViewHeader';
 import ViewFooter from '../../../Shared/ViewFooter/ViewFooter';
+import { setChatDocument } from '../../../Actions/Chat';
 
 const ProformaReadLayout = () => {
     const navigate = useNavigate();
@@ -85,6 +86,13 @@ const ProformaReadLayout = () => {
 
         setGroupedItems(groupedByTaxId);
     }, [itemTotal, itemTax, proforma, taxRates]);
+
+    useEffect(() => {
+        dispatch(setChatDocument({ id: proforma?.pi_id, number: proforma?.pi_number}));
+        return () => {
+            dispatch({ type: "RemoveChatDocument" });
+        }
+    }, [dispatch, proforma]);
 
     const contents = ReadContent("Proforma", proforma, user, currencies, taxRates, itemTax, itemTotal, subTotal, discount, tax, total, groupedItems);
 
