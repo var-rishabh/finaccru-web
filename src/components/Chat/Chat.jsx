@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux';
+import { useSearchParams } from 'react-router-dom'
 
 import "./Chat.css"
 import { Tabs } from 'antd';
@@ -11,13 +11,14 @@ import ChatPart from './ChatPart/ChatPart';
 import useChatList from '../../CustomHooks/useChatList';
 
 const Chat = () => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const [tab, setTab] = useState("1");
+    const [searchParams, setSearchParams] = useSearchParams();
+    const id = searchParams.get("id");
+    const [tab, setTab] = useState(searchParams.get("type")?.toString() || "1");
     const { user } = useSelector(state => state.userReducer);
     const { users, loading } = useChatList(user.localId, tab);
-    const [chatId, setChatId] = useState();
+    const [chatId, setChatId] = useState(id);
     const [chatItem, setChatItem] = useState();
+    
     const items = [
         {
             key: '1',
@@ -37,7 +38,7 @@ const Chat = () => {
             <Header headerFor="Chat" backNeeded={true} />
             <div className='chat--main'>
                 <div className='chat--left'>
-                    <Tabs defaultActiveKey="1" items={items} onChange={(key) => {setTab(key); setChatId(); setChatItem()}} />
+                    <Tabs items={items} onChange={(key) => {setTab(key); setChatId(); setChatItem()}} activeKey={tab} />
                 </div>
                 <div className='chat--right'>
                     <ChatPart chatId={chatId} tab={tab} user={chatItem} users={users} />

@@ -157,7 +157,7 @@ const BillRead = () => {
                 </div>
                 <div className='read__header--right'>
                     {
-                        user?.localInfo?.role ?
+                        user?.localInfo?.role === 1 || user?.localInfo?.role === 2 ?
                             <>
                                 <a className='read__header--btn1'
                                     onClick={() => {
@@ -173,7 +173,7 @@ const BillRead = () => {
                                         > Approve </a>
                                 }
                             </> :
-                            finalBill?.status === "Draft" ?
+                            finalBill?.bill_status === "Draft" ?
                                 <>
                                     <a className='read__header--btn1'
                                         onClick={() => {
@@ -190,7 +190,7 @@ const BillRead = () => {
                                         Mark as Void
                                     </a>
                                 </>
-                                : finalBill?.status === "Pending Approval" ?
+                                : finalBill?.bill_status === "Pending Approval" ?
                                     <a className='read__header--btn1'
                                         onClick={() => {
                                             dispatch(markBillVoid(bill_id))
@@ -201,8 +201,8 @@ const BillRead = () => {
                     }
                     {
                         user?.localInfo?.role ? "" :
-                            finalBill?.status === "Void" ? "" :
-                                finalBill?.status === "Approved" ? "" :
+                            finalBill?.bill_status === "Void" ? "" :
+                                finalBill?.bill_status === "Approved" ? "" :
                                     <a className='read__header--btn1'
                                         onClick={() => {
                                             navigate(`${user?.localInfo?.role === 2 ? `/jr/${jr_id}/clients/${client_id}` : user?.localInfo?.role === 1 ? `/clients/${client_id}` : ""}/bill/edit/${finalBill?.bill_id}`)

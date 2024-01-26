@@ -165,22 +165,30 @@ const TaxInvoiceLayout = () => {
             setPaymentList(taxInvoice?.payment !== null ? taxInvoice?.linked_receipts?.map((receipt) => (receipt.receipt_id)) : []);
             setCreditNoteList(taxInvoice?.payment !== null ? taxInvoice?.linked_credit_notes?.map((creditNote) => (creditNote.cn_id)) : []);
         } else if (extracted) {
-            setTaxInvoiceNumber(extractedTaxInvoice?.ti_number);
+            if (extractedTaxInvoice?.ti_number) {
+                if (extractedTaxInvoice?.ti_number.startsWith("INV")) {
+                    setTaxInvoiceNumber(extractedTaxInvoice?.ti_number);
+                } else {
+                    setTaxInvoiceNumber(`INV-${extractedTaxInvoice?.ti_number}`);
+                }
+            } else {
+                setTaxInvoiceNumber(number);
+            }
             setTaxInvoiceDate(moment(extractedTaxInvoice?.ti_date).format('YYYY-MM-DD'));
             setValidTill(moment(extractedTaxInvoice?.due_date).format('YYYY-MM-DD'));
-            setReference(extractedTaxInvoice?.reference);
-            setCustomerName(extractedTaxInvoice?.customer?.customer_name);
-            setCustomerId(extractedTaxInvoice?.customer?.customer_id);
-            setCurrencyId(extractedTaxInvoice?.currency_id);
-            setCurrencyConversionRate(extractedTaxInvoice?.currency_conversion_rate);
+            setReference(extractedTaxInvoice?.reference || null);
+            setCustomerName(extractedTaxInvoice?.customer?.customer_name || '');
+            setCustomerId(extractedTaxInvoice?.customer?.customer_id || null);
+            setCurrencyId(extractedTaxInvoice?.currency_id || 1);
+            setCurrencyConversionRate(extractedTaxInvoice?.currency_conversion_rate || 1);
             setCurrency(currencyId !== 1 ? currencies?.find((currency) => currency.currency_id === extractedTaxInvoice?.currency_id)?.currency_abv : 'AED');
             setItems(extractedTaxInvoice?.line_items || [{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
-            setShippingAddress1(extractedTaxInvoice?.customer?.shipping_address_line_1);
-            setShippingAddress2(extractedTaxInvoice?.customer?.shipping_address_line_2);
-            setShippingAddress3(extractedTaxInvoice?.customer?.shipping_address_line_3);
-            setShippingCountry(extractedTaxInvoice?.customer?.shipping_country);
-            setShippingState(extractedTaxInvoice?.customer?.shipping_state);
-            setSubject(extractedTaxInvoice?.subject);
+            setShippingAddress1(extractedTaxInvoice?.customer?.shipping_address_line_1 || '');
+            setShippingAddress2(extractedTaxInvoice?.customer?.shipping_address_line_2 || null);
+            setShippingAddress3(extractedTaxInvoice?.customer?.shipping_address_line_3 || null);
+            setShippingCountry(extractedTaxInvoice?.customer?.shipping_country || '');
+            setShippingState(extractedTaxInvoice?.customer?.shipping_state || '');
+            setSubject(extractedTaxInvoice?.subject || null);
             setTermsAndConditions(extractedTaxInvoice?.terms_and_conditions);
             setIsSetDefaultTncCustomer(extractedTaxInvoice?.is_set_default_tnc_customer);
             setIsSetDefaultTncClient(extractedTaxInvoice?.is_set_default_tnc_client);
@@ -231,31 +239,51 @@ const TaxInvoiceLayout = () => {
         if (taxInvoiceLoading) {
             return;
         }
-        if (taxInvoiceNumber == "" || customerId == null || currencyConversionRate <= 0) {
-            toast.error("Please fill and check all fields.");
+        if (taxInvoiceNumber == "") {
+            toast.error("Please enter tax invoice number.");
             return;
         }
-        if (shippingAddress1 === "" || shippingCountry === "" || shippingState === "") {
+        if (taxInvoiceDate == "") {
+            toast.error("Please select tax invoice date.");
+            return;
+        }
+        if (validTill == "") {
+            toast.error("Please select valid till date.");
+            return;
+        }
+        if (customerId == null) {
+            toast.error("Please select customer.");
+            return;
+        }
+        if (shippingAddress1 === '' || shippingCountry === '' || shippingState === '') {
             toast.error("Please select shipping details.");
             return;
         }
-        if (items.some((item) => item.item_name === '')) {
+        if (currencyId == null) {
+            toast.error("Please select currency.");
+            return;
+        }
+        if (currencyConversionRate <= 0) {
+            toast.error("Currency conversion rate should be greater than 0.");
+            return;
+        }
+        if (items.some((item) => item.item_name === '' || item.item_name == null)) {
             toast.error("Item name cannot be empty.");
             return;
         }
-        if (items.some((item) => item.unit === '')) {
+        if (items.some((item) => item.unit === '' || item.unit == null)) {
             toast.error("Unit cannot be empty.");
             return;
         }
-        if (items.some((item) => item.qty <= 0)) {
+        if (items.some((item) => item.qty <= 0 || item.qty == null)) {
             toast.error("Quantity should be greater than 0.");
             return;
         }
-        if (items.some((item) => item.rate <= 0)) {
+        if (items.some((item) => item.rate <= 0 || item.rate == null)) {
             toast.error("Rate should be greater than 0.");
             return;
         }
-        if (items.some((item) => item.discount < 0)) {
+        if (items.some((item) => item.discount < 0 || item.discount == null)) {
             toast.error("Discount should be greater than or equal to 0.");
             return;
         }
@@ -378,7 +406,7 @@ const TaxInvoiceLayout = () => {
                 extracted &&
                 <div className='pdf__viewer-main'>
                     <div className="pdf__viewer">
-                        <Document file={extractedTaxInvoice?.attachment_url.replace(extractedTaxInvoice?.attachment_url.split('/').slice(0,3).join('/'), '')} onLoadSuccess={onDocumentLoadSuccess} onLoadError={onError} loading={<LoadingOutlined />}>
+                        <Document file={extractedTaxInvoice?.attachment_url.replace(extractedTaxInvoice?.attachment_url.split('/').slice(0, 3).join('/'), '')} onLoadSuccess={onDocumentLoadSuccess} onLoadError={onError} loading={<LoadingOutlined />}>
                             <Page pageNumber={pdfPage} scale={pdfScale} rotate={pdfRotation} renderAnnotationLayer={false} renderTextLayer={false} />
                         </Document>
                         {pdfError && <div className='pdf__viewer--error'>{pdfError}</div>}

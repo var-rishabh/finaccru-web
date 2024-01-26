@@ -55,7 +55,7 @@ export default function JuniorAccountantColumns(navigate) {
                     </div>
                     <div className="accountant__action__button small__button">
                         <Tooltip title="Chat" color='blue' placement="bottom">
-                            <MessageOutlined />
+                            <MessageOutlined onClick={() => navigate(`/chat?id=${record.accountant_id}&type=1`)} />
                         </Tooltip>
                     </div>
                 </div>
