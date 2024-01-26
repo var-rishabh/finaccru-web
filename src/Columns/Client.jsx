@@ -60,7 +60,7 @@ export default function clientColumns(navigate, role = 1, jr_id = 0) {
                     </div>
                     <div className="accountant__action__button small__button">
                         <Tooltip title="Chat" color='blue' placement="bottom">
-                            <MessageOutlined />
+                            <MessageOutlined onClick={() => navigate(`/chat?id=${record.client_id}&type=2`)} />
                         </Tooltip>
                     </div>
                 </div>

@@ -31,7 +31,7 @@ import calculateTotalAmounts from '../../../utils/calculateTotalAmounts';
 import PurchaseReadContent from '../../../utils/PurchaseReadContent';
 import ViewHeader from '../../../Shared/ViewHeader/ViewHeader';
 import ViewFooter from '../../../Shared/ViewFooter/ViewFooter';
-import { setChatDocument } from '../../../Actions/Chat';
+// import { setChatDocument } from '../../../Actions/Chat';
 
 const PurchaseOrderRead = () => {
     const navigate = useNavigate();
@@ -73,12 +73,12 @@ const PurchaseOrderRead = () => {
         setItemTotal(amount);
     }, [purchaseOrder, taxRates]);
 
-    useEffect(() => {
-        dispatch(setChatDocument({ id: purchaseOrder?.po_id, number: purchaseOrder?.po_number}));
-        return () => {
-            dispatch({ type: "RemoveChatDocument" });
-        }
-    }, [dispatch, purchaseOrder]);
+    // useEffect(() => {
+    //     dispatch(setChatDocument({ id: purchaseOrder?.po_id, number: purchaseOrder?.po_number}));
+    //     return () => {
+    //         dispatch({ type: "RemoveChatDocument" });
+    //     }
+    // }, [dispatch, purchaseOrder]);
 
     useEffect(() => {
         const groupedByTaxId = purchaseOrder?.line_items?.reduce((acc, item, index) => {

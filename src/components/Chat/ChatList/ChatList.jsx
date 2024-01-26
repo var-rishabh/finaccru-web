@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./ChatList.css";
 import { readAccountantClientsList } from "../../../Actions/Accountant";
 import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
 
 const ChatList = ({ chatList, loading, setChatId, chatId, setChatItem, tab }) => {
     const { user } = useSelector(state => state.userReducer);
@@ -18,6 +19,13 @@ const ChatList = ({ chatList, loading, setChatId, chatId, setChatItem, tab }) =>
         if (tab === "1")
             setAppendedChatList(chatList);
     }, [dispatch]);
+
+    const [searchParams, setSearchParams] = useSearchParams();
+    const id = searchParams.get("id");
+    useEffect(() => {
+        setChatId(id);
+        setChatItem(chatList?.find((chat) => chat.uid === id));
+    }, [id, clients, chatList.length]);
 
     // Appending Clients List to Chat List to get clients with no chat history
     useEffect(() => {

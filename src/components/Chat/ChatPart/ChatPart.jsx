@@ -30,9 +30,9 @@ const ChatPart = ({ chatId, tab, user, users }) => {
         }
         dispatch(sendChatMessage(data, userDetails?.localInfo?.role, tab, chatId));
         setText("");
-        if (document !== null) {
-            dispatch({ type: "RemoveChatDocument" });
-        }
+        // if (document !== null) {
+        //     dispatch({ type: "RemoveChatDocument" });
+        // }
     }
 
     // Auto scroll to bottom
@@ -42,7 +42,7 @@ const ChatPart = ({ chatId, tab, user, users }) => {
     }
     useEffect(() => {
         scrollToBottom()
-    }, [chats, open])
+    }, [chats, open, messagesEndRef,chatId, user?.name])
 
 
     useEffect(() => {
@@ -110,7 +110,7 @@ const ChatPart = ({ chatId, tab, user, users }) => {
                                     )
                                 })
                             }
-
+                            <div ref={messagesEndRef} />
                         </div>
                         <form className="chatPart--input">
                             <label htmlFor="file"><LinkOutlined /></label>
@@ -129,7 +129,7 @@ const ChatPart = ({ chatId, tab, user, users }) => {
 
                             </div>
                         }
-                        <div ref={messagesEndRef} />
+                        
                     </> :
                     <div className="empty__chatBlock">
                         <WechatOutlined style={{ fontSize: "3rem" }} />

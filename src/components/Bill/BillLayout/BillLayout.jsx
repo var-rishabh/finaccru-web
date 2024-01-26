@@ -21,8 +21,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import backButton from "../../../assets/Icons/back.svg";
 import logo from "../../../assets/Icons/cropped_logo.svg";
 import { Document, Page, pdfjs } from 'react-pdf';
-// Set the worker URL for pdf.js
-// Make sure the path is correct, and the PDF worker file is available at that location
+
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 
@@ -167,30 +166,35 @@ const BillLayout = () => {
             // setBankId(bill?.payment !== null ? bill?.payment?.bank_id : null);
             dispatch(calculateExpectedDeliveryDate(billDate, paymentTermId))
         } else if (extracted) {
-            setBillNumber(extractedBill?.bill_number);
+            if (extractedBill?.bill_number) {
+                if (extractedBill?.bill_number.startsWith("BILL")) {
+                    setBillNumber(extractedBill?.bill_number);
+                } else {
+                    setBillNumber(`BILL-${extractedBill?.bill_number}`);
+                }
+            } else {
+                setBillNumber(number);
+            }
             setBillDate(moment(extractedBill?.bill_date).format('YYYY-MM-DD'));
-            setReference(extractedBill?.reference);
-            setVendorName(extractedBill?.vendor?.vendor_name);
-            setVendorId(extractedBill?.vendor?.vendor_id);
-            setCurrencyId(extractedBill?.currency_id);
-            setPaymentTermId(extractedBill?.payment_term_id);
-            setCurrencyConversionRate(extractedBill?.currency_conversion_rate);
+            setReference(extractedBill?.reference || null);
+            setVendorName(extractedBill?.vendor?.vendor_name || '');
+            setVendorId(extractedBill?.vendor?.vendor_id || null);
+            setCurrencyId(extractedBill?.currency_id || 1);
+            setPaymentTermId(extractedBill?.payment_term_id || '');
+            setCurrencyConversionRate(extractedBill?.currency_conversion_rate || 1);
             setCurrency(currencyId !== 1 ? currencies?.find((currency) => currency.currency_id === extractedBill?.currency_id)?.currency_abv : 'AED');
             setItems(extractedBill?.line_items || [{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
-            setShippingAddress1(extractedBill?.vendor?.shipping_address_line_1);
-            setShippingAddress2(extractedBill?.vendor?.shipping_address_line_2);
-            setShippingAddress3(extractedBill?.vendor?.shipping_address_line_3);
-            setShippingCountry(extractedBill?.vendor?.shipping_country);
-            setShippingState(extractedBill?.vendor?.shipping_state);
-            setSubject(extractedBill?.subject);
-            setNotes(extractedBill?.notes);
-            if (extractedBill?.linked_payments != [] || extractedBill?.linked_debit_notes != [] > 0) {
-                setPaymentReceivedValue(1);
-                setPaymentList(extractedBill?.linked_payments != [] > 0 ? extractedBill?.linked_payments?.map((payment) => (payment.payment_id)) : []);
-                setDebitNoteList(extractedBill?.linked_debit_notes != [] > 0 ? extractedBill?.linked_debit_notes?.map((debitNote) => (debitNote.dn_id)) : []);
-            } else {
-                setPaymentReceivedValue(null);
-            }
+            setShippingAddress1(extractedBill?.vendor?.shipping_address_line_1 || '');
+            setShippingAddress2(extractedBill?.vendor?.shipping_address_line_2 || null);
+            setShippingAddress3(extractedBill?.vendor?.shipping_address_line_3 || null);
+            setShippingCountry(extractedBill?.vendor?.shipping_country || '');
+            setShippingState(extractedBill?.vendor?.shipping_state || '');
+            setSubject(extractedBill?.subject || null);
+            setNotes(extractedBill?.notes || null);
+            setPaymentReceivedValue(null);
+            setBankId(null);
+            setPaymentList([]);
+            setDebitNoteList([]);
             dispatch(calculateExpectedDeliveryDate(billDate, paymentTermId))
         }
         if (type === 'create') {
@@ -224,35 +228,47 @@ const BillLayout = () => {
         if (billLoading) {
             return;
         }
-        if (billNumber == "" || vendorId == null || paymentTermId == '') {
-            toast.error("Please fill and check all fields.");
+        if (billNumber == "") {
+            toast.error("Bill number cannot be empty.");
             return;
         }
-        if (currencyConversionRate <= 0) {
-            toast.error("Currency conversion rate should be greater than 0.");
+        if (billDate == "") {
+            toast.error("Bill date cannot be empty.");
+            return;
+        }
+        if (paymentTermId == "") {
+            toast.error("Please select Payment term ID.");
+            return;
+        }
+        if (vendorId == null) {
+            toast.error("Please select vendor.");
             return;
         }
         if (shippingAddress1 === "" || shippingCountry === "" || shippingState === "") {
             toast.error("Please select shipping details.");
             return;
         }
-        if (items.some((item) => item.item_name === '')) {
+        if (currencyConversionRate <= 0) {
+            toast.error("Currency conversion rate should be greater than 0.");
+            return;
+        }
+        if (items.some((item) => item.item_name === '' || item.item_name == null)) {
             toast.error("Item name cannot be empty.");
             return;
         }
-        if (items.some((item) => item.unit === '')) {
+        if (items.some((item) => item.unit === '' || item.unit == null)) {
             toast.error("Unit cannot be empty.");
             return;
         }
-        if (items.some((item) => item.qty <= 0)) {
+        if (items.some((item) => item.qty <= 0 || item.qty == null)) {
             toast.error("Quantity should be greater than 0.");
             return;
         }
-        if (items.some((item) => item.rate <= 0)) {
+        if (items.some((item) => item.rate <= 0 || item.rate == null)) {
             toast.error("Rate should be greater than 0.");
             return;
         }
-        if (items.some((item) => item.discount < 0)) {
+        if (items.some((item) => item.discount < 0 || item.discount == null)) {
             toast.error("Discount should be greater than or equal to 0.");
             return;
         }
