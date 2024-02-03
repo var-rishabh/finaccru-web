@@ -18,18 +18,19 @@ const Chat = () => {
     const { users, loading } = useChatList(user.localId, tab);
     const [chatId, setChatId] = useState(id);
     const [chatItem, setChatItem] = useState();
-    
+    const [chatUser, setChatUser] = useState();
+    console.log(users);
     const items = [
         {
             key: '1',
             label: 'Internal',
-            children: <ChatList chatList={users} loading={loading} setChatId={setChatId} chatId={chatId} setChatItem={setChatItem} tab={tab} />,
+            children: <ChatList chatList={users} loading={loading} setChatId={setChatId} chatId={chatId} setChatItem={setChatItem} tab={tab} chatUser={chatUser} setChatUser={setChatUser} />,
         },
         {
             key: '2',
-            label: user?.localInfo?.role === 2 ? "" : "Clients",
-            children: <ChatList chatList={users} loading={loading} setChatId={setChatId} chatId={chatId} setChatItem={setChatItem} tab={tab} />,
-            disabled: user?.localInfo?.role === 2
+            label: user?.localInfo?.role === 1 ? "Clients" : "",
+            children: <ChatList chatList={users} loading={loading} setChatId={setChatId} chatId={chatId} setChatItem={setChatItem} tab={tab} chatUser={chatUser} setChatUser={setChatUser} />,
+            disabled: user?.localInfo?.role !== 1
         },
     ];
 

@@ -22,18 +22,19 @@ const ChatPart = ({ chatId, tab, user, users }) => {
     // Send message
     const handleSubmit = (e) => {
         e.preventDefault();
-        const data = {
-            chat_id: chatId,
+        console.log(user);
+        let data = {
             receiver_id: user?.user,
             text: text,
             document: document,
         }
+        if (!user?.uid.includes("@FIX")) {
+            data.chat_id = user?.uid;
+        }
         dispatch(sendChatMessage(data, userDetails?.localInfo?.role, tab, chatId));
         setText("");
-        // if (document !== null) {
-        //     dispatch({ type: "RemoveChatDocument" });
-        // }
     }
+
 
     // Auto scroll to bottom
     const messagesEndRef = useRef(null)

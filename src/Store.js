@@ -18,6 +18,7 @@ import { billPaymentReducer } from './Reducers/BillPayment';
 import { bankReducer } from './Reducers/Bank';
 import { pdcReducer } from './Reducers/PDC';
 import { chatReducer } from './Reducers/Chat';
+import { dashboardReducer } from './Reducers/Dashboard';
 
 const store = configureStore({
     reducer: {
@@ -41,6 +42,7 @@ const store = configureStore({
         bankReducer: bankReducer,
         pdcReducer: pdcReducer,
         chatReducer: chatReducer,
+        dashboardReducer: dashboardReducer,
     },
 });
 
