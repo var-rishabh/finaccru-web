@@ -44,6 +44,8 @@ const store = configureStore({
         chatReducer: chatReducer,
         dashboardReducer: dashboardReducer,
     },
+    // remove devTools for production
+    devTools: false,
 });
 
 export default store;

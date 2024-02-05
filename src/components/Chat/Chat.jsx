@@ -19,7 +19,6 @@ const Chat = () => {
     const [chatId, setChatId] = useState(id);
     const [chatItem, setChatItem] = useState();
     const [chatUser, setChatUser] = useState();
-    console.log(users);
     const items = [
         {
             key: '1',

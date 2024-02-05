@@ -63,7 +63,6 @@ const DebitNoteLayoutP1 = ({
     const handlePaymentTermChange = (value) => {
         setPaymentTermId(value);
         dispatch(calculateExpectedDeliveryDate(debitNoteDate, value));
-        console.log(expectedDeliveryDate);
     }
 
     useEffect(() => {

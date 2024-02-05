@@ -241,8 +241,6 @@ export const sendOtp = (user) => async (dispatch) => {
         const data = await signInWithPhoneNumber(auth, mobile_number, appVerifier)
         const confirmationResult = await data;
         window.confirmationResult = confirmationResult;
-        window.localStorage.setItem("mobilenumber", mobile_number);
-        window.localStorage.removeItem("mobile_number");
         dispatch({ type: "SendOtpSuccess" });
         toast.success("OTP Sent");
     } catch (error) {
@@ -285,7 +283,7 @@ export const verifyOTP = (user) => async (dispatch) => {
             // const status = data.data.status;
 
             toast.success("Login Successfull");
-            dispatch({ type: "LoadUserRequest" })
+            window.location.href = "/";
             // if (status === 3) {
             //     if (window.location.pathname !== "/onboard") window.location.href = "/onboard";
             // } else if (status === 2) {

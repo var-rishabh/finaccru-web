@@ -76,7 +76,6 @@ const Register = () => {
       return;
     }
     dispatch(sendLink({ email_id: email, password: password, full_name: username, mobile_number: countryPhoneCode + phone, country: country, state: state }));
-    window.localStorage.setItem("user", JSON.stringify({ username, phone, country, state }));
   }
 
   return (

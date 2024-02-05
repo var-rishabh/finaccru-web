@@ -23,6 +23,8 @@ const TableCard = ({ columns, dispatch, loading, items, getList, searchText, cus
                     searchText.length > 2 ? dispatch(getList(pagination.current, searchText)) : dispatch(getList(pagination.current));
                 } else if (client_id) {
                     dispatch(getList(pagination.current, "", 0, role, client_id, showAll));
+                } else {
+                    dispatch(getList(pagination.current));
                 }
             }}
         />
