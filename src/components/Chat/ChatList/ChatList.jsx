@@ -26,6 +26,7 @@ const ChatList = ({ chatList, loading, setChatId, chatId, setChatItem, tab, chat
     const [searchParams, setSearchParams] = useSearchParams();
     const id = searchParams.get("id");
     useEffect(() => {
+        if (chatUser) return;
         setChatId(id);
         setChatItem(chatList?.find((chat) => chat.uid === id));
         setChatUser(chatList?.find((chat) => chat.uid === id)?.user);
@@ -50,10 +51,8 @@ const ChatList = ({ chatList, loading, setChatId, chatId, setChatItem, tab, chat
             setAppendedChatList(newChatList);
         }
         if (tab === "1" && user?.localInfo?.role === 2) {
-            console.log("jr_accountants", jr_accountants);
             let clientList = [];
             let jrs = jr_accountants?.map((client) => {
-                console.log(client);
                 const chat = chatList?.find((chat) => chat.user === client.accountant_id);
                 clientList.push(client.accountant_id);
                 if (chat) {
@@ -69,7 +68,6 @@ const ChatList = ({ chatList, loading, setChatId, chatId, setChatItem, tab, chat
             });
             const nonChat = chatList?.filter((chat) => !clientList.includes(chat.user));
             setAppendedChatList(jrs?.concat(nonChat));
-            console.log("appended", appendedChatList);
         }
     }, [clients,jr_accountants, chatList]);
 

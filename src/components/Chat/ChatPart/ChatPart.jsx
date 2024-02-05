@@ -22,7 +22,6 @@ const ChatPart = ({ chatId, tab, user, users }) => {
     // Send message
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(user);
         let data = {
             receiver_id: user?.user,
             text: text,

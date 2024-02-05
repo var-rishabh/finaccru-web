@@ -26,8 +26,6 @@ const Header = ({ headerFor, backNeeded }) => {
                 backNeeded ?
                     <div className='read__header--left back__btn'>
                         <img src={backButton} alt='back' className='read__header--back-btn' onClick={() => {
-                            // remove the last part of the url
-                            // console.log(window.location.pathname.split('/').slice(0, -2).join('/'));
                             navigate(window.location.pathname.split('/').slice(0, -2).join('/') === "" ? "/" : window.location.pathname.split('/').slice(0, -2).join('/'));
                         }} />
                         <h1 className='read__header--title'> Go Back </h1>
