@@ -6,7 +6,7 @@ const ReadFor = ({title, styles, vendor_name, billing_address_line_1, billing_ad
             <View style={styles.mainLeft}>
                 <View style={styles.mainLeftHeading}>
                     <Text>
-                        {title} For
+                        Billing Address
                     </Text>
                 </View>
                 <View style={styles.mainLeftData}>
@@ -15,7 +15,7 @@ const ReadFor = ({title, styles, vendor_name, billing_address_line_1, billing_ad
                     {billing_address_line_2 && <Text>{billing_address_line_2}</Text>}
                     {billing_address_line_3 && <Text>{billing_address_line_3}</Text>}
                     <Text>{billing_state + ', ' + billing_country}</Text>
-                    {trn && <Text>TRN: {trn}</Text>}
+                    {trn && <Text>VAT TRN: {trn}</Text>}
                 </View>
             </View>
             <View style={styles.mainRight}>
@@ -27,7 +27,7 @@ const ReadFor = ({title, styles, vendor_name, billing_address_line_1, billing_ad
                     {shipping_address_line_2 && <Text>{shipping_address_line_2}</Text>}
                     {shipping_address_line_3 && <Text>{shipping_address_line_3}</Text>}
                     <Text>{shipping_state + ', ' + shipping_country}</Text>
-                    {trn && <Text>TRN: {trn}</Text>}
+                    {trn && <Text>VAT TRN: {trn}</Text>}
                 </View>
             </View>
         </View>

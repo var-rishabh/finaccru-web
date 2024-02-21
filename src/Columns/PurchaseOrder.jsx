@@ -5,19 +5,27 @@ import convertIcon from '../assets/Icons/convertIcon.svg';
 import editIcon from '../assets/Icons/editIcon.svg';
 import deleteIcon from '../assets/Icons/deleteIcon.svg';
 
+import moment from "moment";
+
 export default function purchaseOrderColumns(showModal, navigate) {
     const columns = [
         {
             title: 'Order Date',
             dataIndex: 'order_date',
             key: 'order_date',
-            width: 120
+            width: 120,
+            render: (text, record) => (
+                <span>{moment(record.order_date).format('DD-MM-YYYY')}</span>
+            )
         },
         {
             title: 'Expected Date',
             dataIndex: 'expected_delivery_date',
             key: 'expected_delivery_date',
-            width: 120
+            width: 120,
+            render: (text, record) => (
+                <span>{moment(record.expected_delivery_date).format('DD-MM-YYYY')}</span>
+            )
         },
         {
             title: 'PO Number',

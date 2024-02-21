@@ -148,7 +148,7 @@ const PurchaseOrderRead = () => {
                             purchaseOrder?.po_status === "Void" ? "" :
                                 <a className='read__header--btn1' onClick={() => navigate(`/purchase-order/edit/${purchaseOrder?.po_id}`)}>Edit</a>
                     }
-                    <PdfDownload contents={contents} heading={"Purchase Order"} />
+                    <PdfDownload contents={contents} heading={"Purchase Order"} name={purchaseOrder?.po_number} />
                 </div>
             </div>
             <div className="read__container">

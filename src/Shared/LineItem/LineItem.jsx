@@ -11,7 +11,7 @@ const LineItem = ({ styles, item_name, unit, qty, rate, discount, is_percentage_
                         </View> :
                         <View></View>
                     }
-                    <View style={styles?.mainItemNameBox}>
+                    <View style={item_name.length > 19 ? styles?.mainItemNameBoxLong : styles?.mainItemNameBoxShort}>
                         <Text>{item_name}</Text>
                     </View>
                 </View>
@@ -76,7 +76,10 @@ const LineItem = ({ styles, item_name, unit, qty, rate, discount, is_percentage_
                     <View style={styles?.mainItemTaxBox}>
                         <View style={tax_id == 1 ? styles?.mainItemTaxAmount : styles?.mainItemTaxAmountNS}>
                             <Text>
-                                {taxAmount}
+                                {
+                                    new Intl.NumberFormat('en-US', {
+                                    }).format(parseFloat((taxAmount || 0).toFixed(2)))
+                                }
                             </Text>
                         </View>
                         <View style={tax_id == 1 ? styles?.mainItemTaxType : styles?.mainItemTaxTypeNS}>
@@ -97,7 +100,10 @@ const LineItem = ({ styles, item_name, unit, qty, rate, discount, is_percentage_
                     }
                     <View style={styles?.mainItemAmountBox}>
                         <Text>
-                            {amount}
+                            {
+                                new Intl.NumberFormat('en-US', {
+                                }).format(parseFloat((amount || 0).toFixed(2)))
+                            }
                         </Text>
                     </View>
                 </View>

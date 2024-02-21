@@ -70,12 +70,12 @@ const Proforma = () => {
             </Modal>
             <div className='mainPage__header'>
                 <div className='mainPage__header--left'>
-                    <h1 className='mainPage__header--title'> Proformas </h1>
+                    <h1 className='mainPage__header--title'>Proforma Invoice</h1>
                     <Input placeholder='Search' onChange={(e) => setSearchText(e.target.value)} value={searchText} />
                 </div>
                 <div className='mainPage__header--right'>
                     <a className='mainPage__header--btn1' onClick={() => dispatch(downloadProformaList())}>Download</a>
-                    <a onClick={() => navigate("/proforma/create")} className='mainPage__header--btn2'>Create Proforma</a>
+                    <a onClick={() => navigate("/proforma/create")} className='mainPage__header--btn2'>Create Proforma Invoice</a>
                 </div>
             </div>
             <div className="table">

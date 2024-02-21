@@ -27,7 +27,7 @@ const CompanyModal = ({ isCompanyModalOpen, handleCompanyCancel, clientData }) =
                                 <p>{clientData?.company_data?.company_type_name}</p>
                             </div>
                             <div className="company__modal--input">
-                                <span>TRN</span>
+                                <span>VAT TRN</span>
                                 <p>{clientData?.company_data?.trade_license_number}</p>
                             </div>
                             <div className="company__modal--input">

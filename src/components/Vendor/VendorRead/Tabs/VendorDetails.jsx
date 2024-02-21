@@ -39,7 +39,7 @@ const VendorDetails = ({ vendorId }) => {
                         <input value={vendor?.mobile_number} disabled />
                     </div>
                     <div className="read__vendor--input">
-                        <span>TRN Number</span>
+                        <span>VAT TRN Number</span>
                         <input value={vendor?.trn} disabled />
                     </div>
                     <div className="read__vendor--input">
@@ -48,7 +48,7 @@ const VendorDetails = ({ vendorId }) => {
                     </div>
                     <div className="read__vendor--input">
                         <span>Opening Balance Date</span>
-                        <input value={moment(vendor?.opening_balance_date).format('LL')} disabled />
+                        <input value={moment(vendor?.opening_balance_date).format('DD-MM-YYYY')} disabled />
                     </div>
                 </div>
                 <div className="read__vendor--right">

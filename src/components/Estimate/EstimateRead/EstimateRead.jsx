@@ -138,7 +138,7 @@ const EstimateReadLayout = () => {
                             estimate?.estimate_status === "Void" ? "" :
                                 <a className='read__header--btn1' onClick={() => navigate(`/estimate/edit/${estimate?.estimate_id}`)}>Edit</a>
                     }
-                    <PdfDownload contents={contents} heading={"Estimate"} />
+                    <PdfDownload contents={contents} heading={"Estimate"} name={estimate?.estimate_number} />
                 </div>
             </div>
             <div className="read__container">

@@ -149,13 +149,13 @@ const DebitNoteLayoutP1 = ({
         <div className='layout__form--part1'>
             <div className='layout__form--part1-head'>
                 <div className='layout__form--head-info1'>
-                    <h3>Debit Note From</h3>
+                    {/* <h3>Debit Note From</h3> */}
                     <span style={{ fontWeight: 500 }}>{user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}</span>
                     <span>{user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1}</span>
                     <span>{user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2}</span>
                     <span>{user?.localInfo?.role ? client?.company_data?.address_line_3 : user?.clientInfo?.company_data?.address_line_3}</span>
                     <span>{user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state + ', ' + user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}</span>
-                    <span>TRN: {user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}</span>
+                    <span>VAT TRN: {user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}</span>
                 </div>
                 <div className='layout__form--head-info2'>
                     <div className='layout__form--head-info2-data'>
@@ -214,7 +214,7 @@ const DebitNoteLayoutP1 = ({
             </div>
             <div className='layout__form--part2-head'>
                 <div className='layout__form--part2-head-customer'>
-                    <h3 className='required__field'>Debit Note For</h3>
+                    <h3 className='required__field'>Billing Address</h3>
                     {
                         vendorName ?
                             <div className='layout__form--customer-data'>
@@ -226,7 +226,7 @@ const DebitNoteLayoutP1 = ({
                                             {debitNote?.vendor?.billing_address_line_2 && <span>{debitNote?.vendor?.billing_address_line_2}</span>}
                                             {debitNote?.vendor?.billing_address_line_3 && <span>{debitNote?.vendor?.billing_address_line_3}</span>}
                                             {debitNote?.vendor?.billing_state && <span>{debitNote?.vendor?.billing_state + ', ' + debitNote?.vendor?.billing_country}</span>}
-                                            {debitNote?.vendor?.trn && <span>TRN: {debitNote?.vendor?.trn}</span>}
+                                            {debitNote?.vendor?.trn && <span>VAT TRN: {debitNote?.vendor?.trn}</span>}
                                         </>
                                         :
                                         <>
@@ -234,7 +234,7 @@ const DebitNoteLayoutP1 = ({
                                             {vendor?.billing_address_line_2 && <span>{vendor?.billing_address_line_2}</span>}
                                             {vendor?.billing_address_line_3 && <span>{vendor?.billing_address_line_3}</span>}
                                             {vendor?.billing_state && <span>{vendor?.billing_state + ', ' + vendor?.billing_country}</span>}
-                                            {vendor?.trn && <span>TRN: {vendor?.trn}</span>}
+                                            {vendor?.trn && <span>VAT TRN: {vendor?.trn}</span>}
                                         </>
                                     }
                                 </div>

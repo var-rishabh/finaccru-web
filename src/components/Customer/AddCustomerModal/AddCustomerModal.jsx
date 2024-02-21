@@ -102,6 +102,13 @@ const AddCustomerModal = ({ isModalOpen, handleCancel, handleCustomerSubmit }) =
         }
     }
 
+    const handleCustomerName = (e) => {
+        setCustomerName(e.target.value);
+        if (displayName === "" || displayName === customerName) {
+            setDisplayName(e.target.value);
+        }
+    }
+
     const handleSubmit = () => {
         if (phone !== "") {
             if (isPhoneError) {
@@ -203,7 +210,7 @@ const AddCustomerModal = ({ isModalOpen, handleCancel, handleCustomerSubmit }) =
                 <div className='add__customer__modal--left'>
                     <div className='add__customer__modal--input'>
                         <span className='required__field'>Customer Name</span>
-                        <input type="text" name='customerName' value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
+                        <input type="text" name='customerName' value={customerName} onChange={handleCustomerName} />
                     </div>
                     <div className='add__customer__modal--input'>
                         <span>Email</span>
@@ -365,7 +372,7 @@ const AddCustomerModal = ({ isModalOpen, handleCancel, handleCustomerSubmit }) =
                         />
                     </div>
                     <div className='add__customer__modal--input'>
-                        <span>TRN Number</span>
+                        <span>VAT TRN Number</span>
                         <input type="text" name='trnNumber' value={trnNumber} onChange={(e) => setTrnNumber(e.target.value)} />
                     </div>
                     <div className='add__customer__modal--input'>

@@ -5,6 +5,7 @@ import approveIcon from '../assets/Icons/approveIcon.svg';
 import editIcon from '../assets/Icons/editIcon.svg';
 import deleteIcon from '../assets/Icons/deleteIcon.svg';
 
+import moment from "moment";
 
 export default function paymentColumns(showModal, navigate, role = 0, client_id = 0, jr_id = 0) {
     const columns = [
@@ -13,6 +14,9 @@ export default function paymentColumns(showModal, navigate, role = 0, client_id 
             dataIndex: 'receipt_date',
             key: 'receipt_date',
             width: 120,
+            render: (text, record) => (
+                <span>{moment(record.receipt_date).format('DD-MM-YYYY')}</span>
+            )
         },
         {
             title: 'Receipt No.',

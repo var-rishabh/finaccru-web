@@ -47,10 +47,34 @@ const ReadBank = ({ styles, currency_abv, primary_bank, other_bank_accounts, sub
                         <Text style={styles.statsText}>Total</Text>
                     </View>
                     <View style={styles.mainDataRightRight}>
-                        <Text style={styles.statsTextValue}><Tspan style={styles.statsCurrency}>{currency_abv}</Tspan> &nbsp; {subTotal}</Text>
-                        <Text style={styles.statsTextValue}><Tspan style={styles.statsCurrency}>{currency_abv}</Tspan> &nbsp; {discount}</Text>
-                        <Text style={styles.statsTextValue}><Tspan style={styles.statsCurrency}>{currency_abv}</Tspan> &nbsp; {tax}</Text>
-                        <Text style={styles.statsTextValue}><Tspan style={styles.statsCurrency}>{currency_abv}</Tspan> &nbsp; {total}</Text>
+                        <Text style={styles.statsTextValue}>
+                            <Tspan style={styles.statsCurrency}>{currency_abv}</Tspan> &nbsp;
+                            {
+                                new Intl.NumberFormat('en-US', {
+                                }).format(parseFloat((subTotal || 0).toFixed(2)))
+                            }
+                        </Text>
+                        <Text style={styles.statsTextValue}>
+                            <Tspan style={styles.statsCurrency}>{currency_abv}</Tspan> &nbsp;
+                            {
+                                new Intl.NumberFormat('en-US', {
+                                }).format(parseFloat((discount || 0).toFixed(2)))
+                            }
+                        </Text>
+                        <Text style={styles.statsTextValue}>
+                            <Tspan style={styles.statsCurrency}>{currency_abv}</Tspan> &nbsp;
+                            {
+                                new Intl.NumberFormat('en-US', {
+                                }).format(parseFloat((tax || 0).toFixed(2)))
+                            }
+                        </Text>
+                        <Text style={styles.statsTextValue}>
+                            <Tspan style={styles.statsCurrency}>{currency_abv}</Tspan> &nbsp;
+                            {
+                                new Intl.NumberFormat('en-US', {
+                                }).format(parseFloat((total || 0).toFixed(2)))
+                            }
+                        </Text>
                     </View>
                 </View>
             </View>

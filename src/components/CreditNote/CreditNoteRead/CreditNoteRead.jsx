@@ -186,7 +186,7 @@ const CreditNoteReadLayout = () => {
                                         Edit
                                     </a>
                     }
-                    <PdfDownload contents={contents} heading={"Credit Note"} />
+                    <PdfDownload contents={contents} heading={"Credit Note"} name={creditNote?.cn_number} />
                 </div>
             </div>
             <div className="read__container">

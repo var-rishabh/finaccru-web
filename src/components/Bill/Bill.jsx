@@ -181,7 +181,7 @@ const Bill = () => {
                             handleCancelCreateBill();
                             dispatch(getExtractedBillList());
                         }}>
-                            Create By File &nbsp;
+                            Submit &nbsp;
                             <ArrowRightOutlined />
                         </button>
                     </form>

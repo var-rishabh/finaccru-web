@@ -191,7 +191,7 @@ const ProformaLayout = () => {
             <div className='layout__header'>
                 <div className='layout__header--left'>
                     <img src={backButton} alt='back' className='layout__header--back-btn' onClick={() => navigate("/proforma")} />
-                    <h1 className='layout__header--title'> Proformas List </h1>
+                    <h1 className='layout__header--title'> Proforma Invoices List </h1>
                 </div>
                 {/* <div className='layout__header--right'>
                     <a className='layout__header--btn1'>Download</a>
@@ -202,7 +202,7 @@ const ProformaLayout = () => {
                 <div className="create__layout--main">
                     <div className="create__layout--top">
                         <img style={{ width: "9rem" }} src={logo} alt="logo" />
-                        <h1 className='create__layout--head'>Proforma</h1>
+                        <h1 className='create__layout--head'>Proforma Invoice</h1>
                     </div>
                     <form>
                         <ProformaLayoutP1 proformaNumber={proformaNumber} setProformaNumber={setProformaNumber}

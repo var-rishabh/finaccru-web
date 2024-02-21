@@ -6,13 +6,18 @@ import convertIcon from '../assets/Icons/convertIcon.svg';
 import editIcon from '../assets/Icons/editIcon.svg';
 import deleteIcon from '../assets/Icons/deleteIcon.svg';
 
+import moment from "moment";
+
 export default function creditNoteColumns(showModal, navigate, showAdjustModal, role = 0, client_id = 0, jr_id = 0) {
     const columns = [
         {
             title: 'CN Date',
             dataIndex: 'cn_date',
             key: 'cn_date',
-            width: 120
+            width: 120,
+            render: (text, record) => (
+                <span>{moment(record.cn_date).format('DD-MM-YYYY')}</span>
+            )
         },
         {
             title: 'CN Number',

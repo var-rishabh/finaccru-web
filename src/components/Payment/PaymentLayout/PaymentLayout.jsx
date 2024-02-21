@@ -223,13 +223,13 @@ const PaymentLayout = () => {
                         <div className='payment__form--part1'>
                             <div className='payment__form--part1-head'>
                                 <div className='payment__form--head-info1'>
-                                    <h3>Receipt From</h3>
+                                    {/* <h3>Receipt From</h3> */}
                                     <span style={{ fontWeight: 500 }}>{user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}</span>
                                     <span>{user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1}</span>
                                     <span>{user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2}</span>
                                     <span>{user?.localInfo?.role ? client?.company_data?.address_line_3 : user?.clientInfo?.company_data?.address_line_3}</span>
                                     <span>{user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state + ', ' + user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}</span>
-                                    <span>TRN: {user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}</span>
+                                    <span>VAT TRN: {user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}</span>
                                 </div>
                                 <div className='payment__form--head-info2'>
                                     <div className='payment__form--head-info2-data'>
@@ -258,7 +258,7 @@ const PaymentLayout = () => {
                             </div>
                             <div className='payment__form--part2-head'>
                                 <div className='payment__form--part2-head-customer'>
-                                    <h3 className='required__field'>Receipt For</h3>
+                                    <h3 className='required__field'>Billing Address</h3>
                                     {
                                         customerName ?
                                             <div className='payment__form--customer-data'>
@@ -270,7 +270,7 @@ const PaymentLayout = () => {
                                                             {payment?.customer?.billing_address_line_2 && <span>{payment?.customer?.billing_address_line_2}</span>}
                                                             {payment?.customer?.billing_address_line_3 && <span>{payment?.customer?.billing_address_line_3}</span>}
                                                             {payment?.customer?.billing_state && <span>{payment?.customer?.billing_state + ', ' + payment?.customer?.billing_country}</span>}
-                                                            {payment?.customer?.trn && <span>TRN: {payment?.customer?.trn}</span>}
+                                                            {payment?.customer?.trn && <span>VAT TRN: {payment?.customer?.trn}</span>}
                                                         </>
                                                         :
                                                         <>
@@ -278,7 +278,7 @@ const PaymentLayout = () => {
                                                             {customer?.billing_address_line_2 && <span>{customer?.billing_address_line_2}</span>}
                                                             {customer?.billing_address_line_3 && <span>{customer?.billing_address_line_3}</span>}
                                                             {customer?.billing_state && <span>{customer?.billing_state + ', ' + customer?.billing_country}</span>}
-                                                            {customer?.trn && <span>TRN: {customer?.trn}</span>}
+                                                            {customer?.trn && <span>VAT TRN: {customer?.trn}</span>}
                                                         </>
                                                     }
                                                 </div>

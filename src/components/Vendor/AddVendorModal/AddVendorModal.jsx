@@ -367,7 +367,7 @@ const AddVendorModal = ({ isModalOpen, handleCancel, handleVendorSubmit }) => {
                         />
                     </div>
                     <div className='add__vendor__modal--input'>
-                        <span>TRN Number</span>
+                        <span>VAT TRN Number</span>
                         <input type="text" name='trnNumber' value={trnNumber} onChange={(e) => setTrnNumber(e.target.value)} />
                     </div>
                     <div className='add__vendor__modal--input'>

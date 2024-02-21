@@ -145,17 +145,17 @@ const ProformaFormP1 = ({
         <div className='layout__form--part1'>
             <div className='layout__form--part1-head'>
                 <div className='layout__form--head-info1'>
-                    <h3>Proforma From</h3>
+                    {/* <h3>Proforma From</h3> */}
                     <span style={{ fontWeight: 500 }}>{user?.clientInfo?.company_data?.company_name}</span>
                     <span>{user?.clientInfo?.company_data?.address_line_1}</span>
                     <span>{user?.clientInfo?.company_data?.address_line_2}</span>
                     <span>{user?.clientInfo?.company_data?.address_line_3}</span>
                     <span>{user?.clientInfo?.company_data?.state + ', ' + user?.clientInfo?.company_data?.country}</span>
-                    <span>TRN: {user?.clientInfo?.company_data?.trade_license_number}</span>
+                    <span>VAT TRN: {user?.clientInfo?.company_data?.trade_license_number}</span>
                 </div>
                 <div className='layout__form--head-info2'>
                     <div className='layout__form--head-info2-data'>
-                        <span className='required__field'>Proforma Number</span>
+                        <span className='required__field'>Proforma Invoice Number</span>
                         <input
                             name="proformaNumber"
                             type="text"
@@ -167,7 +167,7 @@ const ProformaFormP1 = ({
                         />
                     </div>
                     <div className='layout__form--head-info2-data'>
-                        <span className='required__field'>Proforma Date</span>
+                        <span className='required__field'>Proforma Invoice Date</span>
                         <input type="date"
                             name='proformaDate'
                             value={proformaDate}
@@ -192,7 +192,7 @@ const ProformaFormP1 = ({
             </div>
             <div className='layout__form--part2-head'>
                 <div className='layout__form--part2-head-customer'>
-                    <h3 className='required__field'>Proforma For</h3>
+                    <h3 className='required__field'>Billing Address</h3>
                     {
                         customerName ?
                             <div className='layout__form--customer-data'>
@@ -202,7 +202,7 @@ const ProformaFormP1 = ({
                                     {customer?.billing_address_line_2 && <span>{customer?.billing_address_line_2}</span>}
                                     {customer?.billing_address_line_3 && <span>{customer?.billing_address_line_3}</span>}
                                     <span>{customer?.billing_state + ', ' + customer?.billing_country}</span>
-                                    {customer?.trn && <span>TRN: {customer?.trn}</span>}
+                                    {customer?.trn && <span>VAT TRN: {customer?.trn}</span>}
                                 </div>
                                 <CloseOutlined className='layout__for--anticon-close'
                                     onClick={() => {

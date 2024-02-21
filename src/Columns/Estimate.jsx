@@ -5,6 +5,8 @@ import convertIcon from '../assets/Icons/convertIcon.svg';
 import editIcon from '../assets/Icons/editIcon.svg';
 import deleteIcon from '../assets/Icons/deleteIcon.svg';
 
+import moment from "moment";
+
 export default function estimateColumns(showModal, showConvertModal, navigate) {
     const columns = [
         {
@@ -12,6 +14,9 @@ export default function estimateColumns(showModal, showConvertModal, navigate) {
             dataIndex: 'estimate_date',
             key: 'estimate_date',
             width: 120,
+            render: (text, record) => (
+                <span>{moment(record.estimate_date).format('DD-MM-YYYY')}</span>
+            )
         },
         {
             title: 'Estimate No.',

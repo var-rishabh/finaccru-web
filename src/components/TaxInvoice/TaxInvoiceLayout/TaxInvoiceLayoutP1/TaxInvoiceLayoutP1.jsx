@@ -138,13 +138,13 @@ const TaxInvoiceFormP1 = ({
         <div className='layout__form--part1'>
             <div className='layout__form--part1-head'>
                 <div className='layout__form--head-info1'>
-                    <h3>Tax Invoice From</h3>
+                    {/* <h3>Tax Invoice From</h3> */}
                     <span style={{ fontWeight: 500 }}>{user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}</span>
                     <span>{user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1}</span>
                     <span>{user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2}</span>
                     <span>{user?.localInfo?.role ? client?.company_data?.address_line_3 : user?.clientInfo?.company_data?.address_line_3}</span>
                     <span>{user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state + ', ' + user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}</span>
-                    <span>TRN: {user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}</span>
+                    <span>VAT TRN: {user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}</span>
                 </div>
                 <div className='layout__form--head-info2'>
                     <div className='layout__form--head-info2-data'>
@@ -186,7 +186,7 @@ const TaxInvoiceFormP1 = ({
             </div>
             <div className='layout__form--part2-head'>
                 <div className='layout__form--part2-head-customer'>
-                    <h3 className='required__field'>Tax Invoice For</h3>
+                    <h3 className='required__field'>Billing Address</h3>
                     {
                         customerName ?
                             <div className='layout__form--customer-data'>
@@ -198,7 +198,7 @@ const TaxInvoiceFormP1 = ({
                                             {taxInvoice?.customer?.billing_address_line_2 && <span>{taxInvoice?.customer?.billing_address_line_2}</span>}
                                             {taxInvoice?.customer?.billing_address_line_3 && <span>{taxInvoice?.customer?.billing_address_line_3}</span>}
                                             {taxInvoice?.customer?.billing_state && <span>{taxInvoice?.customer?.billing_state + ', ' + taxInvoice?.customer?.billing_country}</span>}
-                                            {taxInvoice?.customer?.trn && <span>TRN: {taxInvoice?.customer?.trn}</span>}
+                                            {taxInvoice?.customer?.trn && <span>VAT TRN: {taxInvoice?.customer?.trn}</span>}
                                         </>
                                         :
                                         <>
@@ -206,7 +206,7 @@ const TaxInvoiceFormP1 = ({
                                             {customer?.billing_address_line_2 && <span>{customer?.billing_address_line_2}</span>}
                                             {customer?.billing_address_line_3 && <span>{customer?.billing_address_line_3}</span>}
                                             {customer?.billing_state && <span>{customer?.billing_state + ', ' + customer?.billing_country}</span>}
-                                            {customer?.trn && <span>TRN: {customer?.trn}</span>}
+                                            {customer?.trn && <span>VAT TRN: {customer?.trn}</span>}
                                         </>
                                     }
                                 </div>

@@ -33,7 +33,7 @@ import PurchaseReadContent from '../../../utils/PurchaseReadContent';
 import ViewHeader from '../../../Shared/ViewHeader/ViewHeader';
 import ViewFooter from '../../../Shared/ViewFooter/ViewFooter';
 import { approveDebitNote, getDebitNoteDetails, markDebitNoteVoid, submitDebitNoteForApproval } from '../../../Actions/DebitNote';
-
+import { setChatDocument } from '../../../Actions/Chat';
 const DebitNoteRead = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -167,7 +167,7 @@ const DebitNoteRead = () => {
                                         >Edit</a>
                                     </>
                     }
-                    <PdfDownload contents={contents} heading={"Debit Note"} />
+                    <PdfDownload contents={contents} heading={"Debit Note"} name={debitNote?.dn_number}/>
                 </div>
             </div>
             <div className="read__container">

@@ -57,10 +57,16 @@ import BillPaymentLayout from './components/BillPayment/BillPaymentLayout/BillPa
 import BillPaymentRead from './components/BillPayment/BillPaymentRead/BillPaymentRead';
 
 function getItem(label, icon, component, changecomponent, viewcomponent) {
+    let newKey = `/${label === 'Dashboard' ? '' : label.toLowerCase().split(' ').join('-')}`;
+    let newLabel = label;
+    if (newLabel === "Proforma") {
+        newKey = "/proforma";
+        newLabel = "Proforma Invoice";
+    }
     return {
-        key: `/${label === 'Dashboard' ? '' : label.toLowerCase().split(' ').join('-')}`,
+        key: newKey,
         icon,
-        label,
+        label: newLabel,
         component,
         viewcomponent,
         changecomponent
