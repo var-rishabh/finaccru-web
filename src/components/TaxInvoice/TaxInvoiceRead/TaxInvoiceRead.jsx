@@ -198,7 +198,7 @@ const TaxInvoiceReadLayout = () => {
                                         >Edit</a>
                                     </>
                     }
-                    <PdfDownload contents={contents} heading={"Tax Invoice"} />
+                    <PdfDownload contents={contents} heading={"Tax Invoice"} name={finalTaxInvoice?.ti_number} />
                 </div>
             </div>
             <div className="read__container">

@@ -5,19 +5,27 @@ import approveIcon from '../assets/Icons/approveIcon.svg';
 import editIcon from '../assets/Icons/editIcon.svg';
 import deleteIcon from '../assets/Icons/deleteIcon.svg';
 
+import moment from "moment";
+
 export default function billColumns(showModal, navigate, role = 0, client_id = 0, jr_id = 0) {
     const columns = [
         {
             title: 'Bill Date',
             dataIndex: 'bill_date',
             key: 'bill_date',
-            width: 120
+            width: 120,
+            render: (text, record) => (
+                <span>{moment(record.bill_date).format('DD-MM-YYYY')}</span>
+            )
         },
         {
             title: 'Expected Date',
             dataIndex: 'expected_delivery_date',
             key: 'expected_delivery_date',
-            width: 120
+            width: 120,
+            render: (text, record) => (
+                <span>{moment(record.expected_delivery_date).format('DD-MM-YYYY')}</span>
+            )
         },
         {
             title: 'Bill Number',

@@ -5,13 +5,18 @@ import convertIcon from '../assets/Icons/convertIcon.svg';
 import editIcon from '../assets/Icons/editIcon.svg';
 import deleteIcon from '../assets/Icons/deleteIcon.svg';
 
+import moment from "moment";
+
 export default function performaColumns(showModal, navigate) {
     const columns = [
         {
             title: 'PI Date',
             dataIndex: 'pi_date',
             key: 'pi_date',
-            width: 120
+            width: 120,
+            render: (text, record) => (
+                <span>{moment(record.pi_date).format('DD-MM-YYYY')}</span>
+            )
         },
         {
             title: 'PI Number',

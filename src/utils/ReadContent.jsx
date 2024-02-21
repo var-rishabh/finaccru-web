@@ -63,7 +63,7 @@ export default function ReadContent(title, mainData, user, currencies, taxRates,
             const taxItem = taxRates?.find((tax) => tax.tax_rate_id === item.tax_id);
             return {
                 component: LineItem,
-                height: item.description ? 50 : 35,
+                height: item.description ? 65 : 50,
                 props: {
                     styles: lineItemPdfStyles,
                     index: index,
@@ -116,7 +116,7 @@ export default function ReadContent(title, mainData, user, currencies, taxRates,
         contents[0].props.number = mainData?.ti_number;
         contents[0].props.date = mainData?.ti_date;
         contents[0].props.due_date = mainData?.due_date;
-    } else if (title === 'Proforma') {
+    } else if (title === 'Proforma Invoice') {
         contents[0].props.number = mainData?.pi_number;
         contents[0].props.date = mainData?.pi_date;
         contents[0].props.due_date = mainData?.due_date;

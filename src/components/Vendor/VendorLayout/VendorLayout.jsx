@@ -259,7 +259,7 @@ const VendorLayout = () => {
                                 {/* <span className="phone__error--span">{isPhoneError ? "Wrong Phone Number" : ""}</span> */}
                             </div>
                             <div className="create__vendor--input">
-                                <span>TRN Number</span>
+                                <span>VAT TRN Number</span>
                                 <input type="text" name="trnNumber" value={trnNumber} onChange={(e) => setTrnNumber(e.target.value)} />
                             </div>
                             <div className="create__vendor--input">

@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { getCustomerDetails, getShippingAddressList } from "../../../../Actions/Customer";
 import moment from "moment";
 
-
 const CustomerDetails = ({ customerId }) => {
     const dispatch = useDispatch();
     const { loading, customer, shippingAddresses } = useSelector(state => state.customerReducer);
@@ -39,7 +38,7 @@ const CustomerDetails = ({ customerId }) => {
                         <input value={customer?.mobile_number} disabled />
                     </div>
                     <div className="read__customer--input">
-                        <span>TRN Number</span>
+                        <span>VAT TRN Number</span>
                         <input value={customer?.trn} disabled />
                     </div>
                     <div className="read__customer--input">
@@ -48,7 +47,7 @@ const CustomerDetails = ({ customerId }) => {
                     </div>
                     <div className="read__customer--input">
                         <span>Opening Balance Date</span>
-                        <input value={moment(customer?.opening_balance_date).format('LL')} disabled />
+                        <input value={moment(customer?.opening_balance_date).format('DD-MM-YYYY')} disabled />
                     </div>
                 </div>
                 <div className="read__customer--right">

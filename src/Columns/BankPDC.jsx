@@ -4,6 +4,8 @@ import { EyeOutlined } from '@ant-design/icons';
 import editIcon from '../assets/Icons/editIcon.svg';
 import deleteIcon from '../assets/Icons/deleteIcon.svg';
 
+import moment from "moment";
+
 export default function bankPDCColumns(showModal, navigate) {
     const columns = [
         {
@@ -15,7 +17,10 @@ export default function bankPDCColumns(showModal, navigate) {
             title: 'Issue Date',
             dataIndex: 'issue_date',
             key: 'issue_date',
-            width: 120
+            width: 120,
+            render: (text, record) => (
+                <span>{record.issue_date ? moment(record.issue_date).format('DD-MM-YYYY') : ''}</span>
+            )
         },
         {
             title: 'Due Date',

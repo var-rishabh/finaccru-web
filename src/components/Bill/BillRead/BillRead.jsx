@@ -211,7 +211,7 @@ const BillRead = () => {
                                         Edit
                                     </a>
                     }
-                    <PdfDownload contents={contents} heading={"Bill"} />
+                    <PdfDownload contents={contents} heading={"Bill"} name={finalBill?.bill_number} />
                 </div>
             </div>
             <div className="read__container">

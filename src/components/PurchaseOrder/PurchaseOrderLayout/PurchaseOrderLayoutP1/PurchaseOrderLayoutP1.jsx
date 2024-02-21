@@ -146,13 +146,13 @@ const PurchaseOrderLayoutP1 = ({
         <div className='layout__form--part1'>
             <div className='layout__form--part1-head'>
                 <div className='layout__form--head-info1'>
-                    <h3>Purchase Order From</h3>
+                    {/* <h3>Purchase Order From</h3> */}
                     <span style={{ fontWeight: 500 }}>{user?.clientInfo?.company_data?.company_name}</span>
                     <span>{user?.clientInfo?.company_data?.address_line_1}</span>
                     <span>{user?.clientInfo?.company_data?.address_line_2}</span>
                     <span>{user?.clientInfo?.company_data?.address_line_3}</span>
                     <span>{user?.clientInfo?.company_data?.state + ', ' + user?.clientInfo?.company_data?.country}</span>
-                    <span>TRN: {user?.clientInfo?.company_data?.trade_license_number}</span>
+                    <span>VAT TRN: {user?.clientInfo?.company_data?.trade_license_number}</span>
                 </div>
                 <div className='layout__form--head-info2'>
                     <div className='layout__form--head-info2-data'>
@@ -211,7 +211,7 @@ const PurchaseOrderLayoutP1 = ({
             </div>
             <div className='layout__form--part2-head'>
                 <div className='layout__form--part2-head-customer'>
-                    <h3 className='required__field'>Purchase Order For</h3>
+                    <h3 className='required__field'>Billing Address</h3>
                     {
                         vendorName ?
                             <div className='layout__form--customer-data'>
@@ -221,7 +221,7 @@ const PurchaseOrderLayoutP1 = ({
                                     {vendor?.billing_address_line_2 && <span>{vendor?.billing_address_line_2}</span>}
                                     {vendor?.billing_address_line_3 && <span>{vendor?.billing_address_line_3}</span>}
                                     <span>{vendor?.billing_state + ', ' + vendor?.billing_country}</span>
-                                    {vendor?.trn && <span>TRN: {vendor?.trn}</span>}
+                                    {vendor?.trn && <span>VAT TRN: {vendor?.trn}</span>}
                                 </div>
                                 <CloseOutlined className='layout__for--anticon-close'
                                     onClick={() => {

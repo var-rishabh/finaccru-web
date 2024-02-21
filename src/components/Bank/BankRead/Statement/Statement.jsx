@@ -90,7 +90,7 @@ const BankStatement = ({ bank_id }) => {
                     />
                 </div>
                 <div className='read__customer--statements-header-download-btn'>
-                    <PdfDownload contents={contents} heading={""} />
+                    <PdfDownload contents={contents} heading={""} name={bank?.account_holder_name} />
                 </div>
             </div>
             <div className="read__customer-statement-container">

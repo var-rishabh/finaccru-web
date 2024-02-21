@@ -156,6 +156,13 @@ const CustomerLayout = () => {
         }
     };
 
+    const handleCustomerName = (e) => {
+        setCustomerName(e.target.value);
+        if (displayName === "" || displayName === customerName) {
+            setDisplayName(e.target.value);
+        }
+    }
+
     const handleSubmit = () => {
         if (phone !== "") {
             if (isPhoneError) {
@@ -164,6 +171,12 @@ const CustomerLayout = () => {
             }
             if ((countryPhoneCode + phone).length > 13) {
                 toast.error("Phone Number can have atmost 13 digits including country code.");
+                return;
+            }
+        }
+        if (trnNumber !== "") {
+            if (trnNumber.length < 15) {
+                toast.error("VAT TRN Number should contain 15 characters.");
                 return;
             }
         }
@@ -230,7 +243,7 @@ const CustomerLayout = () => {
                         <div className="create__customer--left">
                             <div className="create__customer--input">
                                 <span className="required__field">Customer Name</span>
-                                <input type="text" name="customerName" value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
+                                <input type="text" name="customerName" value={customerName} onChange={handleCustomerName} />
                             </div>
                             <div className="create__customer--input">
                                 <span>Contact Name</span>
@@ -260,8 +273,8 @@ const CustomerLayout = () => {
                                 {/* <span className="phone__error--span">{isPhoneError ? "Wrong Phone Number" : ""}</span> */}
                             </div>
                             <div className="create__customer--input">
-                                <span>TRN Number</span>
-                                <input type="text" name="trnNumber" value={trnNumber} onChange={(e) => setTrnNumber(e.target.value)} />
+                                <span>VAT TRN Number</span>
+                                <input type="text" name="trnNumber" minLength={15} value={trnNumber} onChange={(e) => setTrnNumber(e.target.value)} />
                             </div>
                             <div className="create__customer--input">
                                 <span>Opening Balance</span>

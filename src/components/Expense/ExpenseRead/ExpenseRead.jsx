@@ -9,6 +9,7 @@ import { readAccountantClient } from '../../../Actions/Accountant';
 import '../../../Styles/Read.css';
 import backButton from "../../../assets/Icons/back.svg"
 
+import moment from "moment";
 import Loader from '../../Loader/Loader';
 import ViewHeader from '../../../Shared/ViewHeader/ViewHeader';
 import ViewFooter from '../../../Shared/ViewFooter/ViewFooter';
@@ -60,7 +61,7 @@ const ExpenseRead = () => {
                         <form className='expense__form'>
                             <div className="create__expense--input">
                                 <span>Expense Date</span>
-                                <input value={expense?.expense_date} disabled />
+                                <input value={moment(expense?.expense_date).format("DD-MM-YYYY")} disabled />
                             </div>
                             <div className="create__expense--input">
                                 <span>Expense Account</span>

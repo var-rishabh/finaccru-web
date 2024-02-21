@@ -188,7 +188,7 @@ const TaxInvoice = () => {
                             handleCancelCreateTax();
                             dispatch(getExtractedTaxInvoiceList());
                         }}>
-                            Create By File &nbsp;
+                            Submit &nbsp;
                             <ArrowRightOutlined />
                         </button>
                     </form>

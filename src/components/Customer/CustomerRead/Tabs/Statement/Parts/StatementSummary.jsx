@@ -6,8 +6,8 @@ const StatementSummary = ({ styles, start_date, end_date, opening_balance, invoi
         <View style={styles.main}>
             <View style={styles.mainSummary}>
                 <Text style={styles.summaryHeading}>Statement Summary</Text>
-                <Text style={styles.summarySubHeading}>From {moment(start_date).format('LL')}</Text>
-                <Text style={styles.summarySubHeading}>To {moment(end_date).format('LL')}</Text>
+                <Text style={styles.summarySubHeading}>From {moment(start_date).format('DD-MM-YYYY')}</Text>
+                <Text style={styles.summarySubHeading}>To {moment(end_date).format('DD-MM-YYYY')}</Text>
             </View>
             <View style={styles.summaryInfo}>
                 <View style={styles.summaryInfoBox}>

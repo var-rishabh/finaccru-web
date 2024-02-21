@@ -6,7 +6,7 @@ const PaymentFor = ({ styles, title, currency_abv, customer_name, billing_addres
             <View style={styles.mainLeft}>
                 <View style={styles.mainLeftHeading}>
                     <Text>
-                        {title} For
+                        Billing Address
                     </Text>
                 </View>
                 <View style={styles.mainLeftData}>
@@ -15,7 +15,7 @@ const PaymentFor = ({ styles, title, currency_abv, customer_name, billing_addres
                     {billing_address_line_2 && <Text>{billing_address_line_2}</Text>}
                     {billing_address_line_3 && <Text>{billing_address_line_3}</Text>}
                     <Text>{billing_state + ', ' + billing_country}</Text>
-                    {trn && <Text>TRN: {trn}</Text>}
+                    {trn && <Text>VAT TRN: {trn}</Text>}
                 </View>
             </View>
             <View style={styles.mainMiddle}>

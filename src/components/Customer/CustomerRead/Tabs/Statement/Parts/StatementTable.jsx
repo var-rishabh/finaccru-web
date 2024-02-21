@@ -1,3 +1,5 @@
+import moment from "moment";
+
 import { View, Text} from '@react-pdf/renderer'
 
 const StatementTable = ({ styles, transactions }) => {
@@ -15,7 +17,7 @@ const StatementTable = ({ styles, transactions }) => {
                 {transactions?.map((transaction, index) => (
                     <View key={index} style={styles.tableRow}>
                         <Text style={styles.tableRowCellLeft}>
-                            {transaction.date}
+                            {moment(transaction.date).format('DD-MM-YYYY')}
                         </Text>
                         <Text style={styles.tableRowCellLeft}>
                             {transaction.type}

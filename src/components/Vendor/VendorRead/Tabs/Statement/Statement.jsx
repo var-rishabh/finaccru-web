@@ -90,7 +90,7 @@ const VendorStatement = ({ vendor_id }) => {
                     />
                 </div>
                 <div className='read__vendor--statements-header-download-btn'>
-                    <PdfDownload contents={contents} heading={""} />
+                    <PdfDownload contents={contents} heading={""} name={vendor?.vendor_name} />
                 </div>
             </div>
             <div className="read__vendor-statement-container">

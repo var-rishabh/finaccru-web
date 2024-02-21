@@ -4,6 +4,8 @@ import { EyeOutlined, FileOutlined } from '@ant-design/icons';
 // import deleteIcon from '../assets/Icons/deleteIcon.svg';
 import editIcon from '../assets/Icons/editIcon.svg';
 
+import moment from "moment";
+
 export default function extractedTaxInvoiceColumns(showModal, navigate, role = 0, client_id = 0, jr_id = 0) {
     const columns = [
         {
@@ -16,7 +18,10 @@ export default function extractedTaxInvoiceColumns(showModal, navigate, role = 0
             title: 'TI Date',
             dataIndex: 'ti_date',
             key: 'ti_date',
-            width: 120
+            width: 120,
+            render: (text, record) => (
+                <span>{moment(record.ti_date).format('DD-MM-YYYY')}</span>
+            )
         },
         {
             title: 'TI Number',

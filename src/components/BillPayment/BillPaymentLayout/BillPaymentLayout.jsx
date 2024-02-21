@@ -203,13 +203,13 @@ const BillPaymentLayout = () => {
                         <div className='payment__form--part1'>
                             <div className='payment__form--part1-head'>
                                 <div className='payment__form--head-info1'>
-                                    <h3>Bill Payment From</h3>
+                                    {/* <h3>Bill Payment From</h3> */}
                                     <span style={{ fontWeight: 500 }}>{user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}</span>
                                     <span>{user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1}</span>
                                     <span>{user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2}</span>
                                     <span>{user?.localInfo?.role ? client?.company_data?.address_line_3 : user?.clientInfo?.company_data?.address_line_3}</span>
                                     <span>{user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state + ', ' + user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}</span>
-                                    <span>TRN: {user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}</span>
+                                    <span>VAT TRN: {user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}</span>
                                 </div>
                                 <div className='payment__form--head-info2'>
                                     <div className='payment__form--head-info2-data'>
@@ -238,7 +238,7 @@ const BillPaymentLayout = () => {
                             </div>
                             <div className='payment__form--part2-head'>
                                 <div className='payment__form--part2-head-customer'>
-                                    <h3 className='required__field'>Bill Payment For</h3>
+                                    <h3 className='required__field'>Billing Address</h3>
                                     {
                                         vendorName ?
                                             <div className='payment__form--customer-data'>
@@ -250,7 +250,7 @@ const BillPaymentLayout = () => {
                                                             {billPayment?.vendor?.billing_address_line_2 && <span>{billPayment?.vendor?.billing_address_line_2}</span>}
                                                             {billPayment?.vendor?.billing_address_line_3 && <span>{billPayment?.vendor?.billing_address_line_3}</span>}
                                                             {billPayment?.vendor?.billing_state && <span>{billPayment?.vendor?.billing_state + ', ' + billPayment?.vendor?.billing_country}</span>}
-                                                            {billPayment?.vendor?.trn && <span>TRN: {billPayment?.vendor?.trn}</span>}
+                                                            {billPayment?.vendor?.trn && <span>VAT TRN: {billPayment?.vendor?.trn}</span>}
                                                         </>
                                                         :
                                                         <>
@@ -258,7 +258,7 @@ const BillPaymentLayout = () => {
                                                             {vendor?.billing_address_line_2 && <span>{vendor?.billing_address_line_2}</span>}
                                                             {vendor?.billing_address_line_3 && <span>{vendor?.billing_address_line_3}</span>}
                                                             {vendor?.billing_state && <span>{vendor?.billing_state + ', ' + vendor?.billing_country}</span>}
-                                                            {vendor?.trn && <span>TRN: {vendor?.trn}</span>}
+                                                            {vendor?.trn && <span>VAT TRN: {vendor?.trn}</span>}
                                                         </>
                                                     }
                                                 </div>

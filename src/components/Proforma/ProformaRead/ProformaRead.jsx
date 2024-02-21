@@ -94,14 +94,14 @@ const ProformaReadLayout = () => {
     //     }
     // }, [dispatch, proforma]);
 
-    const contents = ReadContent("Proforma", proforma, user, currencies, taxRates, itemTax, itemTotal, subTotal, discount, tax, total, groupedItems);
+    const contents = ReadContent("Proforma Invoice", proforma, user, currencies, taxRates, itemTax, itemTotal, subTotal, discount, tax, total, groupedItems);
 
     return (
         <>
             <div className='read__header'>
                 <div className='read__header--left'>
                     <img src={backButton} alt='back' className='read__header--back-btn' onClick={() => navigate("/proforma")} />
-                    <h1 className='read__header--title'> Proformas List </h1>
+                    <h1 className='read__header--title'> Proforma Invoices List </h1>
                 </div>
                 <div className='read__header--right'>
                     {
@@ -124,15 +124,15 @@ const ProformaReadLayout = () => {
                             proforma?.pi_status === "Void" ? "" :
                                 <a className='read__header--btn1' onClick={() => navigate(`/proforma/edit/${proforma?.pi_id}`)}>Edit</a>
                     }
-                    <PdfDownload contents={contents} heading={"Proforma"} />
+                    <PdfDownload contents={contents} heading={"Proforma Invoice"} name={proforma?.pi_number} />
                 </div>
             </div>
             <div className="read__container">
                 {loading ? <Loader /> :
                     <div className="read--main" id="read--main">
-                        <ViewHeader title={"Proforma"} />
+                        <ViewHeader title={"Proforma Invoice"} />
                         <ReadHead
-                            title={"Proforma"}
+                            title={"Proforma Invoice"}
                             styles={headStyles}
                             address_line_1={user?.clientInfo?.company_data?.address_line_1}
                             address_line_2={user?.clientInfo?.company_data?.address_line_2}
@@ -143,7 +143,7 @@ const ProformaReadLayout = () => {
                             trade_license_number={user?.clientInfo?.company_data?.trade_license_number}
                             number={proforma?.pi_number}
                             date={proforma?.pi_date}
-                            valid_till={proforma?.valid_till}
+                            due_date={proforma?.due_date}
                             reference={proforma?.reference}
                         />
                         <ReadFor

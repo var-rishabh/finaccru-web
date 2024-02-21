@@ -22,7 +22,7 @@ const StatementHead = ({ styles, bank, user }) => {
                     {user?.company_data?.address_line_2 && <Text>{user?.company_data?.address_line_2}</Text>}
                     {user?.company_data?.address_line_3 && <Text>{user?.company_data?.address_line_3}</Text>}
                     <Text>{user?.company_data?.state + ', ' + user?.company_data?.country}</Text>
-                    {user?.company_data?.trade_license_number && <Text>TRN: {user?.company_data?.trade_license_number}</Text>}
+                    {user?.company_data?.trade_license_number && <Text>VAT TRN: {user?.company_data?.trade_license_number}</Text>}
                 </View>
             </View>
         </View>

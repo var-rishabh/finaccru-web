@@ -167,7 +167,7 @@ const PaymentReadLayout = () => {
                                         >Edit</a>
                                     </>
                     }
-                    <PdfDownload contents={contents} heading={"Payment"} />
+                    <PdfDownload contents={contents} heading={"Payment"} name={payment?.receipt_number} />
                 </div>
             </div>
             <div className="read__payment__container">
