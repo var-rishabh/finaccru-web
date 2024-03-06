@@ -49,7 +49,7 @@ const BillPaymentReadLayout = () => {
     }, [dispatch, payment_id, user?.localInfo?.role, client_id]);
 
     useEffect(() => {
-        dispatch(setChatDocument({ id: billPayment?.payment_id, number: billPayment?.payment_number}));
+        dispatch(setChatDocument({ id: billPayment?.payment_id, number: billPayment?.payment_number }));
         return () => {
             dispatch({ type: "RemoveChatDocument" });
         }
@@ -87,7 +87,7 @@ const BillPaymentReadLayout = () => {
             props: {
                 styles: forPdfStyles,
                 title: "Bill Payment",
-                customer_name: billPayment?.vendor?.vendor_name,
+                vendor_name: billPayment?.vendor?.vendor_name,
                 billing_address_line_1: billPayment?.vendor?.billing_address_line_1,
                 billing_address_line_2: billPayment?.vendor?.billing_address_line_2,
                 billing_address_line_3: billPayment?.vendor?.billing_address_line_3,
@@ -167,14 +167,16 @@ const BillPaymentReadLayout = () => {
                                         >Edit</a>
                                     </>
                     }
-                    <PdfDownload contents={contents} heading={"Bill Payment"} name={billPayment?.payment_number} />
+                    <PdfDownload contents={contents} heading={"Bill Payment"} name={billPayment?.payment_number} logo={user?.localInfo?.role ? client?.company_logo_url : user?.clientInfo?.company_logo_url} />
                 </div>
             </div>
             <div className="read__payment__container">
                 {loading ? <Loader /> :
                     <div className="read__payment--main" id="read__payment--main">
                         <div className="read__payment--top">
-                            <img style={{ width: "9rem" }} src={logo} alt="logo" />
+                            <div style={{ width: "9rem", height: "5rem", overflow: "hidden" }}>
+                                <img style={{ width: "max-content", height: "100%" }} src={user?.localInfo?.role ? client?.company_logo_url : user?.clientInfo?.company_logo_url} alt="logo" />
+                            </div>
                             <h1 className='read__payment--head'>Bill Payment</h1>
                         </div>
                         <PaymentHead styles={headStyles} title="Bill Payment"
@@ -184,10 +186,11 @@ const BillPaymentReadLayout = () => {
                             company_name={user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}
                             country={user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}
                             state={user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state}
-                            trade_license_number={user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}
+                            vat_trn={user?.localInfo?.role ? client?.company_data?.vat_trn : user?.clientInfo?.company_data?.vat_trn}
+                            corporate_tax_trn={user?.localInfo?.role ? client?.company_data?.corporate_tax_trn : user?.clientInfo?.company_data?.corporate_tax_trn}
                             payment_number={billPayment?.payment_number} payment_date={billPayment?.payment_date}
                         />
-                        <PaymentFor styles={forStyles} title="Bill Payment" customer_name={billPayment?.vendor?.vendor_name} billing_address_line_1={billPayment?.vendor?.billing_address_line_1} billing_address_line_2={billPayment?.vendor?.billing_address_line_2} billing_address_line_3={billPayment?.vendor?.billing_address_line_3} billing_state={billPayment?.vendor?.billing_state} billing_country={billPayment?.vendor?.billing_country} trn={billPayment?.vendor?.trn}
+                        <PaymentFor styles={forStyles} title="Bill Payment" vendor_name={billPayment?.vendor?.vendor_name} billing_address_line_1={billPayment?.vendor?.billing_address_line_1} billing_address_line_2={billPayment?.vendor?.billing_address_line_2} billing_address_line_3={billPayment?.vendor?.billing_address_line_3} billing_state={billPayment?.vendor?.billing_state} billing_country={billPayment?.vendor?.billing_country} trn={billPayment?.vendor?.trn}
                             invoice_mappings={billPayment?.bill_mappings || []} total_amount={billPayment?.total_amount}
                             amount_in_words={toWords.convert(billPayment?.total_amount ?? 0)}
                             currency_abv={currencies?.find((currency) => currency.currency_id === billPayment?.currency_id)?.currency_abv}

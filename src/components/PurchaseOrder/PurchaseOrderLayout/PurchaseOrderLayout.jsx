@@ -38,15 +38,16 @@ const PurchaseOrderLayout = () => {
     const [items, setItems] = useState([{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
     const [notes, setNotes] = useState(null);
 
-    const [shippingAddress1, setShippingAddress1] = useState('');
+    const [shippingAddress1, setShippingAddress1] = useState(null);
     const [shippingAddress2, setShippingAddress2] = useState(null);
     const [shippingAddress3, setShippingAddress3] = useState(null);
-    const [shippingCountry, setShippingCountry] = useState('');
-    const [shippingState, setShippingState] = useState('');
+    const [shippingCountry, setShippingCountry] = useState(null);
+    const [shippingState, setShippingState] = useState(null);
+    const [sameAsBillingAddress, setSameAsBillingAddress] = useState(false);
 
     const isAdd = window.location.pathname.split('/')[2] === 'create';
 
-    // const { user } = useSelector(state => state.userReducer);
+    const { user } = useSelector(state => state.userReducer);
     const { currencies } = useSelector(state => state.onboardingReducer);
     const { loading: purchaseOrderLoading, purchaseOrder, number } = useSelector(state => state.purchaseOrderReducer);
 
@@ -108,7 +109,7 @@ const PurchaseOrderLayout = () => {
             toast.error("Currency conversion rate should be greater than 0.");
             return;
         }
-        if (shippingAddress1 === "" || shippingCountry === "" || shippingState === "") {
+        if (!sameAsBillingAddress && shippingAddress1 === null) {
             toast.error("Please select shipping details.");
             return;
         }
@@ -141,11 +142,11 @@ const PurchaseOrderLayout = () => {
             currency_id: currencyId,
             currency_conversion_rate: currencyConversionRate,
             line_items: items,
-            shipping_address_line_1: shippingAddress1,
-            shipping_address_line_2: shippingAddress2 === "" ? null : shippingAddress2,
-            shipping_address_line_3: shippingAddress3 === "" ? null : shippingAddress3,
-            shipping_state: shippingState,
-            shipping_country: shippingCountry,
+            shipping_address_line_1: sameAsBillingAddress ? null : shippingAddress1,
+            shipping_address_line_2: sameAsBillingAddress ? null : shippingAddress2,
+            shipping_address_line_3: sameAsBillingAddress ? null : shippingAddress3,
+            shipping_state: sameAsBillingAddress ? null : shippingState,
+            shipping_country: sameAsBillingAddress ? null : shippingCountry,
             notes: notes === "" ? null : notes,
         }
         if (isAdd) {
@@ -167,7 +168,9 @@ const PurchaseOrderLayout = () => {
             <div className="layout__container">
                 <div className="create__layout--main">
                     <div className="create__layout--top">
-                        <img style={{ width: "9rem" }} src={logo} alt="logo" />
+                        <div style={{ width: "9rem", height: "5rem", overflow: "hidden" }}>
+                            <img style={{ width: "max-content", height: "100%" }} src={user?.clientInfo?.company_logo_url} alt="logo" />
+                        </div>
                         <h1 className='create__layout--head'>Purchase Order</h1>
                     </div>
                     <form>
@@ -185,6 +188,7 @@ const PurchaseOrderLayout = () => {
                             shippingAddress3={shippingAddress3} setShippingAddress3={setShippingAddress3}
                             shippingCountry={shippingCountry} setShippingCountry={setShippingCountry}
                             shippingState={shippingState} setShippingState={setShippingState}
+                            sameAsBillingAddress={sameAsBillingAddress} setSameAsBillingAddress={setSameAsBillingAddress}
                         />
                         <PurchaseOrderLayoutP2
                             currency={currency}

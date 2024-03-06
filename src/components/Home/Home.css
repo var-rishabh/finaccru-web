@@ -112,6 +112,7 @@ li.ant-menu-item-selected>.ant-menu-item-icon {
   gap: 0.625rem;
   margin: 1rem 0 0.5rem 2rem;
   width: 100%;
+  cursor: pointer;
 }
 
 .settings__item>img {

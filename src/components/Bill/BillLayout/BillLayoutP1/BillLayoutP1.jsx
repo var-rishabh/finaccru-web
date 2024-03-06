@@ -23,7 +23,8 @@ const BillLayoutP1 = ({
     currencyConversionRate, setCurrencyConversionRate,
     subject, setSubject, shippingAddress1, setShippingAddress1,
     shippingAddress2, setShippingAddress2, shippingAddress3, setShippingAddress3,
-    shippingState, setShippingState, shippingCountry, setShippingCountry, extracted
+    shippingState, setShippingState, shippingCountry, setShippingCountry, extracted,
+    sameAsBillingAddress, setSameAsBillingAddress
 }) => {
     const filterOption = (input, option) => {
         return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
@@ -159,10 +160,29 @@ const BillLayoutP1 = ({
                     {/* <h3>Bill From</h3> */}
                     <span style={{ fontWeight: 500 }}>{user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}</span>
                     <span>{user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1}</span>
-                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2}</span>
-                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_3 : user?.clientInfo?.company_data?.address_line_3}</span>
-                    <span>{user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state + ', ' + user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}</span>
-                    <span>VAT TRN: {user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}</span>
+                    {
+                        user?.localInfo?.role ?
+                            <>
+                                {client?.company_data?.address_line_2 && <span>{client?.company_data?.address_line_2}</span>}
+                                {client?.company_data?.address_line_3 && <span>{client?.company_data?.address_line_3}</span>}
+                            </> :
+                            <>
+                                {user?.clientInfo?.company_data?.address_line_2 && <span>{user?.clientInfo?.company_data?.address_line_2}</span>}
+                                {user?.clientInfo?.company_data?.address_line_3 && <span>{user?.clientInfo?.company_data?.address_line_3}</span>}
+                            </>
+                    }
+                    <span>{user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state}{', '} {user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}</span>
+                    {
+                        user?.localInfo?.role ?
+                            <>
+                                {client?.company_data?.vat_trn && <span>VAT TRN: {client?.company_data?.vat_trn}</span>}
+                                {client?.company_data?.corporate_tax_trn && <span>Corporate Tax TRN: {client?.company_data?.corporate_tax_trn}</span>}
+                            </> :
+                            <>
+                                {user?.clientInfo?.company_data?.vat_trn && <span>VAT TRN: {user?.clientInfo?.company_data?.vat_trn}</span>}
+                                {user?.clientInfo?.company_data?.corporate_tax_trn && <span>Corporate Tax TRN: {user?.clientInfo?.company_data?.corporate_tax_trn}</span>}
+                            </>
+                    }
                 </div>
                 <div className='layout__form--head-info2'>
                     <div className='layout__form--head-info2-data'>
@@ -249,6 +269,12 @@ const BillLayoutP1 = ({
                                     onClick={() => {
                                         setVendorName(''); setVendorId(null); setShippingId(null);
                                         setShippingAddress1(null);
+                                        setShippingAddress2(null);
+                                        setShippingAddress3(null);
+                                        setShippingState(null);
+                                        setShippingCountry(null);
+                                        setShippingLabel(null);
+                                        setSameAsBillingAddress(false);
                                         setVendorKeyword("");
                                     }}
                                 />}
@@ -263,6 +289,22 @@ const BillLayoutP1 = ({
                         vendorId ?
                             <>
                                 <h3 className='required__field'>Shipping Address</h3>
+                                {
+                                    shippingAddress1 === null ?
+                                        <div style={{ marginTop: "1rem" }} className='layout--details__modal--checkbox'>
+                                            <input type="checkbox"
+                                                value={sameAsBillingAddress}
+                                                checked={sameAsBillingAddress}
+                                                onChange={(e) => setSameAsBillingAddress(e.target.checked)}
+                                            />
+                                            <span
+                                                style={{
+                                                    opacity: sameAsBillingAddress ? '1' : '0.5'
+                                                }}
+                                            >
+                                                Use Same as Billing Address</span>
+                                        </div> : ""
+                                }
                                 {
                                     shippingId || shippingAddress1 ?
                                         <div className='layout__form--customer-data'>
@@ -280,12 +322,14 @@ const BillLayoutP1 = ({
                                                     setShippingAddress2(null); setShippingAddress3(null);
                                                     setShippingState(null); setShippingCountry(null);
                                                     setShippingLabel(null);
+                                                    setSameAsBillingAddress(false);
                                                     dispatch(getVendorShippingAddressList(vendorId, user?.localInfo?.role, client_id));
                                                 }}
                                             />}
                                         </div>
                                         : <Select
                                             // showSearch
+                                            disabled={sameAsBillingAddress}
                                             placeholder='Select Shipping Address'
                                             optionFilterProp='children'
                                             value={shippingId}

@@ -43,17 +43,18 @@ const TaxInvoiceLayout = () => {
     const [isSetDefaultTncCustomer, setIsSetDefaultTncCustomer] = useState(false);
     const [isSetDefaultTncClient, setIsSetDefaultTncClient] = useState(false);
     const [items, setItems] = useState([{ item_name: '', unit: '', qty: null, rate: null, discount: 0, is_percentage_discount: true, tax_id: 1, description: null }]);
-    const [shippingAddress1, setShippingAddress1] = useState('');
+    const [shippingAddress1, setShippingAddress1] = useState(null);
     const [shippingAddress2, setShippingAddress2] = useState(null);
     const [shippingAddress3, setShippingAddress3] = useState(null);
-    const [shippingCountry, setShippingCountry] = useState('');
-    const [shippingState, setShippingState] = useState('');
+    const [shippingCountry, setShippingCountry] = useState(null);
+    const [shippingState, setShippingState] = useState(null);
     const [currency, setCurrency] = useState('AED');
     const [attachmentUrl, setAttachmentUrl] = useState(null);
     const [paymentReceivedValue, setPaymentReceivedValue] = useState(null);
     const [bankId, setBankId] = useState(null);
     const [paymentList, setPaymentList] = useState([]);
     const [creditNoteList, setCreditNoteList] = useState([]);
+    const [sameAsBillingAddress, setSameAsBillingAddress] = useState(false);
 
     const setPaymentOptionsNull = () => {
         setPaymentReceivedValue(null);
@@ -63,6 +64,7 @@ const TaxInvoiceLayout = () => {
     }
 
     const { user } = useSelector(state => state.userReducer);
+    const { client } = useSelector(state => state.accountantReducer);
 
     const type = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[6] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[4] : window.location.pathname.split('/')[2];
     const ti_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
@@ -255,7 +257,7 @@ const TaxInvoiceLayout = () => {
             toast.error("Please select customer.");
             return;
         }
-        if (shippingAddress1 === '' || shippingCountry === '' || shippingState === '') {
+        if (!sameAsBillingAddress && shippingAddress1 === null) {
             toast.error("Please select shipping details.");
             return;
         }
@@ -300,11 +302,11 @@ const TaxInvoiceLayout = () => {
             currency_id: currencyId,
             currency_conversion_rate: currencyConversionRate,
             line_items: items,
-            shipping_address_line_1: shippingAddress1,
-            shipping_address_line_2: shippingAddress2 === "" ? null : shippingAddress2,
-            shipping_address_line_3: shippingAddress3 === "" ? null : shippingAddress3,
-            shipping_state: shippingState,
-            shipping_country: shippingCountry,
+            shipping_address_line_1: sameAsBillingAddress ? null : shippingAddress1,
+            shipping_address_line_2: sameAsBillingAddress ? null : shippingAddress2,
+            shipping_address_line_3: sameAsBillingAddress ? null : shippingAddress3,
+            shipping_state: sameAsBillingAddress ? null : shippingState,
+            shipping_country: sameAsBillingAddress ? null : shippingCountry,
             attachment_url: attachmentUrl === "" ? null : attachmentUrl,
             payment: bankId === null ? null : {
                 bank_id: bankId,
@@ -354,7 +356,9 @@ const TaxInvoiceLayout = () => {
             <div className="layout__container">
                 <div className="create__layout--main">
                     <div className="create__layout--top">
-                        <img style={{ width: "9rem" }} src={logo} alt="logo" />
+                        <div style={{ width: "9rem", height: "5rem", overflow: "hidden" }}>
+                            <img style={{ width: "max-content", height: "100%" }} src={user?.localInfo?.role ? client?.company_logo_url : user?.clientInfo?.company_logo_url} alt="logo" />
+                        </div>
                         <h1 className='create__layout--head'>Tax Invoice</h1>
                     </div>
                     <form>
@@ -374,6 +378,7 @@ const TaxInvoiceLayout = () => {
                             termsAndConditions={termsAndConditions} setTermsAndConditions={setTermsAndConditions}
                             convert={convert} setPaymentOptionsNull={setPaymentOptionsNull}
                             extracted={extracted}
+                            sameAsBillingAddress={sameAsBillingAddress} setSameAsBillingAddress={setSameAsBillingAddress}
                         />
                         <TaxInvoiceLayoutP2 items={items} setItems={setItems} currency={currency} currencies={currencies}
                             termsAndConditions={termsAndConditions} setTermsAndConditions={setTermsAndConditions}

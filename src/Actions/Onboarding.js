@@ -79,10 +79,14 @@ export const uploadDocuments = (data) => async (dispatch) => {
             },
         };
         const form = new FormData();
+        form.append("logo_file", data.logo_file);
         form.append("trade_license_file", data.trade_license_file);
         form.append("moa_file", data.moa_file);
         form.append("emirates_id_file", data.emirates_id_file);
         form.append("passport_file", data.passport_file);
+        if (data.corporate_tax_certificate_file) {
+            form.append("corporate_tax_certificate_file", data.corporate_tax_certificate_file);
+        }
         if (data.vat_file) {
             form.append("vat_file", data.vat_file);
         }
@@ -90,7 +94,7 @@ export const uploadDocuments = (data) => async (dispatch) => {
         toast.success("Documents Uploaded Successfully! Redirecting to Home Page");
         dispatch({ type: "LoadUserRequest" })
         window.location.href = "/";
-        dispatch({ type: "UploadDocumentsSuccess", payload: response.data });;
+        dispatch({ type: "UploadDocumentsSuccess", payload: response.data });
     } catch (error) {
         console.log(error);
         if (error.response?.status === 422) {

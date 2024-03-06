@@ -124,15 +124,15 @@ const ProformaReadLayout = () => {
                             proforma?.pi_status === "Void" ? "" :
                                 <a className='read__header--btn1' onClick={() => navigate(`/proforma/edit/${proforma?.pi_id}`)}>Edit</a>
                     }
-                    <PdfDownload contents={contents} heading={"Proforma Invoice"} name={proforma?.pi_number} />
+                    <PdfDownload contents={contents} heading={"Proforma Invoice"} name={proforma?.pi_number} logo={user?.clientInfo?.company_logo_url}/>
                 </div>
             </div>
             <div className="read__container">
                 {loading ? <Loader /> :
                     <div className="read--main" id="read--main">
-                        <ViewHeader title={"Proforma Invoice"} />
+                        <ViewHeader title={"Proforma Invoice"} logo={user?.clientInfo?.company_logo_url} />
                         <ReadHead
-                            title={"Proforma Invoice"}
+                            title={"PI"}
                             styles={headStyles}
                             address_line_1={user?.clientInfo?.company_data?.address_line_1}
                             address_line_2={user?.clientInfo?.company_data?.address_line_2}
@@ -140,7 +140,8 @@ const ProformaReadLayout = () => {
                             company_name={user?.clientInfo?.company_data?.company_name}
                             country={user?.clientInfo?.company_data?.country}
                             state={user?.clientInfo?.company_data?.state}
-                            trade_license_number={user?.clientInfo?.company_data?.trade_license_number}
+                            vat_trn={user?.clientInfo?.company_data?.vat_trn}
+                            corporate_tax_trn={user?.clientInfo?.company_data?.corporate_tax_trn}
                             number={proforma?.pi_number}
                             date={proforma?.pi_date}
                             due_date={proforma?.due_date}

@@ -30,7 +30,7 @@ const BankRead = () => {
             children: <>
                 <div className="read__container">
                     <div className="read--main2" id="read--main">
-                        <ViewHeader title={type} />
+                        <ViewHeader title={type} logo={user?.clientInfo?.company_logo_url}/>
                         {
                             type == "bank" ?
                                 <BankingRead /> : <PDCRead />

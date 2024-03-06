@@ -58,14 +58,16 @@ const BillLayout = () => {
     const [paymentList, setPaymentList] = useState([]);
     const [debitNoteList, setDebitNoteList] = useState([]);
 
-    const [shippingAddress1, setShippingAddress1] = useState('');
+    const [shippingAddress1, setShippingAddress1] = useState(null);
     const [shippingAddress2, setShippingAddress2] = useState(null);
     const [shippingAddress3, setShippingAddress3] = useState(null);
-    const [shippingCountry, setShippingCountry] = useState('');
-    const [shippingState, setShippingState] = useState('');
-
+    const [shippingCountry, setShippingCountry] = useState(null);
+    const [shippingState, setShippingState] = useState(null);
+    const [sameAsBillingAddress, setSameAsBillingAddress] = useState(false);
 
     const { user } = useSelector(state => state.userReducer);
+    const { client } = useSelector(state => state.accountantReducer);
+
     const { currencies } = useSelector(state => state.onboardingReducer);
     const { loading: billLoading, bill, number, extractedBill } = useSelector(state => state.billReducer);
     const { purchaseOrder } = useSelector(state => state.purchaseOrderReducer);
@@ -244,7 +246,7 @@ const BillLayout = () => {
             toast.error("Please select vendor.");
             return;
         }
-        if (shippingAddress1 === "" || shippingCountry === "" || shippingState === "") {
+        if (!sameAsBillingAddress && shippingAddress1 === null) {
             toast.error("Please select shipping details.");
             return;
         }
@@ -282,11 +284,11 @@ const BillLayout = () => {
             currency_id: currencyId,
             currency_conversion_rate: currencyConversionRate,
             line_items: items,
-            shipping_address_line_1: shippingAddress1,
-            shipping_address_line_2: shippingAddress2 === "" ? null : shippingAddress2,
-            shipping_address_line_3: shippingAddress3 === "" ? null : shippingAddress3,
-            shipping_state: shippingState,
-            shipping_country: shippingCountry,
+            shipping_address_line_1: sameAsBillingAddress ? null : shippingAddress1,
+            shipping_address_line_2: sameAsBillingAddress ? null : shippingAddress2,
+            shipping_address_line_3: sameAsBillingAddress ? null : shippingAddress3,
+            shipping_state: sameAsBillingAddress ? null : shippingState,
+            shipping_country: sameAsBillingAddress ? null : shippingCountry,
             notes: notes === "" ? null : notes,
             attachment_url: attachmentUrl === "" ? null : attachmentUrl,
             payment: bankId === null ? null : {
@@ -334,7 +336,9 @@ const BillLayout = () => {
             <div className="layout__container">
                 <div className="create__layout--main">
                     <div className="create__layout--top">
-                        <img style={{ width: "9rem" }} src={logo} alt="logo" />
+                        <div style={{ width: "9rem", height: "5rem", overflow: "hidden" }}>
+                            <img style={{ width: "max-content", height: "100%" }} src={user?.localInfo?.role ? client?.company_logo_url : user?.clientInfo?.company_logo_url} alt="logo" />
+                        </div>
                         <h1 className='create__layout--head'>Bill</h1>
                     </div>
                     <form>
@@ -354,6 +358,7 @@ const BillLayout = () => {
                             shippingCountry={shippingCountry} setShippingCountry={setShippingCountry}
                             shippingState={shippingState} setShippingState={setShippingState}
                             extracted={extracted}
+                            sameAsBillingAddress={sameAsBillingAddress} setSameAsBillingAddress={setSameAsBillingAddress}
                         />
                         <BillLayoutP2
                             currency={currency} currencies={currencies} items={items} setItems={setItems}
@@ -386,8 +391,8 @@ const BillLayout = () => {
                 extracted &&
                 <div className='pdf__viewer-main'>
                     <div className="pdf__viewer">
-                        <Document file={extractedBill?.attachment_url.replace(extractedBill?.attachment_url.split('/').slice(0,3).join("/"), '')} onLoadSuccess={onDocumentLoadSuccess} onLoadError={onError} loading={<LoadingOutlined />}>
-                            <Page pageNumber={pdfPage} scale={pdfScale} rotate={pdfRotation} renderAnnotationLayer={false} renderTextLayer={false}/>
+                        <Document file={extractedBill?.attachment_url.replace(extractedBill?.attachment_url.split('/').slice(0, 3).join("/"), '')} onLoadSuccess={onDocumentLoadSuccess} onLoadError={onError} loading={<LoadingOutlined />}>
+                            <Page pageNumber={pdfPage} scale={pdfScale} rotate={pdfRotation} renderAnnotationLayer={false} renderTextLayer={false} />
                         </Document>
                         {pdfError && <div className='pdf__viewer--error'>{pdfError}</div>}
                         {pdfError && <a href={extractedBill?.attachment_url} target='_blank' rel='noreferrer' className='pdf__viewer--error'>Download</a>}

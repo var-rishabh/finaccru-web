@@ -20,6 +20,7 @@ export const styles = {
     },
     mainLeftCompany: {
         fontWeight: '500',
+        fontSize: "1rem"
     },
     mainRight: {
         display: "flex",
@@ -69,6 +70,7 @@ export const pdfStyle = {
     },
     mainLeftCompany: {
         fontWeight: 'bold',
+        fontSize: "12px"
     },
     mainRight: {
         display: "flex",

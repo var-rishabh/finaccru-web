@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import "./BankLayout.css";
 import "../../../Styles/Layout/LayoutHeader.css";
@@ -8,10 +9,11 @@ import Banking from './Banking/Banking';
 import PDC from './PDC/PDC';
 
 import backButton from "../../../assets/Icons/back.svg";
-import logo from "../../../assets/Icons/cropped_logo.svg";
 
 const BankLayout = () => {
     const navigate = useNavigate();
+
+    const { user } = useSelector(state => state.userReducer);
 
     const searchParams = new URLSearchParams(window.location.search);
     const type = searchParams.get('type');
@@ -27,7 +29,9 @@ const BankLayout = () => {
             <div className="layout__container">
                 <div className="create__layout--main">
                     <div className="create__layout--top">
-                        <img style={{ width: "9rem" }} src={logo} alt="logo" />
+                        <div style={{ width: "9rem", height: "5rem", overflow: "hidden" }}>
+                            <img style={{ width: "max-content", height: "100%" }} src={user?.clientInfo?.company_logo_url} alt="logo" />
+                        </div>
                         <h1 className='create__payment--head'> {type == "bank" ? "Bank" : "PDC"} </h1>
                     </div>
                     {

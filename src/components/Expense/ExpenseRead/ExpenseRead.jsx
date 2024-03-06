@@ -57,7 +57,7 @@ const ExpenseRead = () => {
             <div className="read__container">
                 {loading ? <Loader /> :
                     <div className="read--main" id="read--main">
-                        <ViewHeader title={"Expense"} />
+                        <ViewHeader title={"Expense"} logo={user?.clientInfo?.company_logo_url}/>
                         <form className='expense__form'>
                             <div className="create__expense--input">
                                 <span>Expense Date</span>

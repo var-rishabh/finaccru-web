@@ -66,7 +66,7 @@ export const styles = {
         flexDirection: 'column',
         justifyContent: 'flex-end',
         textAlign: 'right',
-        width: '100%',
+        width: '50%',
     },
     statsText: {
         fontSize: '1rem',
@@ -78,6 +78,8 @@ export const styles = {
         fontSize: '1rem',
         fontWeight: '400',
         lineHeight: '1.5',
+        display: 'flex',
+        justifyContent: 'space-between'
     },
     statsCurrency: {
         fontWeight: '500',
@@ -89,7 +91,7 @@ export const pdfStyle = {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        padding: "15px 40px",
+        padding: '15px 40px',
         height: '120px',
     },
     mainHeading: {
@@ -154,7 +156,7 @@ export const pdfStyle = {
         flexDirection: 'column',
         justifyContent: 'flex-end',
         textAlign: 'right',
-        width: '100%',
+        width: '50%',
     },
     statsText: {
         fontSize: '8px',

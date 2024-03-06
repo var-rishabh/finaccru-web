@@ -25,7 +25,8 @@ export default function PurchaseReadContent(title, mainData, user, currencies, t
                 company_name: user?.clientInfo?.company_data?.company_name,
                 country: user?.clientInfo?.company_data?.country,
                 state: user?.clientInfo?.company_data?.state,
-                trade_license_number: user?.clientInfo?.company_data?.trade_license_number,
+                vat_trn: user?.clientInfo?.company_data?.vat_trn,
+                corporate_tax_trn: user?.clientInfo?.company_data?.corporate_tax_trn,
                 expected_delivery_date: mainData?.expected_delivery_date
             }
         },

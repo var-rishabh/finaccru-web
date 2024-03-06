@@ -22,7 +22,7 @@ const BankStatement = ({ bank_id }) => {
     const { user } = useSelector(state => state.userReducer);
     const { bank } = useSelector(state => state.bankReducer);
     const [startDate, setStartDate] = useState(moment().startOf('month').format('YYYY-MM-DD'));
-    const [endDate, setEndDate] = useState( moment().endOf('month').format("YYYY-MM-DD"));
+    const [endDate, setEndDate] = useState(moment().endOf('month').format("YYYY-MM-DD"));
 
     useEffect(() => {
         dispatch(getBankDetails(bank_id));
@@ -96,7 +96,9 @@ const BankStatement = ({ bank_id }) => {
             <div className="read__customer-statement-container">
                 <div className="read__customer-statement-main">
                     <div className="read__customer-statement-top">
-                        <img style={{ width: "9rem" }} src={logo} alt="logo" />
+                        <div style={{ width: "9rem", height: "5rem", overflow: "hidden" }}>
+                            <img style={{ width: "max-content", height: "100%" }} src={user?.clientInfo?.company_logo_url} alt="logo" />
+                        </div>
                     </div>
                     <StatementHead styles={headStyles}
                         bank={bank} user={user?.clientInfo}

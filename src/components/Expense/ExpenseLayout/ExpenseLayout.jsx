@@ -37,6 +37,7 @@ const ExpenseLayout = () => {
     const [expenseDate, setExpenseDate] = useState(moment().format('YYYY-MM-DD'));
     const isAdd = window.location.pathname.split('/')[2] === 'create';
 
+    const { user } = useSelector(state => state.userReducer);
     const { loading: expenseLoading, expense, categories, categoryLoading } = useSelector(state => state.expenseReducer);
     const { loading: vendorLoading, vendorsInf, totalVendors, paymentMethods, paymentMethodSubCategories } = useSelector(state => state.vendorReducer);
     const { currencies, currencyLoading } = useSelector(state => state.onboardingReducer);
@@ -187,7 +188,9 @@ const ExpenseLayout = () => {
             <div className="layout__container">
                 <div className="create__layout--main">
                     <div className="create__layout--top">
-                        <img style={{ width: "9rem" }} src={logo} alt="logo" />
+                        <div style={{ width: "9rem", height: "5rem", overflow: "hidden" }}>
+                            <img style={{ width: "max-content", height: "100%" }} src={user?.clientInfo?.company_logo_url} alt="logo" />
+                        </div>
                         <h1 className='create__payment--head'> Expense </h1>
                     </div>
                     <form className='expense__form'>

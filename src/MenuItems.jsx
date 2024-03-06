@@ -1,7 +1,6 @@
 import dashboard from './assets/dashboardIcons/dashboard.svg';
 import Dashboard from './components/Dashboard/Dashboard';
 
-import customer from './assets/dashboardIcons/customer.svg';
 import Customer from './components/Customer/Customer';
 import CustomerLayout from './components/Customer/CustomerLayout/CustomerLayout';
 import CustomerRead from './components/Customer/CustomerRead/CustomerRead';
@@ -75,7 +74,7 @@ function getItem(label, icon, component, changecomponent, viewcomponent) {
 
 const items = [
     getItem('Dashboard', <img src={dashboard} />, <Dashboard />),
-    getItem('Customer', <img src={customer} />, <Customer />, <CustomerLayout />, <CustomerRead />),
+    getItem('Customer', <img src={estimate} />, <Customer />, <CustomerLayout />, <CustomerRead />),
     getItem('Estimate', <img src={estimate} />, <Estimate />, <EstimateLayout />, <EstimateRead />),
     getItem('Proforma', <img src={proforma} />, <Proforma />, <ProformaLayout />, <ProformaRead />),
     getItem('Tax Invoice', <img src={estimate} />, <TaxInvoice />, <TaxInvoiceLayout />, <TaxInvoiceRead />),

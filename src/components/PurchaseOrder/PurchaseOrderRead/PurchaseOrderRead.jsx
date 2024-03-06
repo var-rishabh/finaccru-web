@@ -148,13 +148,13 @@ const PurchaseOrderRead = () => {
                             purchaseOrder?.po_status === "Void" ? "" :
                                 <a className='read__header--btn1' onClick={() => navigate(`/purchase-order/edit/${purchaseOrder?.po_id}`)}>Edit</a>
                     }
-                    <PdfDownload contents={contents} heading={"Purchase Order"} name={purchaseOrder?.po_number} />
+                    <PdfDownload contents={contents} heading={"Purchase Order"} name={purchaseOrder?.po_number} logo={user?.clientInfo?.company_logo_url}/>
                 </div>
             </div>
             <div className="read__container">
                 {loading ? <Loader /> :
                     <div className="read--main" id="read--main">
-                        <ViewHeader title={"Purchase Order"} />
+                        <ViewHeader title={"Purchase Order"} logo={user?.clientInfo?.company_logo_url} />
                         <ReadFrom
                             title={"Purchase Order"}
                             styles={headStyles}
@@ -164,7 +164,8 @@ const PurchaseOrderRead = () => {
                             company_name={user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}
                             country={user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}
                             state={user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state}
-                            trade_license_number={user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}
+                            vat_trn={user?.clientInfo?.company_data?.vat_trn}
+                            corporate_tax_trn={user?.clientInfo?.company_data?.corporate_tax_trn}
                             number={purchaseOrder?.po_number}
                             date={purchaseOrder?.order_date}
                             expected_delivery_date={purchaseOrder?.expected_delivery_date}
