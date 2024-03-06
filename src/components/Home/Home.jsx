@@ -1,4 +1,6 @@
 import React from 'react';
+
+import { useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, useNavigate } from 'react-router-dom';
 
@@ -10,19 +12,21 @@ const { Content, Sider } = Layout;
 import MenuItems from '../../MenuItems';
 import useChatList from '../../CustomHooks/useChatList';
 import ChatPart from '../Chat/ChatPart/ChatPart';
+import CompanyModal from '../Accountant/CompanyModal/CompanyModal';
 
 import './Home.css';
 import { MessageOutlined, LoadingOutlined } from '@ant-design/icons';
 import logo from '../../assets/Icons/cropped_logo.svg';
-import settingIcon from '../../assets/dashboardIcons/setting.svg';
 import logoutIcon from '../../assets/dashboardIcons/logout.svg';
 import profileIcon from '../../assets/dashboardIcons/profile.svg';
-
+import customer from '../../assets/dashboardIcons/customer.svg';
 
 const Home = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [key, setKey] = React.useState(window.location.pathname.split('/')[1]);
+
+    const [companyModalOpen, setCompanyModalOpen] = useState(false);
 
     React.useEffect(() => {
         setKey(window.location.pathname.split('/')[1]);
@@ -62,9 +66,9 @@ const Home = () => {
                                 <span className='setting__email'>{user?.email}</span>
                             </div>
                         </div>
-                        <div className='settings__item'>
-                            <img src={settingIcon} alt="" />
-                            <span>Settings</span>
+                        <div className='settings__item' onClick={() => setCompanyModalOpen(true)}>
+                            <img src={customer} alt="" />
+                            <span>Profile</span>
                         </div>
                         <div className="settings__item" style={{ cursor: 'pointer' }} onClick={() => dispatch(logout())}>
                             <img src={logoutIcon} alt="" />
@@ -72,6 +76,7 @@ const Home = () => {
                         </div>
                     </div>
                 </Sider>
+                <CompanyModal isCompanyModalOpen={companyModalOpen} handleCompanyCancel={() => setCompanyModalOpen(false)} clientData={user?.clientInfo} />
                 <Layout className='site-layout'>
                     <Content className='site-layout__background'>
                         <Outlet />

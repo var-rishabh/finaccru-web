@@ -11,7 +11,7 @@ const LineItem = ({ styles, item_name, unit, qty, rate, discount, is_percentage_
                         </View> :
                         <View></View>
                     }
-                    <View style={item_name.length > 19 ? styles?.mainItemNameBoxLong : styles?.mainItemNameBoxShort}>
+                    <View style={item_name.length > 40 ? styles?.mainItemNameBoxLong : styles?.mainItemNameBoxShort}>
                         <Text>{item_name}</Text>
                     </View>
                 </View>
@@ -45,7 +45,12 @@ const LineItem = ({ styles, item_name, unit, qty, rate, discount, is_percentage_
                         <View></View>
                     }
                     <View style={styles?.mainItemRateBox}>
-                        <Text>{rate}</Text>
+                        <Text>
+                            {
+                                new Intl.NumberFormat('en-US', {
+                                }).format(parseFloat(rate || 0).toFixed(2))
+                            }
+                        </Text>
                     </View>
                 </View>
                 <View style={styles?.mainItemDiscount}>
@@ -74,17 +79,14 @@ const LineItem = ({ styles, item_name, unit, qty, rate, discount, is_percentage_
                         <View></View>
                     }
                     <View style={styles?.mainItemTaxBox}>
-                        <View style={tax_id == 1 ? styles?.mainItemTaxAmount : styles?.mainItemTaxAmountNS}>
+                        <View style={styles?.mainItemTaxAmount}>
                             <Text>
                                 {
+                                    tax_id === 1 ? 
                                     new Intl.NumberFormat('en-US', {
                                     }).format(parseFloat((taxAmount || 0).toFixed(2)))
+                                    : tax_id === 2 ? "0%" : "-"
                                 }
-                            </Text>
-                        </View>
-                        <View style={tax_id == 1 ? styles?.mainItemTaxType : styles?.mainItemTaxTypeNS}>
-                            <Text>
-                                {taxRateName == "Standard Rated (5%)" ? "5%" : taxRateName}
                             </Text>
                         </View>
                     </View>

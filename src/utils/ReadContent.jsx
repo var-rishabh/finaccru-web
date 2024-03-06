@@ -25,7 +25,8 @@ export default function ReadContent(title, mainData, user, currencies, taxRates,
                 company_name: user?.clientInfo?.company_data?.company_name,
                 country: user?.clientInfo?.company_data?.country,
                 state: user?.clientInfo?.company_data?.state,
-                trade_license_number: user?.clientInfo?.company_data?.trade_license_number,
+                vat_trn: user?.clientInfo?.company_data?.vat_trn,
+                corporate_tax_trn: user?.clientInfo?.company_data?.corporate_tax_trn,
                 reference: mainData?.reference
             }
         },
@@ -120,6 +121,7 @@ export default function ReadContent(title, mainData, user, currencies, taxRates,
         contents[0].props.number = mainData?.pi_number;
         contents[0].props.date = mainData?.pi_date;
         contents[0].props.due_date = mainData?.due_date;
+        contents[0].props.title = "PI";
     } else if (title === 'Estimate') {
         contents[0].props.number = mainData?.estimate_number;
         contents[0].props.date = mainData?.estimate_date;

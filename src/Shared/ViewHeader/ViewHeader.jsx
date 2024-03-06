@@ -1,10 +1,11 @@
-import React from 'react'
-import logo from '../../assets/Icons/cropped_logo.svg'
 import './ViewHeader.css'
-const ViewHeader = ({title}) => {
+
+const ViewHeader = ({ title, logo }) => {
     return (
         <div className="view__header">
-            <img style={{ width: "9rem" }} src={logo} alt="logo" />
+            <div style={{ width: "9rem", height: "5rem", overflow: "hidden" }}>
+                <img style={{ width: "max-content", height: "100%" }} src={logo} alt="logo" />
+            </div>
             <h1 className='view__header--head'>{title}</h1>
         </div>
     )

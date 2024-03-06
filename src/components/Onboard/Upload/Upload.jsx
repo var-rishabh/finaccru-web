@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from "react-toastify";
 
@@ -8,6 +7,8 @@ import { uploadDocuments } from '../../../Actions/Onboarding';
 import { LoadingOutlined } from '@ant-design/icons';
 
 const UploadFiles = () => {
+    const [companyLogo, setCompanyLogo] = useState([]);
+    const [companyLogoError, setCompanyLogoError] = useState([false, ""]);
     const [tradeLicense, setTradeLicense] = useState([]);
     const [tradeError, setTradeError] = useState([false, ""]);
     const [moa, setMoa] = useState([]);
@@ -19,6 +20,8 @@ const UploadFiles = () => {
     const [emiratedIdError, setEmiratedIdError] = useState([false, ""]);
     const [ownerPassport, setOwnerPassport] = useState([]);
     const [ownerPassportError, setOwnerPassportError] = useState([false, ""]);
+    const [corporateTaxTrn, setCorporateTaxTrn] = useState([]);
+    const [corporateTaxTrnError, setCorporateTaxTrnError] = useState([false, ""]);
     const { loading } = useSelector(state => state.onboardingReducer);
 
     const handleFileUpload = (e, errorState, uploadState) => {
@@ -34,32 +37,36 @@ const UploadFiles = () => {
         }
     }
     
-    const { handleSubmit } = useForm();
     const dispatch = useDispatch();
+
     const handleUpload = (e) => {
-        const { tradeLicense, moa, vat, emiratedId, ownerPassport } = e.target;
-        if (!tradeLicense.files[0] || !moa.files[0] || !emiratedId.files[0] || !ownerPassport.files[0] || (vatNeeded && !vat.files[0])) {
+        const { companyLogo, tradeLicense, moa, vat, emiratedId, ownerPassport, corporateTaxTrn } = e.target;
+        if (!companyLogo.files[0] || !tradeLicense.files[0] || !moa.files[0] || !emiratedId.files[0] || !ownerPassport.files[0] || (vatNeeded && !vat.files[0])) {
             toast.error("Please upload all the documents.");
             return;
         }
-        if (tradeError[0] || moaError[0] || emiratedIdError[0] || ownerPassportError[0] || (vatNeeded && vatError[0])) {
+        if (companyLogoError[0] || tradeError[0] || moaError[0] || emiratedIdError[0] || ownerPassportError[0] || (vatNeeded && vatError[0]) || corporateTaxTrnError[0]) {
             toast.error("Please upload all the documents correctly.");
             return;
         }
         if (vatNeeded) {
             dispatch(uploadDocuments({
+                logo_file: companyLogo.files[0],
                 trade_license_file: tradeLicense.files[0],
                 moa_file: moa.files[0],
                 vat_file: vat.files[0],
                 emirates_id_file: emiratedId.files[0],
                 passport_file: ownerPassport.files[0],
+                corporate_tax_certificate_file: corporateTaxTrn.files[0]
             }));
         } else {
             dispatch(uploadDocuments({
+                logo_file: companyLogo.files[0],
                 trade_license_file: tradeLicense.files[0],
                 moa_file: moa.files[0],
                 emirates_id_file: emiratedId.files[0],
                 passport_file: ownerPassport.files[0],
+                corporate_tax_certificate_file: corporateTaxTrn.files[0]
             }));
         }
     }
@@ -79,6 +86,19 @@ const UploadFiles = () => {
                 <form className='upload__form' onSubmit={(e) => { e.preventDefault(); handleUpload(e) }}>
                     <div className="upload__form--split">
                         <div className='upload__form--left'>
+                            <div className='upload__form--input'>
+                                <span className='required__field'>Company Logo</span>
+                                <input id="companyLogo" name='companyLogo' type='file'
+                                    onChange={(e) => handleFileUpload(e, setCompanyLogoError, setCompanyLogo ) }
+                                    hidden
+                                />
+                                <label htmlFor="companyLogo">UPLOAD</label>
+                                <p id="file-chosen">{companyLogo.name || "No File Chosen"}</p>
+                                {companyLogoError[0] ?
+                                    <span style={{marginTop: "-2rem", fontSize: "0.8rem"}} className="phone__error--span"> {companyLogoError[1]} </span>
+                                    : <></>
+                                }
+                            </div>
                             <div className='upload__form--input'>
                                 <span className='required__field'>Trade License</span>
                                 <input id="tradeLicense" name='tradeLicense' type='file'
@@ -157,6 +177,19 @@ const UploadFiles = () => {
                                 <p id="file-chosen">{ownerPassport.name || "No File Chosen"}</p>
                                 {ownerPassportError[0] ?
                                     <span style={{marginTop: "-2rem", fontSize: "0.8rem"}} className="phone__error--span"> {ownerPassportError[1]} </span>
+                                    : <></>
+                                }
+                            </div>
+                            <div className='upload__form--input'>
+                                <span>Corporate Tax TRN</span>
+                                <input id="corporateTaxTrn" type='file' name='corporateTaxTrn'
+                                    onChange={(e) => handleFileUpload(e, setCorporateTaxTrnError, setCorporateTaxTrn)}
+                                    hidden
+                                />
+                                <label htmlFor="corporateTaxTrn">UPLOAD</label>
+                                <p id="file-chosen">{corporateTaxTrn.name || "No File Chosen"}</p>
+                                {corporateTaxTrnError[0] ?
+                                    <span style={{marginTop: "-2rem", fontSize: "0.8rem"}} className="phone__error--span"> {corporateTaxTrnError[1]} </span>
                                     : <></>
                                 }
                             </div>

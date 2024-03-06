@@ -1,9 +1,10 @@
+import { useSelector } from 'react-redux';
+
 import { Document, Page, Text, View, StyleSheet, Image, Font } from '@react-pdf/renderer';
 import menuIcon from '../../assets/croppedIcon.png';
 import WorkSans from '../../assets/fonts/WorkSans.ttf';
 import WorkSansBold from '../../assets/fonts/WorkSansBold.ttf';
 import WorkSansExtraBold from '../../assets/fonts/WorkSansExtraBold.ttf';
-
 
 const styles = StyleSheet.create({
   page: {
@@ -92,7 +93,7 @@ Font.register({
   ],
 });
 
-const PdfContent = ({ contents, heading }) => {
+const PdfContent = ({ contents, heading, logo }) => {
   const contentPerPage = 600; // Set the maximum height of content per page (adjust as needed)
 
   const pages = [];
@@ -123,7 +124,7 @@ const PdfContent = ({ contents, heading }) => {
         <Page key={index} size="A4" style={styles.page}>
           <View style={styles.header}>
             <View style={styles.header__image}>
-              <Image style={{ width: "100px" }} src={menuIcon} alt="logo" />
+              <Image style={{ height: "60px", maxWidth: "120px", maxHeight: "60px" }} src={logo} alt="logo" />
             </View>
             <View style={styles.header__text}>
               <Text>{heading}</Text>
@@ -135,7 +136,7 @@ const PdfContent = ({ contents, heading }) => {
             const props = section.props;
 
             return (
-                <Component {...props} />
+              <Component {...props} />
             );
 
           })}

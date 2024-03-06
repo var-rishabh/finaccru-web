@@ -167,13 +167,13 @@ const DebitNoteRead = () => {
                                         >Edit</a>
                                     </>
                     }
-                    <PdfDownload contents={contents} heading={"Debit Note"} name={debitNote?.dn_number}/>
+                    <PdfDownload contents={contents} heading={"Debit Note"} name={debitNote?.dn_number} logo={user?.localInfo?.role ? client?.company_logo_url : user?.clientInfo?.company_logo_url}/>
                 </div>
             </div>
             <div className="read__container">
                 {loading ? <Loader /> :
                     <div className="read--main" id="read--main">
-                        <ViewHeader title={"Debit Note"} />
+                        <ViewHeader title={"Debit Note"} logo={user?.localInfo?.role ? client?.company_logo_url : user?.clientInfo?.company_logo_url} />
                         <ReadFrom
                             title={"Debit Note"}
                             styles={headStyles}
@@ -183,7 +183,8 @@ const DebitNoteRead = () => {
                             company_name={user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}
                             country={user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}
                             state={user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state}
-                            trade_license_number={user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}
+                            vat_trn={user?.localInfo?.role ? client?.company_data?.vat_trn : user?.clientInfo?.company_data?.vat_trn}
+                            corporate_tax_trn={user?.localInfo?.role ? client?.company_data?.corporate_tax_trn : user?.clientInfo?.company_data?.corporate_tax_trn}
                             number={debitNote?.dn_number}
                             date={debitNote?.dn_date}
                             expected_delivery_date={debitNote?.expected_delivery_date}

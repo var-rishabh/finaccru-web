@@ -138,13 +138,13 @@ const EstimateReadLayout = () => {
                             estimate?.estimate_status === "Void" ? "" :
                                 <a className='read__header--btn1' onClick={() => navigate(`/estimate/edit/${estimate?.estimate_id}`)}>Edit</a>
                     }
-                    <PdfDownload contents={contents} heading={"Estimate"} name={estimate?.estimate_number} />
+                    <PdfDownload contents={contents} heading={"Estimate"} name={estimate?.estimate_number} logo={user?.clientInfo?.company_logo_url}/>
                 </div>
             </div>
             <div className="read__container">
                 {loading ? <Loader /> :
                     <div className="read--main" id="read--main">
-                        <ViewHeader title={"Estimate"} />
+                        <ViewHeader title={"Estimate"} logo={user?.clientInfo?.company_logo_url} />
                         <ReadHead
                             title={"Estimate"}
                             styles={headStyles}
@@ -154,7 +154,8 @@ const EstimateReadLayout = () => {
                             company_name={user?.clientInfo?.company_data?.company_name}
                             country={user?.clientInfo?.company_data?.country}
                             state={user?.clientInfo?.company_data?.state}
-                            trade_license_number={user?.clientInfo?.company_data?.trade_license_number}
+                            vat_trn={user?.clientInfo?.company_data?.vat_trn}
+                            corporate_tax_trn={user?.clientInfo?.company_data?.corporate_tax_trn}
                             number={estimate?.estimate_number}
                             date={estimate?.estimate_date}
                             valid_till={estimate?.valid_till}

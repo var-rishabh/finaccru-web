@@ -198,13 +198,13 @@ const TaxInvoiceReadLayout = () => {
                                         >Edit</a>
                                     </>
                     }
-                    <PdfDownload contents={contents} heading={"Tax Invoice"} name={finalTaxInvoice?.ti_number} />
+                    <PdfDownload contents={contents} heading={"Tax Invoice"} name={finalTaxInvoice?.ti_number} logo={user?.localInfo?.role ? client?.company_logo_url : user?.clientInfo?.company_logo_url}/>
                 </div>
             </div>
             <div className="read__container">
                 {loading ? <Loader /> :
                     <div className="read--main" id="read--main">
-                        <ViewHeader title={"Tax Invoice"} />
+                        <ViewHeader title={"Tax Invoice"} logo={user?.localInfo?.role ? client?.company_logo_url : user?.clientInfo?.company_logo_url} />
                         <ReadHead
                             title={"Tax Invoice"}
                             styles={headStyles}
@@ -214,7 +214,8 @@ const TaxInvoiceReadLayout = () => {
                             company_name={user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}
                             country={user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}
                             state={user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state}
-                            trade_license_number={user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}
+                            vat_trn={user?.localInfo?.role ? client?.company_data?.vat_trn : user?.clientInfo?.company_data?.vat_trn}
+                            corporate_tax_trn={user?.localInfo?.role ? client?.company_data?.corporate_tax_trn : user?.clientInfo?.company_data?.corporate_tax_trn}
                             number={finalTaxInvoice?.ti_number}
                             date={finalTaxInvoice?.ti_date}
                             due_date={finalTaxInvoice?.due_date}

@@ -12,6 +12,7 @@ const Company = () => {
     const [companyName, setCompanyName] = useState("");
     const [companyType, setCompanyType] = useState(0);
     const [tradeLicenseNumber, setTradeLicenseNumber] = useState("");
+    const [corporateTaxTrn, setCorporateTaxTrn] = useState(null);
     const [email, setEmail] = useState("");
     const [telephone, setTelephone] = useState("");
     const [address1, setAddress1] = useState("");
@@ -22,6 +23,7 @@ const Company = () => {
     const [state, setState] = useState("");
     const [allState, setAllStates] = useState(uaeStates);
     const [poBox, setPoBox] = useState(null);
+    const [vatTrn, setVatTrn] = useState(null);
 
     const [industry, setIndustry] = useState("");
     const [otherIndustry, setOtherIndustry] = useState(false);
@@ -87,7 +89,9 @@ const Company = () => {
             po_box: poBox,
             industry: industry,
             company_email: email,
-            company_telephone_number: telephone
+            company_telephone_number: telephone,
+            corporate_tax_trn: corporateTaxTrn,
+            vat_trn: vatTrn
         }))
     }
 
@@ -166,6 +170,18 @@ const Company = () => {
                                         : <></>
                                 }
                             </div>
+                            <div className='company__form--input'>
+                                <span>Corporate Tax TRN</span>
+                                <input type='text' placeholder='Corporate Tax TRN' name='corporateTaxTrn' value={corporateTaxTrn}
+                                    onChange={(e) => {
+                                        if (e.target.value == "") {
+                                            setCorporateTaxTrn(null);
+                                        } else {
+                                            setCorporateTaxTrn(e.target.value)
+                                        }
+                                    }}
+                                />
+                            </div>
                             <div className='company__form--button'>
                                 <button type='submit'>
                                     {
@@ -175,6 +191,18 @@ const Company = () => {
                             </div>
                         </div>
                         <div className='company__form--right'>
+                            <div className='company__form--input'>
+                                <span>VAT TRN</span>
+                                <input type='text' placeholder='VAT TRN' name='vatTrn' value={vatTrn}
+                                    onChange={(e) => {
+                                        if (e.target.value == "") {
+                                            setVatTrn(null);
+                                        } else {
+                                            setVatTrn(e.target.value)
+                                        }
+                                    }}
+                                />
+                            </div>
                             <div className='company__form--input'>
                                 <span className='required__field'>Address Line 1</span>
                                 <input type='text' placeholder='Address' name='address1' value={address1} onChange={(e) => setAddress1(e.target.value)} />

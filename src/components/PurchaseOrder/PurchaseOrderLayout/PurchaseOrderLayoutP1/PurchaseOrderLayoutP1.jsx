@@ -23,7 +23,7 @@ const PurchaseOrderLayoutP1 = ({
     currencyConversionRate, setCurrencyConversionRate,
     subject, setSubject,
     shippingAddress1, setShippingAddress1, shippingAddress2, setShippingAddress2, shippingAddress3, setShippingAddress3,
-    shippingState, setShippingState, shippingCountry, setShippingCountry,
+    shippingState, setShippingState, shippingCountry, setShippingCountry, sameAsBillingAddress, setSameAsBillingAddress
 }) => {
     const filterOption = (input, option) => {
         return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
@@ -149,10 +149,11 @@ const PurchaseOrderLayoutP1 = ({
                     {/* <h3>Purchase Order From</h3> */}
                     <span style={{ fontWeight: 500 }}>{user?.clientInfo?.company_data?.company_name}</span>
                     <span>{user?.clientInfo?.company_data?.address_line_1}</span>
-                    <span>{user?.clientInfo?.company_data?.address_line_2}</span>
-                    <span>{user?.clientInfo?.company_data?.address_line_3}</span>
+                    {user?.clientInfo?.company_data?.address_line_2 && <span>{user?.clientInfo?.company_data?.address_line_2}</span>}
+                    {user?.clientInfo?.company_data?.address_line_3 && <span>{user?.clientInfo?.company_data?.address_line_3}</span>}
                     <span>{user?.clientInfo?.company_data?.state + ', ' + user?.clientInfo?.company_data?.country}</span>
-                    <span>VAT TRN: {user?.clientInfo?.company_data?.trade_license_number}</span>
+                    {user?.clientInfo?.company_data?.vat_trn && <span>VAT TRN: {user?.clientInfo?.company_data?.vat_trn}</span>}
+                    {user?.clientInfo?.company_data?.corporate_tax_trn && <span>Corporate Tax TRN: {user?.clientInfo?.company_data?.corporate_tax_trn}</span>}
                 </div>
                 <div className='layout__form--head-info2'>
                     <div className='layout__form--head-info2-data'>
@@ -227,7 +228,12 @@ const PurchaseOrderLayoutP1 = ({
                                     onClick={() => {
                                         setVendorName(''); setVendorId(null); setShippingId(null);
                                         setShippingAddress1(null);
-                                        setVendorKeyword("");
+                                        setShippingAddress2(null);
+                                        setShippingAddress3(null);
+                                        setShippingState(null);
+                                        setShippingCountry(null);
+                                        setShippingLabel(null);
+                                        setSameAsBillingAddress(false);
                                     }}
                                 />
                             </div>
@@ -241,6 +247,22 @@ const PurchaseOrderLayoutP1 = ({
                         vendorId ?
                             <>
                                 <h3 className='required__field'>Shipping Address</h3>
+                                {
+                                    shippingAddress1 === null ?
+                                        <div style={{ marginTop: "1rem" }} className='layout--details__modal--checkbox'>
+                                            <input type="checkbox"
+                                                value={sameAsBillingAddress}
+                                                checked={sameAsBillingAddress}
+                                                onChange={(e) => setSameAsBillingAddress(e.target.checked)}
+                                            />
+                                            <span
+                                                style={{
+                                                    opacity: sameAsBillingAddress ? '1' : '0.5'
+                                                }}
+                                            >
+                                                Use Same as Billing Address</span>
+                                        </div> : ""
+                                }
                                 {
                                     shippingId || shippingAddress1 ?
                                         <div className='layout__form--customer-data'>
@@ -259,12 +281,14 @@ const PurchaseOrderLayoutP1 = ({
                                                     setShippingAddress2(null); setShippingAddress3(null);
                                                     setShippingState(null); setShippingCountry(null);
                                                     setShippingLabel(null);
+                                                    setSameAsBillingAddress(false);
                                                     dispatch(getVendorShippingAddressList(vendorId))
                                                 }}
                                             />
                                         </div>
                                         : <Select
                                             // showSearch
+                                            disabled={sameAsBillingAddress}
                                             placeholder='Select Shipping Address'
                                             optionFilterProp='children'
                                             value={shippingId}

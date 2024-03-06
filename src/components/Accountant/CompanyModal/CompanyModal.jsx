@@ -48,14 +48,22 @@ const CompanyModal = ({ isCompanyModalOpen, handleCompanyCancel, clientData }) =
                                 <span>Address Line 1</span>
                                 <p>{clientData?.company_data?.address_line_1}</p>
                             </div>
-                            <div className="company__modal--input">
-                                <span>Address Line 2</span>
-                                <p>{clientData?.company_data?.address_line_2}</p>
-                            </div>
-                            <div className="company__modal--input">
-                                <span>Address Line 3</span>
-                                <p>{clientData?.company_data?.address_line_3}</p>
-                            </div>
+                            {
+                                clientData?.address_line_2 ?
+                                    <div className="company__modal--input">
+                                        <span>Address Line 2</span>
+                                        <p>{clientData?.company_data?.address_line_2}</p>
+                                    </div>
+                                    : ""
+                            }
+                            {
+                                clientData?.address_line_2 ?
+                                    <div className="company__modal--input">
+                                        <span>Address Line 3</span>
+                                        <p>{clientData?.company_data?.address_line_3}</p>
+                                    </div>
+                                    : ""
+                            }
                             <div className="company__modal--input">
                                 <span>State</span>
                                 <p>{clientData?.company_data?.state}</p>
@@ -64,10 +72,14 @@ const CompanyModal = ({ isCompanyModalOpen, handleCompanyCancel, clientData }) =
                                 <span>Country</span>
                                 <p>{clientData?.company_data?.country}</p>
                             </div>
-                            <div className="company__modal--input">
-                                <span>PO Box</span>
-                                <p>{clientData?.company_data?.po_box}</p>
-                            </div>
+                            {
+                                clientData?.company_data?.po_box ?
+                                    <div className="company__modal--input">
+                                        <span>PO Box</span>
+                                        <p>{clientData?.company_data?.po_box}</p>
+                                    </div>
+                                    : ""
+                            }
                         </div>
                     </div>
                 </div>
@@ -130,6 +142,16 @@ const CompanyModal = ({ isCompanyModalOpen, handleCompanyCancel, clientData }) =
                                     </div>
                                 )
                             }
+                            {
+                                clientData?.corporate_tax_certificate_url && (
+                                    <div className="company__modal--links">
+                                        <span>Corporate Tax TRN</span>
+                                        <Link to={clientData?.corporate_tax_certificate_url} target="_blank" >
+                                            <PaperClipOutlined />
+                                        </Link>
+                                    </div>
+                                )
+                            }
                         </div>
                         <div className="company__modal--right">
                             <div className="company__modal--links">
@@ -141,6 +163,12 @@ const CompanyModal = ({ isCompanyModalOpen, handleCompanyCancel, clientData }) =
                             <div className="company__modal--links">
                                 <span>Trade License</span>
                                 <Link to={clientData?.trade_licence_url} target="_blank" >
+                                    <PaperClipOutlined />
+                                </Link>
+                            </div>
+                            <div className="company__modal--links">
+                                <span>Company Logo</span>
+                                <Link to={clientData?.company_logo_url} target="_blank" >
                                     <PaperClipOutlined />
                                 </Link>
                             </div>

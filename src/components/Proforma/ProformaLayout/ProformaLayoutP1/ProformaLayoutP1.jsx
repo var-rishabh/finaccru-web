@@ -14,7 +14,7 @@ import { CloseOutlined } from '@ant-design/icons';
 const ProformaFormP1 = ({
     proformaNumber, proformaDate, validTill, reference, subject, customerName, customerId, currency, currencyId, currencyConversionRate, shippingAddress1, shippingAddress2, shippingAddress3, shippingState, shippingCountry,
     setProformaNumber, setProformaDate, setValidTill, setReference, setSubject, setCustomerName, setCustomerId, setCurrency, setCurrencyId, setCurrencyConversionRate, setShippingAddress1, setShippingAddress2, setShippingAddress3, setShippingState, setShippingCountry,
-    termsAndConditions, setTermsAndConditions, convert
+    termsAndConditions, setTermsAndConditions, convert, sameAsBillingAddress, setSameAsBillingAddress
 }) => {
     const filterOption = (input, option) => {
         return (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
@@ -148,10 +148,11 @@ const ProformaFormP1 = ({
                     {/* <h3>Proforma From</h3> */}
                     <span style={{ fontWeight: 500 }}>{user?.clientInfo?.company_data?.company_name}</span>
                     <span>{user?.clientInfo?.company_data?.address_line_1}</span>
-                    <span>{user?.clientInfo?.company_data?.address_line_2}</span>
-                    <span>{user?.clientInfo?.company_data?.address_line_3}</span>
+                    {user?.clientInfo?.company_data?.address_line_2 && <span>{user?.clientInfo?.company_data?.address_line_2}</span>}
+                    {user?.clientInfo?.company_data?.address_line_3 && <span>{user?.clientInfo?.company_data?.address_line_3}</span>}
                     <span>{user?.clientInfo?.company_data?.state + ', ' + user?.clientInfo?.company_data?.country}</span>
-                    <span>VAT TRN: {user?.clientInfo?.company_data?.trade_license_number}</span>
+                    {user?.clientInfo?.company_data?.vat_trn && <span>VAT TRN: {user?.clientInfo?.company_data?.vat_trn}</span>}
+                    {user?.clientInfo?.company_data?.corporate_tax_trn && <span>Corporate Tax TRN: {user?.clientInfo?.company_data?.corporate_tax_trn}</span>}
                 </div>
                 <div className='layout__form--head-info2'>
                     <div className='layout__form--head-info2-data'>
@@ -208,6 +209,12 @@ const ProformaFormP1 = ({
                                     onClick={() => {
                                         setCustomerName(''); setCustomerId(null); setShippingId(null);
                                         setShippingAddress1(null);
+                                        setShippingAddress2(null);
+                                        setShippingAddress3(null);
+                                        setShippingState(null);
+                                        setShippingCountry(null);
+                                        setShippingLabel(null);
+                                        setSameAsBillingAddress(false);
                                     }}
                                 />
                             </div>
@@ -223,6 +230,22 @@ const ProformaFormP1 = ({
                         customerId ?
                             <>
                                 <h3 className='required__field'>Shipping Address</h3>
+                                {
+                                    shippingAddress1 === null ?
+                                        <div style={{ marginTop: "1rem" }} className='layout--details__modal--checkbox'>
+                                            <input type="checkbox"
+                                                value={sameAsBillingAddress}
+                                                checked={sameAsBillingAddress}
+                                                onChange={(e) => setSameAsBillingAddress(e.target.checked)}
+                                            />
+                                            <span
+                                                style={{
+                                                    opacity: sameAsBillingAddress ? '1' : '0.5'
+                                                }}
+                                            >
+                                                Use Same as Billing Address</span>
+                                        </div> : ""
+                                }
                                 {
                                     shippingId || shippingAddress1 ?
                                         <div className='layout__form--customer-data'>
@@ -241,6 +264,7 @@ const ProformaFormP1 = ({
                                                     setShippingAddress2(null); setShippingAddress3(null);
                                                     setShippingState(null); setShippingCountry(null);
                                                     setShippingLabel(null);
+                                                    setSameAsBillingAddress(false);
                                                     dispatch(getShippingAddressList(customerId))
                                                 }}
                                             />
@@ -248,11 +272,11 @@ const ProformaFormP1 = ({
                                         : <>
                                             <Select
                                                 // showSearch
+                                                disabled={sameAsBillingAddress}
                                                 placeholder='Select Shipping Address'
                                                 optionFilterProp='children'
                                                 value={shippingId}
                                                 onChange={onChangeShipping}
-                                            // filterOption={filterOption2}
                                             >
                                                 <Option style={{ fontWeight: 600 }} key="addShippingAddress" value="addShippingAddress">
                                                     Add Shipping Address

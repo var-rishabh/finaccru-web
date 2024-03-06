@@ -50,10 +50,10 @@ const PaymentLayout = () => {
     const { loading: customerLoading, customersInf, totalCustomers, customer } = useSelector(state => state.customerReducer);
     const { loading: taxLoading, openTaxInvoices } = useSelector(state => state.taxInvoiceReducer);
 
-    const type =  user?.localInfo?.role === 2 ? window.location.pathname.split('/')[6] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[4] : window.location.pathname.split('/')[2];
+    const type = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[6] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[4] : window.location.pathname.split('/')[2];
     const receipt_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[7] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[5] : window.location.pathname.split('/')[3];
-    const client_id =  user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
-    const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;    
+    const client_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[4] : user?.localInfo?.role === 1 ? window.location.pathname.split('/')[2] : 0;
+    const jr_id = user?.localInfo?.role === 2 ? window.location.pathname.split('/')[2] : 0;
     const isAdd = type === 'create';
 
     const [currentCustomerPage, setCurrentCustomerPage] = useState(1);
@@ -216,7 +216,9 @@ const PaymentLayout = () => {
             <div className="payment__container">
                 <div className="create__payment--main">
                     <div className="create__payment--top">
-                        <img style={{ width: "9rem" }} src={logo} alt="logo" />
+                        <div style={{ width: "9rem", height: "5rem", overflow: "hidden" }}>
+                            <img style={{ width: "max-content", height: "100%" }} src={user?.localInfo?.role ? client?.company_logo_url : user?.clientInfo?.company_logo_url} alt="logo" />
+                        </div>
                         <h1 className='create__payment--head'>Receipt</h1>
                     </div>
                     <form>
@@ -226,10 +228,29 @@ const PaymentLayout = () => {
                                     {/* <h3>Receipt From</h3> */}
                                     <span style={{ fontWeight: 500 }}>{user?.localInfo?.role ? client?.company_data?.company_name : user?.clientInfo?.company_data?.company_name}</span>
                                     <span>{user?.localInfo?.role ? client?.company_data?.address_line_1 : user?.clientInfo?.company_data?.address_line_1}</span>
-                                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_2 : user?.clientInfo?.company_data?.address_line_2}</span>
-                                    <span>{user?.localInfo?.role ? client?.company_data?.address_line_3 : user?.clientInfo?.company_data?.address_line_3}</span>
-                                    <span>{user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state + ', ' + user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}</span>
-                                    <span>VAT TRN: {user?.localInfo?.role ? client?.company_data?.trade_license_number : user?.clientInfo?.company_data?.trade_license_number}</span>
+                                    {
+                                        user?.localInfo?.role ?
+                                            <>
+                                                {client?.company_data?.address_line_2 && <span>{client?.company_data?.address_line_2}</span>}
+                                                {client?.company_data?.address_line_3 && <span>{client?.company_data?.address_line_3}</span>}
+                                            </> :
+                                            <>
+                                                {user?.clientInfo?.company_data?.address_line_2 && <span>{user?.clientInfo?.company_data?.address_line_2}</span>}
+                                                {user?.clientInfo?.company_data?.address_line_3 && <span>{user?.clientInfo?.company_data?.address_line_3}</span>}
+                                            </>
+                                    }
+                                    <span>{user?.localInfo?.role ? client?.company_data?.state : user?.clientInfo?.company_data?.state}{', '} {user?.localInfo?.role ? client?.company_data?.country : user?.clientInfo?.company_data?.country}</span>
+                                    {
+                                        user?.localInfo?.role ?
+                                            <>
+                                                {client?.company_data?.vat_trn && <span>VAT TRN: {client?.company_data?.vat_trn}</span>}
+                                                {client?.company_data?.corporate_tax_trn && <span>Corporate Tax TRN: {client?.company_data?.corporate_tax_trn}</span>}
+                                            </> :
+                                            <>
+                                                {user?.clientInfo?.company_data?.vat_trn && <span>VAT TRN: {user?.clientInfo?.company_data?.vat_trn}</span>}
+                                                {user?.clientInfo?.company_data?.corporate_tax_trn && <span>Corporate Tax TRN: {user?.clientInfo?.company_data?.corporate_tax_trn}</span>}
+                                            </>
+                                    }
                                 </div>
                                 <div className='payment__form--head-info2'>
                                     <div className='payment__form--head-info2-data'>

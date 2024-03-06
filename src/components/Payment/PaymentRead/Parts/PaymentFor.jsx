@@ -1,6 +1,6 @@
 import { View, Text } from '@react-pdf/renderer'
 
-const PaymentFor = ({ styles, title, currency_abv, customer_name, billing_address_line_1, billing_address_line_2, billing_address_line_3, billing_state, billing_country, trn, invoice_mappings, total_amount, amount_in_words }) => {
+const PaymentFor = ({ styles, title, currency_abv, customer_name, vendor_name, billing_address_line_1, billing_address_line_2, billing_address_line_3, billing_state, billing_country, trn, invoice_mappings, total_amount, amount_in_words }) => {
     return (
         <View style={styles.main}>
             <View style={styles.mainLeft}>
@@ -10,7 +10,7 @@ const PaymentFor = ({ styles, title, currency_abv, customer_name, billing_addres
                     </Text>
                 </View>
                 <View style={styles.mainLeftData}>
-                    <Text style={styles.mainLeftCustomer}>{customer_name}</Text>
+                    <Text style={styles.mainLeftCustomer}>{customer_name ? customer_name : vendor_name}</Text>
                     <Text>{billing_address_line_1}</Text>
                     {billing_address_line_2 && <Text>{billing_address_line_2}</Text>}
                     {billing_address_line_3 && <Text>{billing_address_line_3}</Text>}
